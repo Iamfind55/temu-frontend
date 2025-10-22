@@ -1,0 +1,221 @@
+"use client"
+
+import Link from "next/link"
+import React from "react"
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, ShoppingCart, User, ChevronDown, TruckIcon, DollarSign, Undo2, Truck, Smartphone, ChevronRight, ThumbsUp, Star } from "lucide-react"
+
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { MegaMenu } from "@/components/mega-menu"
+import { LanguageSelector } from "@/components/language-selector"
+
+import { useAuth } from "@/lib/auth-context"
+import { useCart } from "@/lib/cart-context"
+
+const messages = [
+  {
+    icon: <Truck />,
+    title: "Delivery guarantee",
+    text: "Refund for any issues",
+  },
+  {
+    icon: <Undo2 />,
+    title: "Free returns",
+    text: "Up to 90 days*",
+  },
+  {
+    icon: <DollarSign />,
+    title: "Price adjustment",
+    text: "Within 30 days",
+  },
+];
+
+export function SiteHeader() {
+  const { user, logout } = useAuth()
+  const { openCart, itemCount } = useCart()
+
+  const [index, setIndex] = React.useState<number>(0);
+  const [showMegaMenu, setShowMegaMenu] = React.useState<boolean>(false)
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % messages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const { icon, title, text } = messages[index];
+
+
+  return (
+    <header className="sticky top-0 z-50 w-full">
+      <div className="hidden sm:block bg-[oklch(0.15_0_0)] text-white">
+        <div className="container mx-auto flex items-center justify-between px-4 py-2 text-sm">
+          <div className="flex items-center gap-2 space-x-2 text-green-300">
+            <TruckIcon />
+            <div className="flex items-start justify-center flex-col">
+              <span className="text-bold text-lg font-semibold">Free shipping</span>
+              <span className="text-xs font-bold">30-day no delivery refund</span>
+            </div>
+          </div>
+          <div className="hidden items-center gap-8 md:flex">
+            <div className="overflow-hidden h-auto">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={index}
+                  initial={{ y: 30, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -30, opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex items-center gap-2 text-yellow-100"
+                >
+                  {icon}
+                  <div className="flex items-start justify-center flex-col">
+                    <span className="text-lg font-semibold">{title}</span>
+                    <span className="text-xs font-bold">{text}</span>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-yellow-100">
+            <Smartphone />
+            <span className="font-bold text-lg">Get the Temu App</span>
+          </div>
+          <div
+            className="flex items-center gap-4 border border-white/50 px-2 py-1 rounded-md bg-cover bg-center bg-no-repeat hover:border-white/80 cursor-pointer"
+            style={{
+              backgroundImage:
+                "url('https://commimg.kwcdn.com/upload_commimg/support/4c86e9a0-1dee-4013-b53c-4b224cf595f8.png')",
+            }}
+          >
+            Sell on Temu
+            <Button
+              size="sm"
+              className="text-xs font-bold rounded-full bg-orange-400"
+            >
+              <span>Join Now</span>
+              <ChevronRight />
+            </Button>
+          </div>
+
+        </div>
+      </div>
+
+      <div className="bg-red-950 text-white">
+        <div className="container mx-auto flex items-center gap-4 px-4 py-3">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400 font-bold text-white">
+              <span className="text-xs">Temu</span>
+            </div>
+          </Link>
+
+          <Link href="/best-selling">
+            <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+              <ThumbsUp />
+              Best-Selling Items
+            </Button>
+          </Link>
+
+          <Link href="/5-star-rated">
+            <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+              <Star />
+              5-Star Rated
+            </Button>
+          </Link>
+
+          <div
+            className="relative"
+            onMouseEnter={() => setShowMegaMenu(true)}
+            onMouseLeave={() => setShowMegaMenu(false)}
+          >
+            <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+              Categories
+              <ChevronDown className="ml-1 h-4 w-4" />
+            </Button>
+            {showMegaMenu && <MegaMenu />}
+          </div>
+
+          {/* Search */}
+          <div className="relative flex-1 max-w-2xl">
+            <Input
+              type="search"
+              placeholder="Search ShopHub"
+              className="h-11 w-full rounded-full border-0 bg-white pr-12 text-foreground placeholder:text-muted-foreground"
+            />
+            <Button
+              size="icon"
+              className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-[oklch(0.15_0_0)] hover:bg-[oklch(0.2_0_0)]"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* User actions */}
+          <div className="flex items-center gap-4">
+            {user ? (
+              <div className="group relative">
+                <Link href="/account/orders">
+                  <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+                    <User className="mr-2 h-5 w-5" />
+                    <div className="text-left text-xs">
+                      <div className="text-white/80">Sign in / Register</div>
+                      <div className="font-semibold">Orders & Account</div>
+                    </div>
+                  </Button>
+                </Link>
+                {/* Dropdown menu on hover */}
+                <div className="absolute right-0 top-full hidden w-48 rounded-lg bg-white py-2 shadow-lg group-hover:block">
+                  <Link href="/account/orders" className="block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    Your orders
+                  </Link>
+                  <Link href="/account/profile" className="block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    Your profile
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="block w-full px-4 py-2 text-left text-sm text-foreground hover:bg-muted"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+                  <User className="mr-2 h-5 w-5" />
+                  <div className="text-left text-xs">
+                    <div className="text-white/90">Sign in / Register</div>
+                    <div className="font-bold">Order & Account</div>
+                  </div>
+                </Button>
+              </Link>
+            )}
+            {/* <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                <path d="M12 8h.01" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              Support
+            </Button> */}
+            <LanguageSelector />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-red-700 hover:text-white cursor-pointer rounded-full font-bold"
+              onClick={openCart}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-white">
+                  {itemCount > 9 ? "9+" : itemCount}
+                </span>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </header>
+  )
+}
