@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "ShopHub - Shop Like a Billionaire",
+  title: "Temu - Shop Like a Billionaire",
   description: "Discover amazing deals on millions of products",
-    generator: 'v0.app'
+  generator: 'v0.app'
 }
 
 export default function RootLayout({

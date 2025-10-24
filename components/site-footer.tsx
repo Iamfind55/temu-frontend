@@ -12,12 +12,12 @@ export function SiteFooter() {
             <ul className="space-y-3 text-sm text-white/80">
               <li className="hover:text-white hover:underline">
                 <a href="#" className="hover:text-white">
-                  About ShopHub
+                  About Temu
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="#" className="hover:text-white">
-                  ShopHub – Shop Like a Billionaire
+                  Temu – Shop Like a Billionaire
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
@@ -42,7 +42,7 @@ export function SiteFooter() {
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="#" className="hover:text-white">
-                  ShopHub's Tree Planting Program
+                  Temu's Tree Planting Program
                 </a>
               </li>
             </ul>
@@ -91,7 +91,7 @@ export function SiteFooter() {
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="#" className="hover:text-white">
-                  ShopHub purchase protection
+                  Temu purchase protection
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
@@ -117,7 +117,7 @@ export function SiteFooter() {
               }}
             >
               <div>
-                <h3 className="font-semibold mb-2">Start Selling to Millions of Buyers on ShopHub</h3>
+                <h3 className="font-semibold mb-2">Start Selling to Millions of Buyers on Temu</h3>
                 <Button
                   size="sm"
                   className="text-xs font-bold rounded-full bg-orange-400"
@@ -229,7 +229,7 @@ export function SiteFooter() {
           {/* Payment methods */}
           <div className="mt-8 border-t border-white/20 pt-8">
             <div className="text-center text-sm text-white/60">
-              © 2022 – 2025 ShopHub Inc. ·{" "}
+              © 2022 – 2025 Temu Inc. ·{" "}
               <a href="#" className="hover:text-white">
                 Terms of use
               </a>{" "}

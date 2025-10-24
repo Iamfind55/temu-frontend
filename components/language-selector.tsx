@@ -1,5 +1,6 @@
 "use client"
 
+import { Globe } from "lucide-react"
 import { useState } from "react"
 
 const languages = [
@@ -19,15 +20,8 @@ export function LanguageSelector() {
   return (
     <div className="relative" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <button className="flex items-center gap-2 rounded-lg px-3 py-2 text-white hover:bg-red-700 cursor-pointer">
-        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="12" cy="12" r="10" strokeWidth="2" />
-          <path d="M2 12h20" strokeWidth="2" />
-          <path
-            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"
-            strokeWidth="2"
-          />
-        </svg>
-        <span className="text-sm font-medium">{currentLanguage?.name}</span>
+        <Globe className="h-6 sm:h-4 w-6 sm:w-4" />
+        <span className="hidden sm:block text-sm font-medium">{currentLanguage?.name}</span>
       </button>
 
       {isOpen && (
