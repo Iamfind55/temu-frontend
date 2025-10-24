@@ -91,7 +91,7 @@ export function AccountSidebar() {
                   className={cn(
                     "flex w-full items-center justify-between gap-3 px-3 py-2.5 text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-orange-50 border-l-4 border-orange-600"
+                      ? "bg-orange-50"
                       : "text-gray-700 hover:bg-gray-100"
                   )}
                 >
@@ -138,9 +138,9 @@ export function AccountSidebar() {
                         key={subItem.href}
                         href={subItem.href}
                         className={cn(
-                          "block rounded px-3 py-2 text-sm transition-colors",
+                          "block px-3 py-2 text-sm transition-colors",
                           isSubActive
-                            ? "bg-orange-50 text-orange-600 font-medium"
+                            ? "bg-orange-50 border-l-2 border-orange-500 text-orange-600 font-medium"
                             : "text-gray-600 hover:bg-gray-50"
                         )}
                       >

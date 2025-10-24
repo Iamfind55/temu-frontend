@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import React from "react"
+import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingCart, User, ChevronDown, TruckIcon, DollarSign, Undo2, Truck, Smartphone, ChevronRight, ThumbsUp, Star, Logs } from "lucide-react"
 
@@ -12,6 +12,7 @@ import { LanguageSelector } from "@/components/language-selector"
 
 import { useAuth } from "@/lib/auth-context"
 import { useCart } from "@/lib/cart-context"
+import { cn } from "@/lib/utils";
 
 const messages = [
   {
@@ -31,7 +32,7 @@ const messages = [
   },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ className }: { className?: string }) {
   const { user, logout } = useAuth()
   const { openCart, itemCount } = useCart()
 
@@ -103,23 +104,23 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className="bg-red-950 text-white">
+      <div className={cn("bg-red-950 text-white", className)}>
         <div className="container mx-auto flex items-center gap-4 px-4 py-3">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400 font-bold text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400 font-bold">
               <span className="text-xs">Temu</span>
             </div>
           </Link>
 
           <Link href="/best-selling" className="hidden sm:block">
-            <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+            <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
               <ThumbsUp />
               Best-Selling Items
             </Button>
           </Link>
 
           <Link href="/5-star-rated" className="hidden sm:block">
-            <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+            <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
               <Star />
               5-Star Rated
             </Button>
@@ -130,11 +131,11 @@ export function SiteHeader() {
             onMouseEnter={() => setShowMegaMenu(true)}
             onMouseLeave={() => setShowMegaMenu(false)}
           >
-            <Button variant="ghost" className="hidden sm:flex text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+            <Button variant="ghost" className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
               Categories
               <ChevronDown className="ml-1 h-4 w-4" />
             </Button>
-            <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 text-white hover:bg-red-700 cursor-pointer">
+            <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
               <Logs className="h-6 sm:h-4 w-6 sm:w-4" />
             </button>
             {showMegaMenu && <MegaMenu />}
@@ -144,7 +145,7 @@ export function SiteHeader() {
             <Input
               type="search"
               placeholder="Search Temu"
-              className="h-11 w-full rounded-full border-0 bg-white pr-12 text-foreground placeholder:text-muted-foreground"
+              className="h-11 w-full rounded-full border bg-white pr-12 text-foreground placeholder:text-muted-foreground"
             />
             <Button
               size="icon"
@@ -159,14 +160,14 @@ export function SiteHeader() {
             {user ? (
               <div className="group relative">
                 <Link href="/account/orders">
-                  <Button variant="ghost" className="hidden sm:flex text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+                  <Button variant="ghost" className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
                     <User className="mr-0 sm:mr-1 h-8 sm:h-5 w-8 sm:w-5" />
                     <div className="text-left text-xs">
-                      <div className="text-white/80">Sign in / Register</div>
+                      <div>Sign in / Register</div>
                       <div className="font-semibold">Orders & Account</div>
                     </div>
                   </Button>
-                  <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 text-white hover:bg-red-700 cursor-pointer">
+                  <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
                     <User className="h-6 sm:h-4 w-6 sm:w-4" />
                   </button>
                 </Link>
@@ -188,30 +189,30 @@ export function SiteHeader() {
               </div>
             ) : (
               <Link href="/login">
-                <Button variant="ghost" className="text-white hover:bg-red-800 hover:text-white cursor-pointer rounded-full font-bold">
+                <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
                   <User className="mr-0 sm:mr-2 h-8 sm:h-5 w-8 sm:w-5" />
                   <div className="text-left text-xs">
-                    <div className="text-white/90">Sign in / Register</div>
+                    <div>Sign in / Register</div>
                     <div className="font-bold">Order & Account</div>
                   </div>
                 </Button>
               </Link>
             )}
-            <LanguageSelector />
+            <LanguageSelector className={className ? "text-black hover:text-white" : ""} />
             <Button
               variant="ghost"
               size="icon"
-              className="hidden sm:flex text-white hover:bg-red-700 hover:text-white cursor-pointer rounded-full font-bold"
+              className="hidden sm:flex hover:bg-red-700 cursor-pointer rounded-full font-bold hover:text-white"
               onClick={openCart}
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-white">
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold">
                   {itemCount > 9 ? "9+" : itemCount}
                 </span>
               )}
             </Button>
-            <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 text-white hover:bg-red-700 cursor-pointer">
+            <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
               <ShoppingCart className="h-6 sm:h-4 w-6 sm:w-4" />
             </button>
           </div>

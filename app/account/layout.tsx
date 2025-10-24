@@ -12,7 +12,7 @@ export default function AccountLayout({
 }) {
   return (
     <div className="w-full flex flex-col">
-      <SiteHeader />
+      <SiteHeader className="bg-white text-black border-b" />
       <div className="flex items-center justify-center mt-4">
         <div className="px-2 sm:container w-full">
           <div className="hidden sm:block px-6 py-3">
