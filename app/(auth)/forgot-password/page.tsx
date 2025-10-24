@@ -1,18 +1,19 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
 import Link from "next/link"
+import type React from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Lock, ChevronLeft } from "lucide-react"
 
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { SiteFooter } from "@/components/site-footer"
+
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("tao**e29@gmail.com")
-  const [submitted, setSubmitted] = useState(false)
   const router = useRouter()
+  const [submitted, setSubmitted] = useState(false)
+  const [email, setEmail] = useState("tao**e29@gmail.com")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,26 +25,22 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Simple header */}
       <div className="border-b bg-white">
         <div className="container mx-auto flex items-center gap-2 px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary font-bold text-white">
-              <span className="text-xs">US</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400 font-bold text-white">
+              <span className="text-xs">Temu</span>
             </div>
-            <span className="text-2xl font-bold text-primary">TEMU</span>
           </Link>
-          <div className="flex items-center gap-2 text-sm text-green-600">
+          <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
             <span>All data will be encrypted</span>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 h-[80vh]">
         <div className="mx-auto max-w-md">
-          {/* Back button */}
           <Link
             href="/login"
             className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
@@ -52,15 +49,13 @@ export default function ForgotPasswordPage() {
             Back
           </Link>
 
-          {/* Title */}
           <div className="mb-8 text-center">
-            <h1 className="mb-3 text-2xl font-bold">Forgot password</h1>
+            <h1 className="mb-3 text-xl font-bold">Forgot password</h1>
             <p className="text-sm text-muted-foreground">
               Confirm your email address below, and we'll send you a 6-digit password reset code.
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-medium">
@@ -78,7 +73,7 @@ export default function ForgotPasswordPage() {
 
             <Button
               type="submit"
-              className="h-12 w-full bg-primary text-lg font-semibold hover:bg-primary/90"
+              className="h-12 w-full bg-orange-500 text-sm font-semibold hover:bg-orange-600 rounded-full cursor-pointer"
               disabled={submitted}
             >
               {submitted ? "Sending..." : "Submit"}
@@ -91,6 +86,10 @@ export default function ForgotPasswordPage() {
             )}
           </form>
         </div>
+      </div>
+
+      <div className="hidden sm:block">
+        <SiteFooter />
       </div>
     </div>
   )

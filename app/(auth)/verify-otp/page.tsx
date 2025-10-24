@@ -1,20 +1,22 @@
 "use client"
 
-import type React from "react"
-import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import type React from "react"
 import { Lock, ChevronLeft } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { SiteFooter } from "@/components/site-footer"
 
 export default function VerifyOtpPage() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get("email") || "tao**e29@gmail.com"
-  const router = useRouter()
 
-  const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const [countdown, setCountdown] = useState(50)
+  const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
   // Countdown timer
@@ -65,13 +67,11 @@ export default function VerifyOtpPage() {
     const otpCode = otp.join("")
 
     if (otpCode.length === 6) {
-      // In a real app, verify the OTP code here
       router.push(`/reset-password?email=${encodeURIComponent(email)}&code=${otpCode}`)
     }
   }
 
   const handleResend = () => {
-    // In a real app, resend the OTP code
     setCountdown(50)
     setOtp(["", "", "", "", "", ""])
   }
@@ -80,26 +80,22 @@ export default function VerifyOtpPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Simple header */}
       <div className="border-b bg-white">
         <div className="container mx-auto flex items-center gap-2 px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary font-bold text-white">
-              <span className="text-xs">US</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400 font-bold text-white">
+              <span className="text-xs">Temu</span>
             </div>
-            <span className="text-2xl font-bold text-primary">TEMU</span>
           </Link>
-          <div className="flex items-center gap-2 text-sm text-green-600">
+          <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
             <span>All data will be encrypted</span>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 h-[80vh]">
         <div className="mx-auto max-w-md">
-          {/* Back button */}
           <Link
             href="/forgot-password"
             className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
@@ -108,7 +104,6 @@ export default function VerifyOtpPage() {
             Back
           </Link>
 
-          {/* Title */}
           <div className="mb-8 text-center">
             <h1 className="mb-3 text-2xl font-bold">Enter the password reset code</h1>
             <p className="text-sm text-muted-foreground">
@@ -117,11 +112,10 @@ export default function VerifyOtpPage() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="mb-3 block text-sm font-medium">Password reset code</label>
-              <div className="flex justify-center gap-2">
+              <div className="flex items-center justify-between gap-2">
                 {otp.map((digit, index) => (
                   <Input
                     key={index}
@@ -162,13 +156,17 @@ export default function VerifyOtpPage() {
 
             <Button
               type="submit"
-              className="h-12 w-full bg-primary text-lg font-semibold hover:bg-primary/90"
+              className="h-12 w-full bg-orange-500 text-sm font-semibold hover:bg-orange-600 rounded-full"
               disabled={!isComplete}
             >
               Continue
             </Button>
           </form>
         </div>
+      </div>
+
+      <div className="hidden sm:block">
+        <SiteFooter />
       </div>
     </div>
   )

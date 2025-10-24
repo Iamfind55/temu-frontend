@@ -1,12 +1,14 @@
 "use client"
 
+import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Lock, Eye, EyeOff } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
+
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { SiteFooter } from "@/components/site-footer"
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams()
@@ -46,36 +48,30 @@ export default function ResetPasswordPage() {
       return
     }
 
-    // In a real app, this would update the password on the server
     console.log("[v0] Resetting password for:", email, "with code:", code)
 
-    // Show success and redirect to login
     alert("Password reset successfully!")
     router.push("/login")
   }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Simple header */}
       <div className="border-b bg-white">
         <div className="container mx-auto flex items-center gap-2 px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary font-bold text-white">
-              <span className="text-xs">US</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400 font-bold text-white">
+              <span className="text-xs">Temu</span>
             </div>
-            <span className="text-2xl font-bold text-primary">TEMU</span>
           </Link>
-          <div className="flex items-center gap-2 text-sm text-green-600">
+          <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
             <span>All data will be encrypted</span>
           </div>
         </div>
       </div>
 
-      {/* Main content */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 h-[70vh]">
         <div className="mx-auto max-w-md">
-          {/* Title */}
           <div className="mb-8 text-center">
             <h1 className="mb-3 text-2xl font-bold">Create a new password</h1>
             <p className="text-sm text-muted-foreground">
@@ -83,7 +79,6 @@ export default function ResetPasswordPage() {
             </p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="password" className="mb-2 block text-sm font-medium">
@@ -130,13 +125,17 @@ export default function ResetPasswordPage() {
 
             <Button
               type="submit"
-              className="h-12 w-full bg-primary text-lg font-semibold hover:bg-primary/90"
+              className="h-12 w-full bg-orange-500 text-lg font-semibold hover:bg-orange-600 rounded-full"
               disabled={password.length < 8}
             >
               Submit
             </Button>
           </form>
         </div>
+      </div>
+
+      <div className="hidden sm:block">
+        <SiteFooter />
       </div>
     </div>
   )
