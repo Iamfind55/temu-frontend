@@ -13,6 +13,7 @@ import { LanguageSelector } from "@/components/language-selector"
 import { useAuth } from "@/lib/auth-context"
 import { useCart } from "@/lib/cart-context"
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const messages = [
   {
@@ -33,9 +34,9 @@ const messages = [
 ];
 
 export function SiteHeader({ className }: { className?: string }) {
+  const router = useRouter()
   const { user, logout } = useAuth()
   const { openCart, itemCount } = useCart()
-
   const [index, setIndex] = React.useState<number>(0);
   const [showMegaMenu, setShowMegaMenu] = React.useState<boolean>(false)
 
@@ -47,7 +48,6 @@ export function SiteHeader({ className }: { className?: string }) {
   }, []);
 
   const { icon, title, text } = messages[index];
-
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -203,7 +203,8 @@ export function SiteHeader({ className }: { className?: string }) {
               variant="ghost"
               size="icon"
               className="hidden sm:flex hover:bg-red-700 cursor-pointer rounded-full font-bold hover:text-white"
-              onClick={openCart}
+              // onClick={openCart}
+              onClick={() => router.push("/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -212,7 +213,10 @@ export function SiteHeader({ className }: { className?: string }) {
                 </span>
               )}
             </Button>
-            <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
+            <button
+              onClick={() => router.push("/cart")}
+              className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer"
+            >
               <ShoppingCart className="h-6 sm:h-4 w-6 sm:w-4" />
             </button>
           </div>

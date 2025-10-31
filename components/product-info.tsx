@@ -1,19 +1,20 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Star, Check, Clock, Share2, Zap } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import type { Product } from "@/lib/product-data"
+import { Star, Check, Clock, Share2, Zap, Plus, RotateCcw, ChevronRight, Leaf, Factory, Shield, Truck, ShieldCheck } from "lucide-react"
+import { Separator } from "./ui/separator"
 
 interface ProductInfoProps {
   product: Product
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
-  const [selectedVariant, setSelectedVariant] = useState(product.variants[0]?.id || "")
   const [quantity, setQuantity] = useState(1)
   const [timeLeft, setTimeLeft] = useState("")
+  const [selectedVariant, setSelectedVariant] = useState(product.variants[0]?.id || "")
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -43,146 +44,230 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
   return (
     <div className="space-y-6">
-      {/* Shipping Info */}
-      <div className="flex items-center gap-4 p-3 bg-orange-50 rounded-lg text-sm">
-        <div className="flex items-center gap-2">
-          <Check className="h-4 w-4 text-green-600" />
-          <span className="font-medium">Free shipping</span>
+      <div className="sticky top-4">
+        <div className="flex items-center gap-4 p-3 bg-orange-50 rounded-lg text-sm">
+          <div className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-green-600" />
+            <span className="font-medium">Free shipping</span>
+          </div>
+          <div className="h-4 w-px bg-border" />
+          <div className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-green-600" />
+            <span className="font-medium">${product.shipping.credit.toFixed(2)} Credit for delay</span>
+          </div>
         </div>
-        <div className="h-4 w-px bg-border" />
+
         <div className="flex items-center gap-2">
-          <Check className="h-4 w-4 text-green-600" />
-          <span className="font-medium">${product.shipping.credit.toFixed(2)} Credit for delay</span>
+          <Zap className="h-5 w-5 text-green-600" />
+          <span className="font-semibold text-green-600">
+            Fastest delivery: {product.shipping.deliveryDays} BUSINESS DAYS
+          </span>
         </div>
-      </div>
 
-      {/* Delivery Info */}
-      <div className="flex items-center gap-2">
-        <Zap className="h-5 w-5 text-green-600" />
-        <span className="font-semibold text-green-600">
-          Fastest delivery: {product.shipping.deliveryDays} BUSINESS DAYS
-        </span>
-      </div>
+        <h1 className="text-lg leading-tight text-balance">{product.title}</h1>
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <span className="text-sm text-muted-foreground">{product.soldCount} sold</span>
+          <div className="flex items-center gap-3">
+            <span className="font-semibold">{product.rating}</span>
+            <div className="flex gap-1">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-4 w-4 ${i < Math.floor(product.rating) ? "fill-orange-500 text-orange-500" : "text-gray-300"}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
 
-      {/* Product Title */}
-      <h1 className="text-2xl font-semibold leading-tight text-balance">{product.title}</h1>
-
-      {/* Badges and Rating */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <span className="text-sm text-muted-foreground">{product.soldCount} sold</span>
-        {product.badges.map((badge) => (
-          <Badge key={badge} className="bg-purple-600 text-white hover:bg-purple-700">
-            ⭐ {badge}
+        {product.category && (
+          <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
+            #TOP RATED in {product.category}
           </Badge>
-        ))}
-        <div className="flex items-center gap-1">
-          <span className="font-semibold">{product.rating}</span>
-          <div className="flex">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`h-4 w-4 ${i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-              />
-            ))}
+        )}
+
+        <div className="space-y-2">
+          <div className="flex items-baseline gap-3">
+            <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
+            <span className="text-md text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-primary font-semibold">🔥 {product.promotion.text}</span>
+            <div className="flex items-center gap-1 px-2 py-1 bg-black text-white rounded text-xs font-mono">
+              <Clock className="h-3 w-3" />
+              <span>{timeLeft}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {product.category && (
-        <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-          #2 TOP RATED in {product.category}
-        </Badge>
-      )}
-
-      {/* Price */}
-      <div className="space-y-2">
-        <div className="flex items-baseline gap-3">
-          <span className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</span>
-          <span className="text-xl text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
-          <Badge className="bg-red-600 text-white hover:bg-red-700">{product.discount}% OFF limited time</Badge>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-primary font-semibold">🔥 {product.promotion.text}</span>
-          <div className="flex items-center gap-1 px-2 py-1 bg-black text-white rounded text-xs font-mono">
-            <Clock className="h-3 w-3" />
-            <span>{timeLeft}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Sale Timer */}
-      <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4 rounded-lg flex items-center justify-between">
-        <span className="font-semibold">Big sale</span>
-        <div className="flex items-center gap-2">
-          <span className="text-sm">Ends in</span>
-          <span className="font-mono font-bold">{timeLeft}</span>
-        </div>
-      </div>
-
-      {/* Color Selection */}
-      {product.variants.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="font-semibold">Color</h3>
-          <div className="grid grid-cols-4 gap-3">
-            {product.variants.map((variant) => (
-              <button
-                key={variant.id}
-                onClick={() => setSelectedVariant(variant.id)}
-                className={`relative p-2 rounded-lg border-2 transition-colors ${
-                  selectedVariant === variant.id ? "border-primary" : "border-border hover:border-muted-foreground"
-                }`}
-              >
-                <div className="aspect-square rounded overflow-hidden mb-1">
-                  <img
-                    src={variant.image || "/placeholder.svg"}
-                    alt={variant.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <p className="text-xs text-center line-clamp-1">{variant.name}</p>
-                {selectedVariant === variant.id && (
-                  <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5">
-                    <Check className="h-3 w-3" />
+        {product.variants.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="font-semibold">Color</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {product.variants.map((variant) => (
+                <button
+                  key={variant.id}
+                  onClick={() => setSelectedVariant(variant.id)}
+                  className={`p-2 rounded-lg border-2 transition-colors ${selectedVariant === variant.id ? "border-primary" : "border-border hover:border-muted-foreground"
+                    }`}
+                >
+                  <div className="aspect-square rounded overflow-hidden mb-1">
+                    <img
+                      src={variant.image || "/placeholder.svg"}
+                      alt={variant.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                )}
-              </button>
-            ))}
+                  <p className="text-xs text-center line-clamp-1">{variant.name}</p>
+                  {selectedVariant === variant.id && (
+                    <div className="absolute top-1 right-1 bg-primary text-white rounded-full p-0.5">
+                      <Check className="h-3 w-3" />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          <div className="flex items-center justify-start gap-2">
+            <h3 className="text-sm font-semibold">Quantity</h3>
+            <select
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="text-sm p-2 border border-border rounded-lg bg-background"
+            >
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50, 60, 70, 80, 100].map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
 
-      {/* Quantity */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold">Qty</h3>
-          <span className="text-sm text-primary">Add 1 to get 2nd for {product.promotion.discount}% off</span>
+        <div className="flex items-center justify-between gap-4">
+          <Button size="lg" className="w-1/2 bg-orange-500 hover:bg-orange-600 text-white text-sm">
+            <Plus />
+            Add to cart
+          </Button>
+
+          <Button variant="outline" size="lg" className="w-1/2 bg-transparent">
+            <Share2 className="h-5 w-5 mr-2" />
+            Share
+          </Button>
         </div>
-        <div className="flex items-center gap-3">
-          <select
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            className="px-4 py-2 border border-border rounded-lg bg-background"
-          >
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-              <option key={num} value={num}>
-                {num}
-              </option>
-            ))}
-          </select>
+
+        <div className="space-y-4 pt-4">
+          <div className="space-y-3">
+            <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold hover:underline transition-colors group">
+              <Truck className="h-5 w-5" />
+              <span className="text-md">Free shipping for this item</span>
+              <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <div className="space-y-2 pl-8">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Delivery:</span>
+                <span className="font-semibold text-foreground">Nov 7-20</span>
+                <button className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted text-muted-foreground hover:bg-muted-foreground hover:text-background transition-colors">
+                  <span className="text-xs">?</span>
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm flex-wrap">
+                <span className="text-muted-foreground">Courier company:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold">📮 USPS</span>
+                  <span className="font-semibold">📦 UPS</span>
+                  <span className="font-semibold">🚚 DHL eCommerce</span>
+                  <span className="font-semibold">🚛 OnTrac ...</span>
+                </div>
+              </div>
+
+              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group">
+                <div className="flex items-center justify-center w-4 h-4 rounded-full border border-current">
+                  <span className="text-xs">i</span>
+                </div>
+                <span>Temu has certain minimum order value. Click here to learn more.</span>
+                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold hover:underline transition-colors group">
+              <ShieldCheck className="h-5 w-5" />
+              <span className="text-md">Why choose Temu?</span>
+              <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+
+            <div className="flex items-center justfy-start gap-2">
+              <div className="bg-muted/50 p-2 rounded-lg space-y-2">
+                <h4 className="font-semibold text-sm">Security & Privacy</h4>
+                <div className="space-y-1 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <span>Safe payments</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <span>Secure privacy</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-muted/50 p-2 rounded-lg space-y-2">
+                <h4 className="font-semibold text-sm">Delivery guarantee</h4>
+                <div className="grid grid-cols-2 gap-3 space-y-1 text-sm text-muted-foreground">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                      <span>$5.00 Credit for delay</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                      <span>15-day no update refund</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                      <span>Return if item damaged</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                      <span>30-day no delivery refund</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold transition-colors group w-full hover:underline">
+            <RotateCcw className="h-5 w-5" />
+            <span className="text-md">Free returns · Price adjustment</span>
+            <ChevronRight className="h-5 w-5 ml-auto group-hover:translate-x-1 transition-transform" />
+          </button>
+
+          <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold transition-colors group w-full hover:underline">
+            <div className="flex items-center justify-center w-6 h-6 bg-green-700 text-white rounded font-bold">
+              <span className="text-[7px]">Plant</span>
+            </div>
+            <span className="text-md">Temu's Tree Planting Program (22M+ trees)</span>
+            <ChevronRight className="h-5 w-5 ml-auto group-hover:translate-x-1 transition-transform" />
+          </button>
+
+          <Separator />
+          <div className="flex items-center gap-2 text-sm text-gray-600 pt-2 font-bold">
+            <span>Sourced from</span>
+            <Factory className="h-4 w-4" />
+            <span>, procured by Temu</span>
+          </div>
         </div>
       </div>
-
-      {/* Add to Cart Button */}
-      <Button size="lg" className="w-full bg-primary hover:bg-primary/90 text-white text-lg h-14">
-        -{product.discount}% now! Add to cart!
-        <div className="text-xs">Fastest delivery in {product.shipping.deliveryDays} business days</div>
-      </Button>
-
-      {/* Share Button */}
-      <Button variant="outline" size="lg" className="w-full bg-transparent">
-        <Share2 className="h-5 w-5 mr-2" />
-        Share
-      </Button>
     </div>
   )
 }

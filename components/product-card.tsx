@@ -1,8 +1,6 @@
 "use client"
 
 import type React from "react"
-
-import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, ShoppingCart } from "lucide-react"
 import type { Product } from "@/lib/product-data"
@@ -44,13 +42,12 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
 
             <button
               onClick={handleCartClick}
-              className="absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100"
+              className="cursor-pointer absolute top-2 right-2 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors opacity-0 group-hover:opacity-100"
             >
               <ShoppingCart className="h-4 w-4 text-gray-700" />
             </button>
           </div>
 
-          {/* Product Info */}
           <div className="p-3 space-y-1.5">
             <h3 className="text-sm line-clamp-2 min-h-[2rem] text-foreground leading-tight">{product.title}</h3>
 

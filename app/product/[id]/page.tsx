@@ -1,12 +1,14 @@
+import Link from "next/link"
 import { notFound } from "next/navigation"
+import { ChevronRight } from "lucide-react"
+
+// Components:
+import { getProductById } from "@/lib/product-data"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
-import { ProductGallery } from "@/components/product-gallery"
 import { ProductInfo } from "@/components/product-info"
+import { ProductGallery } from "@/components/product-gallery"
 import { RelatedProducts } from "@/components/related-products"
-import { getProductById } from "@/lib/product-data"
-import { ChevronRight } from "lucide-react"
-import Link from "next/link"
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -20,7 +22,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen">
       <SiteHeader />
       <main className="bg-background">
-        {/* Breadcrumb */}
         <div className="border-b border-border">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -41,7 +42,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {/* Product Details */}
         <div className="container mx-auto px-4 py-8">
           <div className="grid lg:grid-cols-2 gap-8">
             <ProductGallery images={product.images} title={product.title} />
@@ -49,7 +49,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
 
-        {/* Related Products */}
         <RelatedProducts currentProductId={product.id} />
       </main>
       <SiteFooter />
