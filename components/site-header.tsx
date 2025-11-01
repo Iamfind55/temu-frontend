@@ -112,14 +112,14 @@ export function SiteHeader({ className }: { className?: string }) {
             </div>
           </Link>
 
-          <Link href="/best-selling" className="hidden sm:block">
+          <Link href="/landing/best-selling" className="hidden sm:block">
             <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
               <ThumbsUp />
               Best-Selling Items
             </Button>
           </Link>
 
-          <Link href="/5-star-rated" className="hidden sm:block">
+          <Link href="/landing/5-star-rated" className="hidden sm:block">
             <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
               <Star />
               5-Star Rated
@@ -131,14 +131,26 @@ export function SiteHeader({ className }: { className?: string }) {
             onMouseEnter={() => setShowMegaMenu(true)}
             onMouseLeave={() => setShowMegaMenu(false)}
           >
-            <Button variant="ghost" className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
-              Categories
-              <ChevronDown className="ml-1 h-4 w-4" />
-            </Button>
-            <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
-              <Logs className="h-6 sm:h-4 w-6 sm:w-4" />
-            </button>
-            {showMegaMenu && <MegaMenu />}
+            <div className="group flex items-center">
+              <Button
+                variant="ghost"
+                className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white"
+              >
+                Categories
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+              <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
+                <Logs className="h-6 sm:h-4 w-6 sm:w-4" />
+              </button>
+            </div>
+
+            {showMegaMenu && (
+              <div className="fixed left-1/2 top-[70px] z-50 w-[60vw] -translate-x-1/2 bg-white shadow-lg rounded-lg border border-gray-200">
+                <div className="mx-auto max-w-7xl px-6 py-4">
+                  <MegaMenu />
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="relative flex-1 max-w-2xl">
@@ -155,7 +167,6 @@ export function SiteHeader({ className }: { className?: string }) {
             </Button>
           </div>
 
-          {/* User actions */}
           <div className="flex items-center gap-0 sm:gap-4">
             {user ? (
               <div className="group relative">
@@ -171,7 +182,7 @@ export function SiteHeader({ className }: { className?: string }) {
                     <User className="h-6 sm:h-4 w-6 sm:w-4" />
                   </button>
                 </Link>
-                {/* Dropdown menu on hover */}
+
                 <div className="absolute right-0 top-full hidden w-48 rounded-lg bg-white py-2 shadow-lg group-hover:block">
                   <Link href="/account/orders" className="block px-4 py-2 text-sm text-foreground hover:bg-muted">
                     Your orders
@@ -203,7 +214,6 @@ export function SiteHeader({ className }: { className?: string }) {
               variant="ghost"
               size="icon"
               className="hidden sm:flex hover:bg-red-700 cursor-pointer rounded-full font-bold hover:text-white"
-              // onClick={openCart}
               onClick={() => router.push("/cart")}
             >
               <ShoppingCart className="h-5 w-5" />

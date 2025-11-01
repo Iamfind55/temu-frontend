@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type TimePeriod = "30" | "14" | "7"
-type SortOption = "recommended" | "price-low" | "price-high" | "rating" | "reviews"
+type SortOption = "recommended" | "price-low" | "price-high" | "rating" | "sold"
 
-export default function FiveStarRatedPage() {
+export default function BestSellingPage() {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>("30")
   const [category, setCategory] = useState<string>("all")
   const [sortBy, setSortBy] = useState<SortOption>("recommended")
@@ -17,8 +17,8 @@ export default function FiveStarRatedPage() {
   // Get unique categories from products
   const categories = ["all", ...Array.from(new Set(products.map((p) => p.category)))]
 
-  // Filter products with 4.5+ rating
-  let filteredProducts = products.filter((p) => p.rating >= 4.5)
+  // Filter and sort products
+  let filteredProducts = [...products]
 
   if (category !== "all") {
     filteredProducts = filteredProducts.filter((p) => p.category === category)
@@ -33,8 +33,8 @@ export default function FiveStarRatedPage() {
         return b.price - a.price
       case "rating":
         return b.rating - a.rating
-      case "reviews":
-        return b.reviewCount - a.reviewCount
+      case "sold":
+        return Number.parseInt(b.soldCount.replace(/\D/g, "")) - Number.parseInt(a.soldCount.replace(/\D/g, ""))
       default:
         return 0
     }
@@ -42,42 +42,39 @@ export default function FiveStarRatedPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6">
-        {/* Header with filters */}
+      <div className="container mx-auto px-4 py-6 space-y-4">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold">5-Star Rated</h1>
+            <h1 className="text-sm">Best-Selling Items</h1>
 
-            {/* Time period filters */}
             <div className="flex gap-2">
               <Button
                 variant={timePeriod === "30" ? "default" : "outline"}
                 onClick={() => setTimePeriod("30")}
-                className="rounded-full"
+                className="rounded-full text-sm font-normal"
               >
                 Within last 30 days
               </Button>
               <Button
                 variant={timePeriod === "14" ? "default" : "outline"}
                 onClick={() => setTimePeriod("14")}
-                className="rounded-full"
+                className="rounded-full text-sm font-normal"
               >
                 Within last 14 days
               </Button>
               <Button
                 variant={timePeriod === "7" ? "default" : "outline"}
                 onClick={() => setTimePeriod("7")}
-                className="rounded-full"
+                className="rounded-full text-sm font-normal"
               >
                 Within last 7 days
               </Button>
             </div>
           </div>
 
-          {/* Category and sort filters */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Filter by category</span>
+              <span className="text-sm font-medium">Filter by:</span>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="w-[200px]">
                   <SelectValue />
@@ -102,22 +99,21 @@ export default function FiveStarRatedPage() {
                 <SelectItem value="price-low">Price: Low to High</SelectItem>
                 <SelectItem value="price-high">Price: High to Low</SelectItem>
                 <SelectItem value="rating">Highest Rated</SelectItem>
-                <SelectItem value="reviews">Most Reviews</SelectItem>
+                <SelectItem value="sold">Most Sold</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* Product grid */}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} showTopRated />
+          {filteredProducts.map((product, index) => (
+            <ProductCard key={product.id + index} product={product} bestSellingRank={index + 1} />
           ))}
         </div>
 
         {filteredProducts.length === 0 && (
           <div className="py-20 text-center">
-            <p className="text-lg text-muted-foreground">No 5-star rated products found in this category.</p>
+            <p className="text-lg text-muted-foreground">No products found in this category.</p>
           </div>
         )}
       </div>
