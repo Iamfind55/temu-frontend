@@ -24,16 +24,12 @@ export default async function CategoryPage({
 
    return (
       <>
-         <SiteHeader />
-
          <CategoryPageClient
             categorySlug={categorySlug}
             subcategorySlug={subcategorySlug}
             categoryName={category.name}
             subcategoryName={subcategory.name}
          />
-
-         <SiteFooter />
       </>
    )
 }

@@ -1,12 +1,11 @@
 "use client"
 
-import { Dialog, DialogContent } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { X } from "lucide-react"
-import type { Product } from "@/lib/product-data"
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { useCart } from "@/lib/cart-context"
+import { Button } from "@/components/ui/button"
+import type { Product } from "@/lib/product-data"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 interface QuickAddModalProps {
   product: Product
@@ -15,11 +14,13 @@ interface QuickAddModalProps {
 }
 
 export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) {
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [selectedVariant, setSelectedVariant] = useState(0)
+  const router = useRouter()
+  const { addItem } = useCart()
+  const { updateQuantity } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [timeLeft, setTimeLeft] = useState("")
-  const { addItem } = useCart()
+  const [selectedImage, setSelectedImage] = useState(0)
+  const [selectedVariant, setSelectedVariant] = useState(0)
 
   useEffect(() => {
     if (!product.promotion?.endTime) return
@@ -53,45 +54,34 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
       quantity: quantity,
       inStock: true,
     })
-    onClose()
+    onClose();
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute right-4 top-4 z-50 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
-        >
-          <X className="h-6 w-6" />
-          <span className="sr-only">Close</span>
-        </button>
-
+      <DialogContent
+        className="!w-[95vw] sm:!w-[80vw] lg:!w-[70vw] !max-w-[1400px] overflow-y-auto p-0"
+      >
+        <DialogTitle>
+          <p className="hidden">title</p>
+        </DialogTitle>
         <div className="grid md:grid-cols-2 gap-6 p-6">
-          {/* Left Side - Images */}
           <div className="space-y-4">
-            {/* Main Image */}
             <div className="aspect-square bg-muted rounded-lg overflow-hidden relative">
               <img
                 src={product.images[selectedImage] || "/placeholder.svg"}
                 alt={product.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/90 px-4 py-2 rounded-full">
-                <span className="text-2xl font-bold text-primary">Jump Starter & Air Inflator</span>
-              </div>
             </div>
 
-            {/* Thumbnail Gallery */}
             <div className="flex gap-2 overflow-x-auto">
               {product.images.slice(0, 3).map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
-                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                    selectedImage === index ? "border-primary" : "border-transparent"
-                  }`}
+                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index ? "border-primary" : "border-transparent"
+                    }`}
                 >
                   <img
                     src={image || "/placeholder.svg"}
@@ -103,56 +93,29 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
             </div>
           </div>
 
-          {/* Right Side - Product Details */}
           <div className="space-y-4">
-            {/* Title */}
             <h2 className="text-lg font-medium leading-tight">{product.title}</h2>
-
-            {/* Brand and Sales */}
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="font-semibold">Brand: GEENEU</span>
-              <span>{product.soldCount} sold | Sold by ==</span>
+              <span>{product.soldCount} sold</span>
             </div>
 
-            {/* Best Selling Badge */}
-            {product.badges.includes("#2 TOP RATED") && (
-              <Badge className="bg-green-600 text-white text-xs font-semibold">
-                #1 BEST-SELLING ITEM in Tools & Equipment: Insulation Materials
-              </Badge>
-            )}
-
-            {/* Price */}
             <div className="flex items-baseline gap-3">
-              <span className="text-2xl font-bold line-through text-muted-foreground">
+              <span className="text-lg font-bold line-through text-muted-foreground">
                 ${product.originalPrice.toFixed(2)}
               </span>
-              <span className="text-3xl font-bold text-primary">${product.price.toFixed(2)}</span>
-              <Badge className="bg-orange-500 text-white text-sm font-semibold px-3 py-1">
-                {product.discount}% OFF limited time
-              </Badge>
+              <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
             </div>
 
-            {/* Lightning Deal Banner */}
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-3 rounded-lg flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-bold">Lightning deal</span>
-                <span className="text-sm">━━━○━━</span>
-              </div>
-              <span className="font-semibold">Ends in {timeLeft}</span>
-            </div>
-
-            {/* Color Selection */}
             {product.variants.length > 0 && (
-              <div className="space-y-3 border border-orange-500 rounded-lg p-4">
+              <div className="space-y-3 rounded-lg py-2">
                 <h3 className="font-semibold">Color</h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-5 gap-3">
                   {product.variants.slice(0, 2).map((variant, index) => (
                     <button
                       key={variant.id}
                       onClick={() => setSelectedVariant(index)}
-                      className={`border-2 rounded-lg p-2 transition-all ${
-                        selectedVariant === index ? "border-primary" : "border-gray-200"
-                      }`}
+                      className={`cursor-pointer border rounded-lg p-2 transition-all ${selectedVariant === index ? "border-primary" : "border-gray-200"
+                        }`}
                     >
                       <img
                         src={variant.image || "/placeholder.svg"}
@@ -165,42 +128,37 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
                     </button>
                   ))}
                 </div>
-
-                {/* Quantity */}
-                <div className="flex items-center justify-between pt-2">
-                  <span className="font-semibold">Qty</span>
-                  <select
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="border border-gray-300 rounded px-3 py-1"
-                  >
-                    {[1, 2, 3, 4, 5].map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-sm text-primary font-medium">
-                    Add 1 to get 2nd for {product.promotion?.discount}% off
-                  </span>
-                </div>
               </div>
             )}
 
-            {/* Add to Cart Button */}
+            <div className="flex items-start justify-start gap-3">
+              <p>Qty</p>
+              <select
+                value={100}
+                onChange={(e) => updateQuantity(product.id, Number.parseInt(e.target.value))}
+                className="border rounded px-3 py-1.5 text-sm"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+
+            </div>
             <Button
-              size="lg"
-              className="w-full bg-primary hover:bg-primary/90 text-white text-lg font-bold py-6 rounded-full"
+              size="sm"
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold py-6 rounded-full"
               onClick={handleAddToCart}
             >
-              -{product.discount}% now! Add to cart!
-              <div className="text-xs font-normal">
-                Fastest delivery in {product.shipping.deliveryDays} business days
-              </div>
+              Add to cart!
             </Button>
-
-            {/* All Details Link */}
-            <button className="text-sm text-primary hover:underline">All details ›</button>
+            <button
+              onClick={() => router.push(`/landing/product/${product.id}`)}
+              className="text-sm text-primary hover:underline cursor-pointer"
+            >
+              All details ›
+            </button>
           </div>
         </div>
       </DialogContent>

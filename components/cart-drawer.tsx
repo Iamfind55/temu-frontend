@@ -1,24 +1,23 @@
 "use client"
 
-import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useCart } from "@/lib/cart-context"
 import Image from "next/image"
+import { useCart } from "@/lib/cart-context"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react"
 
 export function CartDrawer() {
+  const router = useRouter()
   const { items, isOpen, closeCart, updateQuantity, removeItem, itemCount, subtotal } = useCart()
 
   if (!isOpen) return null
 
   return (
     <>
-      {/* Backdrop */}
       <div className="fixed inset-0 z-50 bg-black/50" onClick={closeCart} />
 
-      {/* Drawer */}
       <div className="fixed right-0 top-0 z-50 h-full w-full max-w-md bg-white shadow-xl animate-in slide-in-from-right">
         <div className="flex h-full flex-col">
-          {/* Header */}
           <div className="flex items-center justify-between border-b px-6 py-4">
             <div className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />
@@ -29,7 +28,6 @@ export function CartDrawer() {
             </Button>
           </div>
 
-          {/* Cart Items */}
           <div className="flex-1 overflow-y-auto px-6 py-4">
             {items.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-center">
@@ -99,22 +97,19 @@ export function CartDrawer() {
             )}
           </div>
 
-          {/* Footer */}
           {items.length > 0 && (
             <div className="border-t px-6 py-4">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-base font-medium">Subtotal ({itemCount} items)</span>
-                <span className="text-2xl font-bold text-primary">${subtotal.toFixed(2)}</span>
+                <span className="text-sm font-medium">Subtotal ({itemCount} items)</span>
+                <span className="text-lg font-bold text-primary">${subtotal.toFixed(2)}</span>
               </div>
-              <Button className="w-full bg-primary text-lg font-semibold hover:bg-primary/90" size="lg">
+              <Button
+                onClick={() => router.push("/landing/cart")}
+                className="cursor-pointer w-full bg-orange-500 hover:bg-orange-600 text-md font-semibold"
+                size="lg"
+              >
                 Proceed to Checkout
               </Button>
-              <Button variant="outline" className="mt-2 w-full bg-transparent" onClick={closeCart}>
-                Continue Shopping
-              </Button>
-              <p className="mt-4 text-center text-xs text-muted-foreground">
-                Shipping and taxes calculated at checkout
-              </p>
             </div>
           )}
         </div>

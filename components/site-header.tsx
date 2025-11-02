@@ -214,7 +214,7 @@ export function SiteHeader({ className }: { className?: string }) {
               variant="ghost"
               size="icon"
               className="hidden sm:flex hover:bg-red-700 cursor-pointer rounded-full font-bold hover:text-white"
-              onClick={() => router.push("/cart")}
+              onClick={() => router.push("/landing/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -224,7 +224,7 @@ export function SiteHeader({ className }: { className?: string }) {
               )}
             </Button>
             <button
-              onClick={() => router.push("/cart")}
+              onClick={() => router.push("/landing/cart")}
               className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer"
             >
               <ShoppingCart className="h-6 sm:h-4 w-6 sm:w-4" />

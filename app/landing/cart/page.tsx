@@ -192,9 +192,10 @@ export default function CartPage() {
                                           onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value))}
                                           className="border rounded px-3 py-1.5 text-sm"
                                        >
+                                          Qty
                                           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                                              <option key={num} value={num}>
-                                                Qty {num}
+                                                {num}
                                              </option>
                                           ))}
                                        </select>
