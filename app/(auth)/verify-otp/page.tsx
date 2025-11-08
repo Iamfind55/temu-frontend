@@ -2,22 +2,28 @@
 
 import Link from "next/link"
 import type React from "react"
-import { Lock, ChevronLeft } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { Lock, ChevronLeft } from "lucide-react"
+import { useMutation } from "@apollo/client/react"
 
+import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SiteFooter } from "@/components/site-footer"
+import { MUTATION_CUSTOMER_FORGOT_PASSWORD } from "@/app/api/auth"
+import { IForgotPasswordResponse } from "@/app/interface/customer"
 
 export default function VerifyOtpPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const email = searchParams.get("email") || "tao**e29@gmail.com"
+  const { successMessage, errorMessage } = useToast()
+  const email = searchParams.get("email") || ""
 
-  const [countdown, setCountdown] = useState(50)
+  const [countdown, setCountdown] = useState(120)
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+  const [forgotPassword] = useMutation<IForgotPasswordResponse>(MUTATION_CUSTOMER_FORGOT_PASSWORD)
 
   // Countdown timer
   useEffect(() => {
@@ -27,8 +33,14 @@ export default function VerifyOtpPage() {
     }
   }, [countdown])
 
+  // Auto-focus first input on mount
+  useEffect(() => {
+    inputRefs.current[0]?.focus()
+  }, [])
+
   const handleChange = (index: number, value: string) => {
     // Only allow single digit
+    if (!/^\d*$/.test(value)) return
     if (value.length > 1) return
 
     const newOtp = [...otp]
@@ -60,20 +72,56 @@ export default function VerifyOtpPage() {
     }
 
     setOtp(newOtp)
+
+    // Focus next empty field or last field
+    const nextEmptyIndex = newOtp.findIndex(digit => digit === "")
+    if (nextEmptyIndex !== -1) {
+      inputRefs.current[nextEmptyIndex]?.focus()
+    } else {
+      inputRefs.current[5]?.focus()
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const otpCode = otp.join("")
 
-    if (otpCode.length === 6) {
-      router.push(`/reset-password?email=${encodeURIComponent(email)}&code=${otpCode}`)
+    if (otpCode.length !== 6) {
+      errorMessage({ message: "Please enter all 6 digits", duration: 2000 })
+      return
     }
+
+    router.push(`/reset-password?email=${encodeURIComponent(email)}&code=${otpCode}`)
   }
 
-  const handleResend = () => {
-    setCountdown(50)
-    setOtp(["", "", "", "", "", ""])
+  const handleResend = async () => {
+    if (countdown > 0) return
+
+    try {
+      const { data } = await forgotPassword({
+        variables: { email }
+      })
+
+      if (data?.customerForgotPassword?.success) {
+        successMessage({
+          message: "Reset code resent! Check your email.",
+          duration: 3000
+        })
+        setCountdown(120)
+        setOtp(["", "", "", "", "", ""])
+        inputRefs.current[0]?.focus()
+      } else {
+        errorMessage({
+          message: data?.customerForgotPassword?.error?.message || "Failed to resend code",
+          duration: 3000
+        })
+      }
+    } catch (error) {
+      errorMessage({
+        message: "An unexpected error occurred. Please try again.",
+        duration: 3000
+      })
+    }
   }
 
   const isComplete = otp.every((digit) => digit !== "")
@@ -94,7 +142,7 @@ export default function VerifyOtpPage() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 h-[80vh]">
+      <div className="container mx-auto px-4 py-12 min-h-[80vh]">
         <div className="mx-auto max-w-md">
           <Link
             href="/forgot-password"
@@ -108,13 +156,15 @@ export default function VerifyOtpPage() {
             <h1 className="mb-3 text-2xl font-bold">Enter the password reset code</h1>
             <p className="text-sm text-muted-foreground">
               Please check your mailbox now! Enter the 6-digit password reset code sent to{" "}
-              <span className="text-primary">{email}</span>. The code expires after 2 hours.
+              <span className="font-medium text-foreground">{email}</span>. The code expires after 2 hours.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="mb-3 block text-sm font-medium">Password reset code</label>
+              <label className="mb-3 block text-sm font-medium">
+                Password reset code <span className="text-rose-500">*</span>
+              </label>
               <div className="flex items-center justify-between gap-2">
                 {otp.map((digit, index) => (
                   <Input
@@ -130,6 +180,7 @@ export default function VerifyOtpPage() {
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     onPaste={handlePaste}
                     className="h-14 w-14 text-center text-xl font-semibold"
+                    aria-label={`Digit ${index + 1}`}
                   />
                 ))}
               </div>
@@ -138,14 +189,13 @@ export default function VerifyOtpPage() {
                   type="button"
                   onClick={handleResend}
                   disabled={countdown > 0}
-                  className="text-sm text-muted-foreground hover:text-primary disabled:cursor-not-allowed"
+                  className="text-sm text-muted-foreground hover:text-primary disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
                 >
-                  {countdown > 0 ? `${countdown}s Resend code` : "Resend code"}
+                  {countdown > 0 ? `Resend code in ${countdown}s` : "Resend code"}
                 </button>
               </div>
             </div>
 
-            {/* Help text */}
             <div className="space-y-2 text-sm text-muted-foreground">
               <p className="font-medium text-foreground">Didn't receive the email?</p>
               <ol className="list-inside list-decimal space-y-1">
@@ -156,8 +206,8 @@ export default function VerifyOtpPage() {
 
             <Button
               type="submit"
-              className="h-12 w-full bg-orange-500 text-sm font-semibold hover:bg-orange-600 rounded-full"
               disabled={!isComplete}
+              className="h-12 w-full bg-orange-500 text-sm font-semibold hover:bg-orange-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
             </Button>

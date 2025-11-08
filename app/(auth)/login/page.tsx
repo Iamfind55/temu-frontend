@@ -3,30 +3,107 @@
 import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
-import { Mail, Lock } from "lucide-react"
+import { Loader, Lock } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useDispatch } from "react-redux"
+import { useMutation } from "@apollo/client/react"
 
-import { useAuth } from "@/lib/auth-context"
+import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SiteFooter } from "@/components/site-footer"
 
+// API and TYPES:
+import { MUTATION_CUSTOMER_LOGIN } from "@/app/api/auth"
+import { signIn } from "@/app/redux/slice/customerAuthSlice"
+import { ICustomerLoginCredentials, ICustomerLoginResponse } from "@/app/interface/customer"
+
 export default function LoginPage() {
   const router = useRouter()
-  const { login } = useAuth()
+  const dispatch = useDispatch()
+  const [isLoading, setIsLoading] = useState(false)
+  const { successMessage, errorMessage } = useToast()
+  const [customerLogin] = useMutation<ICustomerLoginResponse>(MUTATION_CUSTOMER_LOGIN)
+  const [loginData, setLoginData] = useState<ICustomerLoginCredentials>({
+    username: "",
+    password: "",
+  })
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value })
+  }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    login("tao**e29@gmail.com", password)
-    router.push("/account/orders")
+    setIsLoading(true)
+
+    // Validate form fields
+    if (!loginData.username) {
+      errorMessage({ message: "Email is required!", duration: 2000 })
+      setIsLoading(false)
+      return
+    }
+
+    if (!loginData.password) {
+      errorMessage({ message: "Password is required!", duration: 2000 })
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      const { data } = await customerLogin({
+        variables: {
+          where: {
+            username: loginData.username,
+            password: loginData.password,
+          },
+        },
+      })
+
+      if (data?.customerLogin?.success && data.customerLogin.data) {
+        const res = data.customerLogin.data
+
+        dispatch(
+          signIn({
+            id: res.data.id,
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
+            username: res.data.username,
+            email: res.data.email,
+            phone_number: res.data.phone_number,
+            dob: res.data.dob,
+            image: res.data.image,
+            status: res.data.status,
+            created_at: res.data.created_at,
+          })
+        )
+
+        document.cookie = `auth_token=${res.token}; path=/; max-age=3600`
+
+        successMessage({
+          message: "Login successful!",
+          duration: 3000,
+        })
+
+        router.push("/account/orders")
+      } else {
+        errorMessage({
+          message: data?.customerLogin?.error?.message || "Login failed",
+          duration: 3000,
+        })
+      }
+    } catch (error) {
+      errorMessage({
+        message: "An unexpected error occurred during login.",
+        duration: 3000,
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Simple header */}
       <div className="border-b bg-white">
         <div className="container mx-auto flex items-center gap-2 px-4 py-4">
           <Link href="/" className="flex items-center gap-2">
@@ -41,7 +118,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="container mx-auto px-1 sm:px-4 py-12">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
@@ -66,7 +142,7 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-bold font-semibold text-green-700">Price adjustment</div>
+                  <div className="text-lg font-semibold text-green-700">Price adjustment</div>
                   <div className="text-green-700">Within 30 days</div>
                 </div>
               </div>
@@ -82,7 +158,7 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-bold font-semibold text-green-700">Free shipping</div>
+                  <div className="text-lg font-semibold text-green-700">Free shipping</div>
                   <div className="text-green-700">excludes local items</div>
                 </div>
               </div>
@@ -104,7 +180,7 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-bold font-semibold text-green-700">Free returns</div>
+                  <div className="text-lg font-semibold text-green-700">Free returns</div>
                   <div className="text-green-700">Up to 90 days</div>
                 </div>
               </div>
@@ -121,7 +197,7 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-bold font-semibold text-green-700">Delivery guarantee</div>
+                  <div className="text-lg font-semibold text-green-700">Delivery guarantee</div>
                   <div className="text-green-700">Refund for any issue</div>
                 </div>
               </div>
@@ -152,47 +228,68 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleSubmitForm}>
                 <div className="mb-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <label className="text-sm font-medium">Email</label>
-                  </div>
+                  <label htmlFor="username" className="text-sm font-medium">
+                    Email <span className="text-rose-500">*</span>
+                  </label>
                   <Input
-                    type="email"
-                    value={email}
-                    className="h-12"
-                    placeholder="Please enter a email"
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    required
+                    id="username"
+                    name="username"
+                    className="h-12 mt-2"
+                    placeholder="Please enter your email"
+                    value={loginData.username}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
                   />
                 </div>
                 <div className="mb-4">
-                  <div className="mb-2 flex items-center justify-between">
-                    <label className="text-sm font-medium">Password</label>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="text-sm font-medium">
+                      Password <span className="text-rose-500">*</span>
+                    </label>
                     <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                       Forgot password?
                     </Link>
                   </div>
                   <Input
+                    id="password"
+                    required
+                    name="password"
                     type="password"
-                    value={password}
-                    className="h-12"
-                    placeholder="Please enter a password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-12 mt-2"
+                    placeholder="Please enter your password"
+                    value={loginData.password}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
                   />
                 </div>
 
-                <Button type="submit" className="text-sm mb-3 h-12 w-full bg-orange-500 font-semibold hover:bg-orange-600 cursor-pointer">
-                  Sign In
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="mb-3 h-12 w-full bg-orange-500 text-sm font-semibold hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      Signing In...
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
                 </Button>
 
                 <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                  <Link href="#" className="hover:text-foreground">
+                  <button type="button" className="hover:text-foreground">
                     Remove account
-                  </Link>
+                  </button>
                   <span>|</span>
-                  <Link href="#" className="hover:text-foreground">
+                  <button type="button" className="hover:text-foreground">
                     Trouble signing in?
-                  </Link>
+                  </button>
                 </div>
               </form>
             </div>

@@ -5,6 +5,9 @@ import "./globals.css"
 import { AuthProvider } from "@/lib/auth-context"
 import { CartProvider } from "@/lib/cart-context"
 import { CartDrawer } from "@/components/cart-drawer"
+import { ToastContainer } from "react-toastify"
+import { ApolloWrapper } from "@/lib/apollo-provider"
+import { ReduxProvider } from "@/lib/redux-provider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +33,29 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
-        <AuthProvider>
-          <CartProvider>
-            {children}
-            <CartDrawer />
-          </CartProvider>
-        </AuthProvider>
+        <ReduxProvider>
+          <ApolloWrapper>
+            <AuthProvider>
+              <CartProvider>
+                {children}
+                <CartDrawer />
+              </CartProvider>
+            </AuthProvider>
+
+            <ToastContainer
+              position="top-right"
+              autoClose={2000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </ApolloWrapper>
+        </ReduxProvider>
       </body>
     </html>
   )
