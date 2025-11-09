@@ -10,6 +10,10 @@ export const CustomerAuthslice = createSlice({
     },
     signOut: (state) => {
       state.customer = initialCustomerState.customer;
+      // Clear auth token cookie
+      if (typeof window !== "undefined") {
+        document.cookie = "auth_token=; path=/; max-age=0";
+      }
     },
     customerAuth: (state) => {
       state.customer;

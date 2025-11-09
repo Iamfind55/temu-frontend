@@ -288,11 +288,11 @@ export default function LoginPage() {
 
                 <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
                   <button type="button" className="hover:text-foreground">
-                    Remove account
+                    Don't have an account yet?
                   </button>
                   <span>|</span>
-                  <button type="button" className="hover:text-foreground">
-                    Trouble signing in?
+                  <button type="button" className="hover:text-foreground cursor-pointer text-orange-500 font-bold hover:text-orange-600">
+                    Create New
                   </button>
                 </div>
               </form>

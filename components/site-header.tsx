@@ -3,17 +3,21 @@
 import React from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, ShoppingCart, User, ChevronDown, TruckIcon, DollarSign, Undo2, Truck, Smartphone, ChevronRight, ThumbsUp, Star, Logs } from "lucide-react"
+import { Search, ShoppingCart, User, ChevronDown, TruckIcon, DollarSign, Undo2, Truck, Smartphone, ChevronRight, ThumbsUp, Star, Logs, MapPin, Wallet, Shield, FileText, LogOut, CreditCard } from "lucide-react"
 
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { MegaMenu } from "@/components/mega-menu"
 import { LanguageSelector } from "@/components/language-selector"
 
-import { useAuth } from "@/lib/auth-context"
 import { useCart } from "@/lib/cart-context"
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/app/redux/store";
+import { useDispatch } from "react-redux";
+import { signOut } from "@/app/redux/slice/customerAuthSlice";
+import { Separator } from "./ui/separator";
+import { maskEmail } from "@/utils/function";
 
 const messages = [
   {
@@ -35,10 +39,17 @@ const messages = [
 
 export function SiteHeader({ className }: { className?: string }) {
   const router = useRouter()
-  const { user, logout } = useAuth()
+  const dispatch = useDispatch()
+  const customer = useAppSelector((state) => state.customerAuth.customer)
   const { openCart, itemCount } = useCart()
   const [index, setIndex] = React.useState<number>(0);
   const [showMegaMenu, setShowMegaMenu] = React.useState<boolean>(false)
+
+  const handleLogout = () => {
+    dispatch(signOut())
+    // Redirect to home page after logout
+    router.push("/")
+  }
 
   React.useEffect(() => {
     const interval = setInterval(() => {
@@ -168,13 +179,13 @@ export function SiteHeader({ className }: { className?: string }) {
           </div>
 
           <div className="flex items-center gap-0 sm:gap-4">
-            {user ? (
+            {customer?.id ? (
               <div className="group relative">
                 <Link href="/account/orders">
                   <Button variant="ghost" className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
                     <User className="mr-0 sm:mr-1 h-8 sm:h-5 w-8 sm:w-5" />
                     <div className="text-left text-xs">
-                      <div>Sign in / Register</div>
+                      <div>Hello, {maskEmail(customer.email)}</div>
                       <div className="font-semibold">Orders & Account</div>
                     </div>
                   </Button>
@@ -184,16 +195,30 @@ export function SiteHeader({ className }: { className?: string }) {
                 </Link>
 
                 <div className="absolute right-0 top-full hidden w-48 rounded-lg bg-white py-2 shadow-lg group-hover:block">
-                  <Link href="/account/orders" className="block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    Your orders
+                  <Link href="/account/orders" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    <FileText size={14} />Your orders
                   </Link>
-                  <Link href="/account/profile" className="block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    Your profile
+                  <Link href="/account/profile" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    <User size={14} /> Your profile
                   </Link>
+                  <Link href="/account/credit" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    <CreditCard size={14} />Credits
+                  </Link>
+                  <Link href="/account/addresses" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    <MapPin size={14} /> Addresses
+                  </Link>
+                  <Link href="/account/payment" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    <Wallet size={14} />Payment
+                  </Link>
+                  <Link href="/account/security" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
+                    <Shield size={14} />Security
+                  </Link>
+                  <Separator />
                   <button
-                    onClick={logout}
-                    className="block w-full px-4 py-2 text-left text-sm text-foreground hover:bg-muted"
+                    onClick={handleLogout}
+                    className="cursor-pointer flex items-center gap-2  w-full px-4 py-2 text-left text-sm text-foreground hover:bg-muted"
                   >
+                    <LogOut size={14} />
                     Sign out
                   </button>
                 </div>
