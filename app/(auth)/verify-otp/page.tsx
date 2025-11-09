@@ -4,15 +4,15 @@ import Link from "next/link"
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Lock, ChevronLeft } from "lucide-react"
+import { Lock, ChevronLeft, Loader } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SiteFooter } from "@/components/site-footer"
-import { MUTATION_CUSTOMER_FORGOT_PASSWORD } from "@/app/api/auth"
-import { IForgotPasswordResponse } from "@/app/interface/customer"
+import { MUTATION_CUSTOMER_OTP_VERIFY, MUTATION_CUSTOMER_RESEND_OTP } from "@/app/api/auth"
+import { IVerifyOtpResponse, IResendOtpResponse } from "@/app/interface/customer"
 
 export default function VerifyOtpPage() {
   const router = useRouter()
@@ -22,8 +22,11 @@ export default function VerifyOtpPage() {
 
   const [countdown, setCountdown] = useState(120)
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
+  const [isLoading, setIsLoading] = useState(false)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-  const [forgotPassword] = useMutation<IForgotPasswordResponse>(MUTATION_CUSTOMER_FORGOT_PASSWORD)
+
+  const [verifyOtp] = useMutation<IVerifyOtpResponse>(MUTATION_CUSTOMER_OTP_VERIFY)
+  const [resendOtp] = useMutation<IResendOtpResponse>(MUTATION_CUSTOMER_RESEND_OTP)
 
   // Countdown timer
   useEffect(() => {
@@ -82,7 +85,7 @@ export default function VerifyOtpPage() {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const otpCode = otp.join("")
 
@@ -91,20 +94,68 @@ export default function VerifyOtpPage() {
       return
     }
 
-    router.push(`/reset-password?email=${encodeURIComponent(email)}&code=${otpCode}`)
+    if (!email) {
+      errorMessage({ message: "Email is missing", duration: 2000 })
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const { data } = await verifyOtp({
+        variables: {
+          data: {
+            otp: otpCode,
+            email: email
+          }
+        }
+      })
+
+      if (data?.customerVerifyOtp?.success) {
+        successMessage({
+          message: "OTP verified successfully!",
+          duration: 3000
+        })
+
+        setTimeout(() => {
+          router.push(`/reset-password?email=${encodeURIComponent(email)}&code=${otpCode}`)
+        }, 1500)
+      } else {
+        errorMessage({
+          message: data?.customerVerifyOtp?.error?.message || "Invalid OTP code",
+          duration: 3000
+        })
+      }
+    } catch (error) {
+      errorMessage({
+        message: "An unexpected error occurred. Please try again.",
+        duration: 3000
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleResend = async () => {
     if (countdown > 0) return
 
+    if (!email) {
+      errorMessage({ message: "Email is missing", duration: 2000 })
+      return
+    }
+
     try {
-      const { data } = await forgotPassword({
-        variables: { email }
+      const { data } = await resendOtp({
+        variables: {
+          data: {
+            email: email
+          }
+        }
       })
 
-      if (data?.customerForgotPassword?.success) {
+      if (data?.customerResendOTP?.success) {
         successMessage({
-          message: "Reset code resent! Check your email.",
+          message: "OTP resent! Check your email.",
           duration: 3000
         })
         setCountdown(120)
@@ -112,7 +163,7 @@ export default function VerifyOtpPage() {
         inputRefs.current[0]?.focus()
       } else {
         errorMessage({
-          message: data?.customerForgotPassword?.error?.message || "Failed to resend code",
+          message: data?.customerResendOTP?.error?.message || "Failed to resend OTP",
           duration: 3000
         })
       }
@@ -181,6 +232,7 @@ export default function VerifyOtpPage() {
                     onPaste={handlePaste}
                     className="h-14 w-14 text-center text-xl font-semibold"
                     aria-label={`Digit ${index + 1}`}
+                    disabled={isLoading}
                   />
                 ))}
               </div>
@@ -206,10 +258,17 @@ export default function VerifyOtpPage() {
 
             <Button
               type="submit"
-              disabled={!isComplete}
+              disabled={!isComplete || isLoading}
               className="h-12 w-full bg-orange-500 text-sm font-semibold hover:bg-orange-600 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Continue
+              {isLoading ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                "Continue"
+              )}
             </Button>
           </form>
         </div>

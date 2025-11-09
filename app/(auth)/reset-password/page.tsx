@@ -3,9 +3,9 @@
 import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Lock, Eye, EyeOff, Loader } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
+import { Lock, Eye, EyeOff, Loader } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
@@ -17,16 +17,16 @@ import { IResetPasswordResponse } from "@/app/interface/customer"
 export default function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { successMessage, errorMessage } = useToast()
-  const email = searchParams.get("email") || ""
   const code = searchParams.get("code") || ""
+  const email = searchParams.get("email") || ""
+  const { successMessage, errorMessage } = useToast()
 
   const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [passwordQuality, setPasswordQuality] = useState<string>("-")
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordQuality, setPasswordQuality] = useState<string>("-")
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const [resetPassword] = useMutation<IResetPasswordResponse>(MUTATION_CUSTOMER_RESET_PASSWORD)
 
@@ -76,8 +76,8 @@ export default function ResetPasswordPage() {
         variables: {
           data: {
             email,
-            code,
-            newPassword: password
+            otp: code,
+            new_password: password
           }
         }
       })

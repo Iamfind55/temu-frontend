@@ -69,17 +69,97 @@ export const MUTATION_CUSTOMER_FORGOT_PASSWORD = gql`
   }
 `;
 
-export const MUTATION_CUSTOMER_RESET_PASSWORD = gql`
-  mutation CustomerResetPassword($data: ShopResetPasswordInput!) {
-    customerResetPassword(data: $data) {
+export const MUTATION_CUSTOMER_OTP_VERIFY = gql`
+  mutation CustomerVerifyOtp($data: VerifyOtpCustomerInput!) {
+    customerVerifyOtp(data: $data) {
       success
       data {
-        id
+        token
+        data {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone_number
+          dob
+          image
+          customer_address
+          status
+          customer_type
+          created_by
+          created_at
+          updated_at
+          payment_method {
+            id
+            bank_name
+            code
+            bank_account_name
+            bank_account_number
+            is_enable
+          }
+        }
       }
       error {
         message
         code
         details
+      }
+    }
+  }
+`;
+
+export const MUTATION_CUSTOMER_RESEND_OTP = gql`
+  mutation CustomerResendOTP($data: ResendOtpCustomerInput!) {
+    customerResendOTP(data: $data) {
+      success
+      data {
+        token
+        data {
+          id
+          firstName
+          lastName
+          username
+          email
+          phone_number
+          dob
+          image
+          customer_address
+          status
+          customer_type
+          created_by
+          created_at
+          updated_at
+          payment_method {
+            id
+            bank_name
+            code
+            bank_account_name
+            bank_account_number
+            is_enable
+          }
+        }
+      }
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;
+
+export const MUTATION_CUSTOMER_RESET_PASSWORD = gql`
+  mutation CustomerResetPassword($data: ShopResetPasswordInput!) {
+    customerResetPassword(data: $data) {
+      success
+      error {
+        message
+        code
+        details
+      }
+      data {
+        id
       }
     }
   }

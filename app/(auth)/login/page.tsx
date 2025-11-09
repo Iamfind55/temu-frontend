@@ -4,7 +4,7 @@ import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
 import { Loader, Lock } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useDispatch } from "react-redux"
 import { useMutation } from "@apollo/client/react"
 
@@ -20,6 +20,7 @@ import { ICustomerLoginCredentials, ICustomerLoginResponse } from "@/app/interfa
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
   const { successMessage, errorMessage } = useToast()
@@ -28,6 +29,9 @@ export default function LoginPage() {
     username: "",
     password: "",
   })
+
+  // Get redirect URL from query params
+  const redirectUrl = searchParams.get("redirect") || "/account/orders"
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value })
@@ -54,7 +58,7 @@ export default function LoginPage() {
       const { data } = await customerLogin({
         variables: {
           where: {
-            username: loginData.username,
+            email: loginData.username,
             password: loginData.password,
           },
         },
@@ -85,7 +89,7 @@ export default function LoginPage() {
           duration: 3000,
         })
 
-        router.push("/account/orders")
+        router.push(redirectUrl)
       } else {
         errorMessage({
           message: data?.customerLogin?.error?.message || "Login failed",
