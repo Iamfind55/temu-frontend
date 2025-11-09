@@ -126,3 +126,51 @@ export interface IResendOtpResponse {
     };
   };
 }
+
+export interface IRegisterEmailInput {
+  email: string;
+}
+
+export interface IRegisterEmailResponse {
+  customerRegister: {
+    success: boolean;
+    data?: {
+      token: string;
+    };
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    };
+  };
+}
+
+export interface IVerifyOtpRegisterResponse {
+  customerVerifyOtp: {
+    success: boolean;
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    };
+  };
+}
+
+export interface ICreatePasswordInput {
+  email: string;
+  password: string;
+}
+
+export interface ICreatePasswordResponse {
+  customerCreatePassword: {
+    success: boolean;
+    data?: {
+      token: string;
+    };
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    };
+  };
+}

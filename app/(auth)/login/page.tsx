@@ -287,13 +287,11 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                  <button type="button" className="hover:text-foreground">
-                    Don't have an account yet?
-                  </button>
+                  <span>Don't have an account yet?</span>
                   <span>|</span>
-                  <button type="button" className="hover:text-foreground cursor-pointer text-orange-500 font-bold hover:text-orange-600">
+                  <Link href="/register" className="hover:text-foreground cursor-pointer text-orange-500 font-bold hover:text-orange-600">
                     Create New
-                  </button>
+                  </Link>
                 </div>
               </form>
             </div>

@@ -164,3 +164,48 @@ export const MUTATION_CUSTOMER_RESET_PASSWORD = gql`
     }
   }
 `;
+
+export const MUTATION_CUSTOMER_REGISTER_EMAIL = gql`
+  mutation CustomerRegister($data: RegisterCustomerInput!) {
+    customerRegister(data: $data) {
+      success
+      data {
+        token
+      }
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;
+
+export const MUTATION_CUSTOMER_VERIFY_OTP_REGISTER = gql`
+  mutation CustomerVerifyOtp($data: VerifyOtpCustomerInput!) {
+    customerVerifyOtp(data: $data) {
+      success
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;
+
+export const MUTATION_CUSTOMER_CREATE_PASSWORD = gql`
+  mutation CustomerCreatePassword($data: CreatePasswordCustomerInput!) {
+    customerCreatePassword(data: $data) {
+      success
+      data {
+        token
+      }
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;
