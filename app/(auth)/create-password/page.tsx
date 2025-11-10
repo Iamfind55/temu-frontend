@@ -85,24 +85,24 @@ export default function CreatePasswordPage() {
 
       if (data?.customerCreatePassword?.success && data.customerCreatePassword.data) {
         const token = data.customerCreatePassword.data.token
+        const customerData = data.customerCreatePassword.data.data
 
         // Store auth token in cookie
         document.cookie = `auth_token=${token}; path=/; max-age=3600`
 
-        // Note: We don't have full customer data yet, so we'll store minimal info
-        // The actual customer data will be fetched on the account page
+        // Store customer data in Redux
         dispatch(
           signIn({
-            id: "",
-            firstName: "",
-            lastName: "",
-            username: email,
-            email: email,
-            phone_number: "",
-            dob: "",
-            image: "",
-            status: "active",
-            created_at: new Date().toISOString(),
+            id: customerData.id,
+            firstName: customerData.firstName,
+            lastName: customerData.lastName,
+            username: customerData.username,
+            email: customerData.email,
+            phone_number: customerData.phone_number,
+            dob: customerData.dob,
+            image: customerData.image,
+            status: customerData.status,
+            created_at: customerData.created_at,
           })
         )
 

@@ -195,17 +195,29 @@ export const MUTATION_CUSTOMER_VERIFY_OTP_REGISTER = gql`
 `;
 
 export const MUTATION_CUSTOMER_CREATE_PASSWORD = gql`
-  mutation CustomerCreatePassword($data: CreatePasswordCustomerInput!) {
-    customerCreatePassword(data: $data) {
-      success
+mutation CustomerCreatePassword($data: CreatePasswordCustomerInput!) {
+  customerCreatePassword(data: $data) {
+    success
+    data {
+      token
       data {
-        token
-      }
-      error {
-        message
-        code
-        details
+        id
+        firstName
+        lastName
+        username
+        email
+        phone_number
+        dob
+        image
+        status
+        created_at
       }
     }
+    error {
+      message
+      code
+      details
+    }
   }
+}
 `;

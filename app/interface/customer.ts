@@ -166,6 +166,18 @@ export interface ICreatePasswordResponse {
     success: boolean;
     data?: {
       token: string;
+      data: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        username: string;
+        email: string;
+        phone_number: string;
+        dob: string;
+        image: string;
+        status: string;
+        created_at: string;
+      };
     };
     error?: {
       message: string;
