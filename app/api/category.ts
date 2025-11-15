@@ -134,3 +134,21 @@ export const QUERY_GET_PRODUCTS_BY_CATEGORY_ID = gql`
     }
   }
 `;
+
+export const QUERY_GET_ALL_MAIN_CATEGORIES = gql`
+  query GetCategories($limit: Int, $where: CategoryWhereInput) {
+    getCategories(limit: $limit, where: $where) {
+      success
+      total
+      data {
+        id
+        name
+      }
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;

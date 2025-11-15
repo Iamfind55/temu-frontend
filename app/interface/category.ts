@@ -73,3 +73,21 @@ export interface IGetCategoryResponse {
     } | null;
   };
 }
+
+export interface IMainCategory {
+  id: string;
+  name: string;
+}
+
+export interface IGetMainCategoriesResponse {
+  getCategories: {
+    success: boolean;
+    total: number;
+    data: IMainCategory[];
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    };
+  };
+}

@@ -238,12 +238,12 @@ export function SiteHeader({ className }: { className?: string }) {
             <Button
               variant="ghost"
               size="icon"
-              className="hidden sm:flex hover:bg-red-700 cursor-pointer rounded-full font-bold hover:text-white"
+              className="relative hidden sm:flex hover:bg-red-700 cursor-pointer rounded-full font-bold hover:text-white"
               onClick={() => router.push("/landing/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold">
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-white">
                   {itemCount > 9 ? "9+" : itemCount}
                 </span>
               )}

@@ -1,70 +1,192 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useQuery } from "@apollo/client/react"
+import { ChevronDown, Loader } from "lucide-react"
 import { ProductCard } from "@/components/product-card"
-import { products } from "@/lib/product-data"
+import type { Product } from "@/lib/product-data"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { QUERY_GET_BEST_SELLING_PRODUCTS } from "@/app/api/product"
+import { IGetBestSellingProductsResponse, IBestSellingProduct } from "@/app/interface/product"
+import { QUERY_GET_ALL_MAIN_CATEGORIES } from "@/app/api/category"
+import { IGetMainCategoriesResponse } from "@/app/interface/category"
 
-type TimePeriod = "30" | "14" | "7"
-type SortOption = "recommended" | "price-low" | "price-high" | "rating" | "sold"
+type TimePeriod = 30 | 14 | 7 | null
 
 export default function BestSellingPage() {
-  const [timePeriod, setTimePeriod] = useState<TimePeriod>("30")
-  const [category, setCategory] = useState<string>("all")
-  const [sortBy, setSortBy] = useState<SortOption>("recommended")
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>(null)
+  const [categoryId, setCategoryId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [allProducts, setAllProducts] = useState<Product[]>([])
+  const limit = 40
 
-  // Get unique categories from products
-  const categories = ["all", ...Array.from(new Set(products.map((p) => p.category)))]
+  // Fetch main categories
+  const { data: categoriesData } = useQuery<IGetMainCategoriesResponse>(
+    QUERY_GET_ALL_MAIN_CATEGORIES,
+    {
+      variables: {
+        limit: 100,
+        where: {
+          status: "ACTIVE",
+          parent_id: null,
+        },
+      },
+    }
+  )
 
-  // Filter and sort products
-  let filteredProducts = [...products]
+  const mainCategories = categoriesData?.getCategories?.data || []
 
-  if (category !== "all") {
-    filteredProducts = filteredProducts.filter((p) => p.category === category)
+  // Fetch best selling products
+  const { data, loading, error, fetchMore, refetch } = useQuery<IGetBestSellingProductsResponse>(
+    QUERY_GET_BEST_SELLING_PRODUCTS,
+    {
+      variables: {
+        page: 1,
+        limit: limit,
+        sortedBy: "created_at_DESC",
+        where: {
+          within: timePeriod,
+          category_id: categoryId,
+        },
+      },
+    }
+  )
+
+  // Reset products when filters change
+  useEffect(() => {
+    setPage(1)
+    setAllProducts([])
+  }, [timePeriod, categoryId])
+
+  // Refetch when filters change
+  useEffect(() => {
+    refetch({
+      page: 1,
+      limit: limit,
+      sortedBy: "created_at_DESC",
+      where: {
+        within: timePeriod,
+        category_id: categoryId,
+      },
+    })
+  }, [timePeriod, categoryId, refetch])
+
+  useEffect(() => {
+    if (data?.getBestSellingProducts?.success && data.getBestSellingProducts.data) {
+      const mappedProducts = data.getBestSellingProducts.data.map(mapApiProductToProduct)
+      setAllProducts(mappedProducts)
+    }
+  }, [data])
+
+  const handleLoadMore = async () => {
+    const nextPage = page + 1
+
+    try {
+      const result = await fetchMore({
+        variables: {
+          page: nextPage,
+          limit: limit,
+          sortedBy: "created_at_DESC",
+          where: {
+            within: timePeriod,
+            category_id: categoryId,
+          },
+        },
+      })
+
+      if (result.data?.getBestSellingProducts?.success && result.data.getBestSellingProducts.data) {
+        const newProducts = result.data.getBestSellingProducts.data.map(mapApiProductToProduct)
+        setAllProducts((prev) => [...prev, ...newProducts])
+        setPage(nextPage)
+      }
+    } catch (err) {
+      console.error("Error loading more products:", err)
+    }
   }
 
-  // Sort products
-  filteredProducts.sort((a, b) => {
-    switch (sortBy) {
-      case "price-low":
-        return a.price - b.price
-      case "price-high":
-        return b.price - a.price
-      case "rating":
-        return b.rating - a.rating
-      case "sold":
-        return Number.parseInt(b.soldCount.replace(/\D/g, "")) - Number.parseInt(a.soldCount.replace(/\D/g, ""))
-      default:
-        return 0
+  // Map API product to ProductCard product format
+  const mapApiProductToProduct = (apiProduct: IBestSellingProduct): Product => {
+    return {
+      id: apiProduct.id,
+      title: apiProduct.name,
+      description: apiProduct.description || "",
+      price: apiProduct.price,
+      originalPrice: apiProduct.market_price ?? 0,
+      discount: apiProduct.discount,
+      rating: apiProduct.total_star ?? 0,
+      reviewCount: apiProduct.total_comment ?? 0,
+      soldCount:
+        typeof apiProduct.sell_count === "number" && apiProduct.sell_count > 1000
+          ? `${(apiProduct.sell_count / 1000).toFixed(0)}k+`
+          : (apiProduct.sell_count?.toString() || "0"),
+      images:
+        apiProduct?.images ? apiProduct.images : [apiProduct.origin_image_url],
+      variants: [],
+      category: "Best Selling",
+      brand: undefined,
+      badges: apiProduct.product_vip ? ["Star store"] : [],
+      shipping: {
+        isFree: true,
+        deliveryDays: 7,
+        credit: 0,
+      },
+      promotion: apiProduct.discount > 0
+        ? {
+          text: `${apiProduct.discount}% OFF`,
+          discount: apiProduct.discount,
+          endTime: "",
+        }
+        : (null as any),
     }
-  })
+  }
+
+  const totalProducts = data?.getBestSellingProducts?.total || 0
+  const hasMore = allProducts.length < totalProducts
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center text-red-600">
+            Error loading products. Please try again later.
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 space-y-4">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-4">
             <h1 className="text-sm">Best-Selling Items</h1>
-
             <div className="flex gap-2">
               <Button
-                variant={timePeriod === "30" ? "default" : "outline"}
-                onClick={() => setTimePeriod("30")}
+                variant={timePeriod === null ? "default" : "outline"}
+                onClick={() => setTimePeriod(null)}
+                className="rounded-full text-sm font-normal"
+              >
+                All Time
+              </Button>
+              <Button
+                variant={timePeriod === 30 ? "default" : "outline"}
+                onClick={() => setTimePeriod(30)}
                 className="rounded-full text-sm font-normal"
               >
                 Within last 30 days
               </Button>
               <Button
-                variant={timePeriod === "14" ? "default" : "outline"}
-                onClick={() => setTimePeriod("14")}
+                variant={timePeriod === 14 ? "default" : "outline"}
+                onClick={() => setTimePeriod(14)}
                 className="rounded-full text-sm font-normal"
               >
                 Within last 14 days
               </Button>
               <Button
-                variant={timePeriod === "7" ? "default" : "outline"}
-                onClick={() => setTimePeriod("7")}
+                variant={timePeriod === 7 ? "default" : "outline"}
+                onClick={() => setTimePeriod(7)}
                 className="rounded-full text-sm font-normal"
               >
                 Within last 7 days
@@ -72,49 +194,91 @@ export default function BestSellingPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-around gap-2">
+            <div className="flex sm:hidden items-center gap-2">
+              <Select
+                value={timePeriod ? timePeriod.toString() : "all"}
+                onValueChange={(value) => setTimePeriod(value === "all" ? null : (value === "30" ? 30 : value === "14" ? 14 : 7))}
+
+              >
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="30">30 Days</SelectItem>
+                  <SelectItem value="14">14 Days</SelectItem>
+                  <SelectItem value="7">7 Days</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Filter by:</span>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue />
+              <span className="hidden sm:block text-sm font-medium">Filter by:</span>
+              <Select
+                value={categoryId || "all"}
+                onValueChange={(value) => setCategoryId(value === "all" ? null : value)}
+              >
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  {categories.slice(1).map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
+                  {mainCategories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-
-            <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="recommended">Recommended</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
-                <SelectItem value="sold">Most Sold</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-          {filteredProducts.map((product, index) => (
-            <ProductCard key={product.id + index} product={product} bestSellingRank={index + 1} />
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
+        {loading && allProducts.length === 0 ? (
+          <div className="flex items-center justify-center py-20 gap-2">
+            <Loader className="h-6 w-6 animate-spin text-orange-400" /> Loading...
+          </div>
+        ) : allProducts.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="text-lg text-muted-foreground">No products found in this category.</p>
+            <p className="text-lg text-muted-foreground">No products found.</p>
           </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {allProducts.map((product, index) => (
+                <ProductCard key={product.id + index} product={product} bestSellingRank={index + 1} />
+              ))}
+            </div>
+
+            {hasMore && (
+              <div className="flex items-center justify-center pt-6">
+                <Button
+                  size="lg"
+                  onClick={handleLoadMore}
+                  disabled={loading}
+                  className="text-md font-bold rounded-full bg-orange-400 hover:bg-orange-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? (
+                    <>
+                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      Loading...
+                    </>
+                  ) : (
+                    <>
+                      <span>Load More</span>
+                      <ChevronDown />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+
+            {!hasMore && allProducts.length > 0 && (
+              <div className="text-center text-sm text-muted-foreground pt-6">
+                You've reached the end of the products
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

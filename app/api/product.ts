@@ -96,3 +96,55 @@ export const QUERY_GET_LINGHTNING_PRODUCTS = gql`
     }
   }
 `;
+
+export const QUERY_GET_BEST_SELLING_PRODUCTS = gql`
+  query GetBestSellingProducts(
+    $page: Int
+    $limit: Int
+    $sortedBy: BaseOrderByInput
+    $where: ProductBestSellingWhereInput
+  ) {
+    getBestSellingProducts(
+      page: $page
+      limit: $limit
+      sortedBy: $sortedBy
+      where: $where
+    ) {
+      success
+      total
+      data {
+        id
+        name
+        price
+        show_price
+        images
+        description
+        cover_image
+        sell_count
+        quantity
+        status
+        total_star
+        total_comment
+        product_vip
+        productTag {
+          id
+          text_rich
+          local_title
+          content
+          prompt_tag_text
+          footer_text
+          header_text
+        }
+        discount
+        price_str
+        market_price
+        origin_image_url
+      }
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;

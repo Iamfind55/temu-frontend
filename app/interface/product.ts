@@ -74,3 +74,45 @@ export interface IGetLightningProductsResponse {
     };
   };
 }
+
+export interface IBestSellingProduct {
+  id: string;
+  name: string;
+  price: number;
+  show_price?: string;
+  price_str?: string;
+  market_price?: number;
+  images: string[] | null;
+  description: string | null;
+  cover_image: string | null;
+  origin_image_url: string;
+  sell_count: number | string;
+  quantity: number;
+  status: string;
+  total_star: number | null;
+  total_comment: number | null;
+  product_vip: boolean | number;
+  productTag: {
+    id: string;
+    text_rich?: string[] | null;
+    local_title?: string | null;
+    content: string | null;
+    prompt_tag_text?: string | null;
+    footer_text?: string | null;
+    header_text?: string | null;
+  }[];
+  discount: number;
+}
+
+export interface IGetBestSellingProductsResponse {
+  getBestSellingProducts: {
+    success: boolean;
+    total: number;
+    data: IBestSellingProduct[];
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    };
+  };
+}
