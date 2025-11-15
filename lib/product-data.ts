@@ -19,6 +19,7 @@ export interface Product {
   variants: ProductVariant[];
   category: string;
   badges: string[];
+  brand?: string;
   shipping: {
     isFree: boolean;
     deliveryDays: number;

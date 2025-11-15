@@ -59,7 +59,7 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
 
             {product.promotion && (
               <Badge className="bg-orange-500 text-white text-xs font-medium px-2 py-0.5 w-fit">
-                🔥 {product.promotion.text} | 05:39:31
+                🔥 {product.promotion.text}
               </Badge>
             )}
 
@@ -81,18 +81,22 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
                     }`}
                 />
               ))}
-              <span className="text-xs text-muted-foreground ml-1">{product.reviewCount.toLocaleString()}</span>
+              <span className="text-xs text-muted-foreground ml-1">({product.reviewCount.toLocaleString()})</span>
             </div>
 
             {product.badges.includes("Star store") && (
               <Badge className="bg-purple-600 text-white text-xs font-medium px-2 py-0.5 w-fit">⭐ Star store</Badge>
             )}
 
-            <div className="text-xs text-muted-foreground">Brand: GEENEU</div>
+            {product.brand && (
+              <div className="inline-block w-auto text-xs border font-bold text-black py-0.5 px-1 rounded bg-gray-200">
+                Brand: {product.brand}
+              </div>
+            )}
 
-            <div className="text-xs font-medium text-green-600">
+            {/* <div className="text-xs font-medium text-green-600">
               Arrives in {product.shipping.deliveryDays}+ business days
-            </div>
+            </div> */}
           </div>
         </div>
       </Link>
