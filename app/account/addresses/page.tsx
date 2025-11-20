@@ -1,7 +1,43 @@
 import { MapPin, Plus } from "lucide-react"
+import { useLazyQuery } from "@apollo/client/react";
+import { QUERY_CITIES, QUERY_COUNTRIES, QUERY_STATES } from "@/app/api/address";
+import { GetCityResponse, GetCountryResponse, GetStateResponse } from "@/app/interface/address";
+
+
+// components:
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import React from "react";
+
 
 export default function AddressesPage() {
+  const [countryId, setCountryId] = React.useState<string>("");
+  const [countryName, setCountryName] = React.useState<string>("");
+  const [isDepositModalOpen, setIsDepositModalOpen] = React.useState(false)
+
+  const [getCountries, { data: countryData }] =
+    useLazyQuery<GetCountryResponse>(QUERY_COUNTRIES, {
+      fetchPolicy: "no-cache",
+    });
+
+  const [getStates, { data: stateData }] = useLazyQuery<GetStateResponse>(
+    QUERY_STATES,
+    {
+      fetchPolicy: "no-cache",
+    }
+  );
+
+  const [getCities, { data: cityData }] = useLazyQuery<GetCityResponse>(
+    QUERY_CITIES,
+    {
+      fetchPolicy: "no-cache",
+    }
+  );
+
+
   return (
     <>
       <div className="border-b bg-white px-8 py-6">

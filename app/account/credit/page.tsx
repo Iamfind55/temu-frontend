@@ -285,7 +285,7 @@ export default function CreditPage() {
 
             {/* Table header */}
             <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
-              <div>ID</div>
+              <div className="text-center">ID</div>
               <div>Voucher</div>
               <div>Transaction</div>
               <div>Amount</div>
@@ -303,7 +303,7 @@ export default function CreditPage() {
               <div className="space-y-2">
                 {transactions.map((transaction, index: number) => (
                   <div key={transaction.id} className="grid grid-cols-7 gap-4 py-3 text-sm border-b last:border-0">
-                    <div>
+                    <div className="text-center text-gray-600">
                       {index + 1}
                     </div>
                     <div>
@@ -323,8 +323,8 @@ export default function CreditPage() {
                     <div>
                       <span
                         className={`inline-block px-2 py-1 text-xs rounded font-medium ${transaction.identifier?.toLowerCase() === "recharge"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
                           }`}
                       >
                         {transaction.identifier || "N/A"}
@@ -341,10 +341,10 @@ export default function CreditPage() {
                     <div>
                       <span
                         className={`inline-block px-2 py-1 text-xs rounded ${transaction.status === "APPROVED"
-                            ? "bg-green-100 text-green-800"
-                            : transaction.status === "PENDING"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
+                          ? "bg-green-100 text-green-800"
+                          : transaction.status === "PENDING"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
                           }`}
                       >
                         {transaction.status}
