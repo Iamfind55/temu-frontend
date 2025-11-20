@@ -116,3 +116,39 @@ export interface IGetBestSellingProductsResponse {
     };
   };
 }
+
+export interface IProductDetail {
+  id: string;
+  name: string;
+  price: number;
+  price_str?: string;
+  market_price?: number;
+  images: string[] | null;
+  cover_image: string | null;
+  origin_image_url: string;
+  sell_count: number | string;
+  quantity: number;
+  status: string;
+  total_star: number | null;
+  total_comment: number | null;
+  product_vip: boolean | number;
+  brand_id: string | null;
+  brandData: {
+    id: string;
+    name: string;
+    image: string;
+  } | null;
+  discount: number;
+}
+
+export interface IGetProductResponse {
+  getProduct: {
+    success: boolean;
+    data: IProductDetail;
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    } | null;
+  };
+}

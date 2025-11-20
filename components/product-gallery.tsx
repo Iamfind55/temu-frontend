@@ -8,9 +8,11 @@ import { ChevronLeft, ChevronRight, MessageSquareText, ShieldCheck, Star } from 
 interface ProductGalleryProps {
   images: string[]
   title: string
+  rating?: number
+  reviewCount?: number
 }
 
-export function ProductGallery({ images, title }: ProductGalleryProps) {
+export function ProductGallery({ images, title, rating = 0, reviewCount = 0 }: ProductGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0)
 
   const handlePrevious = () => {
@@ -62,14 +64,14 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
 
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
         <div className="flex gap-2">
-          <span className="text-md font-bold">20 Reviews  |</span>
+          <span className="text-md font-bold">{reviewCount} Review{reviewCount !== 1 ? 's' : ''}  |</span>
           <div className="flex gap-3 items-center">
-            <span className="text-md font-semibold">{4} </span>
+            <span className="text-md font-semibold">{rating.toFixed(1)} </span>
             <div className="flex gap-2">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-4 w-4 ${i < Math.floor(4.5) ? "fill-orange-500 text-orange-500" : "text-gray-400"}`}
+                  className={`h-4 w-4 ${i < Math.floor(rating) ? "fill-orange-500 text-orange-500" : "text-gray-400"}`}
                 />
               ))}
             </div>

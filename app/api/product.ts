@@ -148,3 +148,39 @@ export const QUERY_GET_BEST_SELLING_PRODUCTS = gql`
     }
   }
 `;
+
+export const QUERTY_GET_PRODUCT_BY_ID = gql`
+  query GetProduct($getProductId: ID!) {
+    getProduct(id: $getProductId) {
+      success
+      data {
+        id
+        name
+        price
+        images
+        cover_image
+        sell_count
+        quantity
+        status
+        total_star
+        total_comment
+        product_vip
+        brand_id
+        brandData {
+          id
+          name
+          image
+        }
+        discount
+        price_str
+        market_price
+        origin_image_url
+      }
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;

@@ -1,22 +1,26 @@
 "use client"
 
+import { Separator } from "./ui/separator"
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { Product } from "@/lib/product-data"
-import { Star, Check, Clock, Share2, Zap, Plus, RotateCcw, ChevronRight, Leaf, Factory, Shield, Truck, ShieldCheck } from "lucide-react"
-import { Separator } from "./ui/separator"
+import { Star, Check, Clock, Zap, Plus, RotateCcw, ChevronRight, Factory, Truck, ShieldCheck } from "lucide-react"
+import { useCart } from "@/lib/cart-context"
 
 interface ProductInfoProps {
   product: Product
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
+  const { addItem } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [timeLeft, setTimeLeft] = useState("")
   const [selectedVariant, setSelectedVariant] = useState(product.variants[0]?.id || "")
 
   useEffect(() => {
+    if (!product?.promotion?.endTime) return
+
     const calculateTimeLeft = () => {
       const end = new Date(product.promotion.endTime).getTime()
       const now = new Date().getTime()
@@ -40,12 +44,28 @@ export function ProductInfo({ product }: ProductInfoProps) {
     const timer = setInterval(calculateTimeLeft, 1000)
 
     return () => clearInterval(timer)
-  }, [product.promotion.endTime])
+  }, [product?.promotion?.endTime])
+
+  const handleAddToCart = () => {
+    const variant = product.variants.find((v) => v.id === selectedVariant)
+    const selectedColor = variant?.name || undefined
+
+    addItem({
+      id: selectedVariant ? `${product.id}-${selectedVariant}` : product.id,
+      name: product.title,
+      price: product.price,
+      originalPrice: product.originalPrice,
+      image: product.images[0] || "/placeholder.svg",
+      color: selectedColor,
+      quantity: quantity,
+      inStock: true,
+    })
+  }
 
   return (
     <div className="space-y-6">
-      <div className="sticky top-4">
-        <div className="flex items-center gap-4 p-3 bg-orange-50 rounded-lg text-sm">
+      <div className="sticky top-4 space-y-2">
+        <div className="flex items-center gap-4 p-3 bg-orange-50 rounded-lg text-xs">
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-green-600" />
             <span className="font-medium">Free shipping</span>
@@ -86,18 +106,24 @@ export function ProductInfo({ product }: ProductInfoProps) {
           </Badge>
         )}
 
-        <div className="space-y-2">
+        <div className="space-y-3">
           <div className="flex items-baseline gap-3">
             <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
-            <span className="text-md text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
+            {product.originalPrice > 0 && (
+              <span className="text-md text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
+            )}
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-primary font-semibold">🔥 {product.promotion.text}</span>
-            <div className="flex items-center gap-1 px-2 py-1 bg-black text-white rounded text-xs font-mono">
-              <Clock className="h-3 w-3" />
-              <span>{timeLeft}</span>
+          {product.promotion && (
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-primary font-semibold">🔥 {product.promotion.text}</span>
+              {timeLeft && (
+                <div className="flex items-center gap-1 px-2 py-1 bg-black text-white rounded text-xs font-mono">
+                  <Clock className="h-3 w-3" />
+                  <span>{timeLeft}</span>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
 
         {product.variants.length > 0 && (
@@ -130,7 +156,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           </div>
         )}
 
-        <div className="space-y-3">
+        <div className="space-y-4 my-4">
           <div className="flex items-center justify-start gap-2">
             <h3 className="text-sm font-semibold">Quantity</h3>
             <select
@@ -147,15 +173,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-4">
-          <Button size="lg" className="w-1/2 bg-orange-500 hover:bg-orange-600 text-white text-sm">
+        <div className="flex items-center justify-between gap-4 mt-4">
+          <Button
+            size="lg"
+            className="w-full sm:w-1/2 bg-orange-500 hover:bg-orange-600 text-white text-sm"
+            onClick={handleAddToCart}
+          >
             <Plus />
             Add to cart
-          </Button>
-
-          <Button variant="outline" size="lg" className="w-1/2 bg-transparent">
-            <Share2 className="h-5 w-5 mr-2" />
-            Share
           </Button>
         </div>
 
@@ -167,7 +192,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
               <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
 
-            <div className="space-y-2 pl-8">
+            <div className="space-y-2 pl-0 sm:pl-8">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>Delivery:</span>
                 <span className="font-semibold text-foreground">Nov 7-20</span>
@@ -186,11 +211,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 </div>
               </div>
 
-              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group">
+              <button className="flex items-start gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors group">
                 <div className="flex items-center justify-center w-4 h-4 rounded-full border border-current">
                   <span className="text-xs">i</span>
                 </div>
-                <span>Temu has certain minimum order value. Click here to learn more.</span>
+                <span>Temu has certain minimum order value. Learn more.</span>
                 <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
@@ -203,7 +228,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
               <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
 
-            <div className="flex items-center justfy-start gap-2">
+            <div className="flex items-center justfy-start gap-2 overflow-x-scroll">
               <div className="bg-muted/50 p-2 rounded-lg space-y-2">
                 <h4 className="font-semibold text-sm">Security & Privacy</h4>
                 <div className="space-y-1 text-sm text-muted-foreground">
@@ -248,7 +273,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
           <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold transition-colors group w-full hover:underline">
             <RotateCcw className="h-5 w-5" />
-            <span className="text-md">Free returns · Price adjustment</span>
+            <span className="text-sm sm:text-md">Free returns · Price adjustment</span>
             <ChevronRight className="h-5 w-5 ml-auto group-hover:translate-x-1 transition-transform" />
           </button>
 
@@ -256,7 +281,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="flex items-center justify-center w-6 h-6 bg-green-700 text-white rounded font-bold">
               <span className="text-[7px]">Plant</span>
             </div>
-            <span className="text-md">Temu's Tree Planting Program (22M+ trees)</span>
+            <span className="text-sm sm:text-md">Temu's Tree Planting Program (22M+ trees)</span>
             <ChevronRight className="h-5 w-5 ml-auto group-hover:translate-x-1 transition-transform" />
           </button>
 

@@ -118,20 +118,20 @@ export function SiteHeader({ className }: { className?: string }) {
       <div className={cn("bg-red-950 text-white", className)}>
         <div className="container mx-auto flex items-center gap-4 px-4 py-3">
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400 font-bold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400  font-semibold">
               <span className="text-xs">Temu</span>
             </div>
           </Link>
 
           <Link href="/landing/best-selling" className="hidden sm:block">
-            <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
+            <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-semibold hover:text-white">
               <ThumbsUp />
               Best-Selling Items
             </Button>
           </Link>
 
           <Link href="/landing/5-star-rated" className="hidden sm:block">
-            <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
+            <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full  font-semibold hover:text-white">
               <Star />
               5-Star Rated
             </Button>
@@ -145,7 +145,7 @@ export function SiteHeader({ className }: { className?: string }) {
             <div className="group flex items-center">
               <Button
                 variant="ghost"
-                className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white"
+                className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full  font-semibold hover:text-white"
               >
                 Categories
                 <ChevronDown className="ml-1 h-4 w-4" />
