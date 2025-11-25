@@ -186,3 +186,50 @@ export interface ICreatePasswordResponse {
     };
   };
 }
+
+export interface IPaymentMethod {
+  id?: string;
+  code?: string;
+  bank_name?: string;
+  bank_account_name?: string;
+  bank_account_number?: string;
+}
+
+export interface IGetCustomerInformationResponse {
+  getCustomerInformation: {
+    success: boolean;
+    data?: ICustomerData & {
+      payment_method?: IPaymentMethod;
+    };
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    };
+  };
+}
+
+export interface IUpdateCustomerInformationInput {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone_number?: string;
+  dob?: string;
+  username?: string;
+  image?: string;
+  payment_method?: IPaymentMethod[];
+}
+
+export interface IUpdateCustomerInformationResponse {
+  updateCustomerInformation: {
+    success: boolean;
+    data?: {
+      id: string;
+    };
+    error?: {
+      message: string;
+      code: string;
+      details: string;
+    };
+  };
+}
