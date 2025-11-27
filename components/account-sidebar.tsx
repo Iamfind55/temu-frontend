@@ -1,24 +1,17 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
 import {
-  FileText,
-  Star,
   User,
-  Ticket,
-  CreditCard,
-  Store,
-  Clock,
   MapPin,
-  Globe,
-  Wallet,
-  Shield,
-  ChevronDown,
+  FileText,
   ChevronUp,
+  CreditCard,
+  ChevronDown,
 } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const menuItems = [
   {
@@ -52,25 +45,12 @@ const menuItems = [
     icon: MapPin,
     href: "/account/addresses",
   },
-  {
-    id: "payment",
-    label: "Your payment methods",
-    icon: Wallet,
-    href: "/account/payment",
-  },
-  {
-    id: "security",
-    label: "Account security",
-    icon: Shield,
-    href: "/account/security",
-  },
 ];
 
 export function AccountSidebar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const status = searchParams.get("status") || "all";
-
   const [expandedItem, setExpandedItem] = useState<string | null>("orders");
 
   return (

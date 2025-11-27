@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import { User, Mail, Phone, Calendar, Save, X } from "lucide-react"
+import { User, Mail, Phone, Calendar, Save, X, Loader } from "lucide-react"
 import { useMutation, useQuery } from "@apollo/client/react";
 
 // API & Interfaces
@@ -424,7 +424,7 @@ export default function ProfilePage() {
                   onClick={handleCancel}
                   disabled={isLoading}
                 >
-                  <X size={16} className="mr-2" />
+                  <X size={16} />
                   Cancel
                 </Button>
                 <Button
@@ -432,7 +432,7 @@ export default function ProfilePage() {
                   className="bg-orange-500 hover:bg-orange-600"
                   disabled={isLoading}
                 >
-                  <Save size={16} className="mr-2" />
+                  {isLoading ? <Loader size={16} /> : <Save size={16} />}
                   {isLoading ? "Saving..." : "Save Changes"}
                 </Button>
               </div>

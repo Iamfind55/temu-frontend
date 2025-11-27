@@ -326,25 +326,25 @@ export default function AddressesPage() {
 
   return (
     <>
-      <div className="bg-white px-8 py-6">
+      <div className="bg-white px-0 sm:px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold text-gray-900">Addresses</h1>
-            <p className="mt-1 text-sm text-gray-600">Manage your shipping and billing addresses</p>
+            <p className="hidden sm:block mt-1 text-sm text-gray-600">Manage your shipping and billing addresses</p>
           </div>
           <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => {
             setIsUpdate(false);
             setEditingAddressId("");
             setIsModalOpen(true);
           }}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add New Address
+            <Plus className="h-4 w-4" />
+            Add New
           </Button>
         </div>
       </div>
 
       {addressesData?.getCustomerAddresses?.data.length ?? 0 > 0 ?
-        <div className="w-full grid grid-cols-1 gap-4 lg:grid-cols-2 pb-16">
+        <div className="w-full grid grid-cols-1 gap-4 lg:grid-cols-2 pb-16 px-0 sm:px-8">
           {addressesData?.getCustomerAddresses?.data?.map((row) => (
             <div
               key={row.id}
@@ -354,9 +354,9 @@ export default function AddressesPage() {
               <div className="absolute top-2 right-2 menu-dropdown">
                 <button
                   onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
-                  className="p-2 hover:bg-orange-500 hover:text-white rounded-full cursor-pointer"
+                  className="p-1 hover:bg-orange-500 hover:text-white rounded-full cursor-pointer"
                 >
-                  <MoreVertical size={20} />
+                  <MoreVertical size={18} />
                 </button>
                 {openMenuId === row.id && (
                   <div className="absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
