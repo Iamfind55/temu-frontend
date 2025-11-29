@@ -22,9 +22,10 @@ const menuItems = [
     subItems: [
       { label: "All orders", href: "/account/orders" },
       { label: "Processing", href: "/account/orders?status=processing" },
-      { label: "Shipped", href: "/account/orders?status=shipped" },
-      { label: "Delivered", href: "/account/orders?status=delivered" },
-      { label: "Returns", href: "/account/orders?status=returns" },
+      { label: "Packing", href: "/account/orders?status=packing" },
+      { label: "Shipping", href: "/account/orders?status=shipping" },
+      { label: "Completed", href: "/account/orders?status=completed" },
+      { label: "Cancelled", href: "/account/orders?status=cancelled" },
     ],
   },
   {

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useMutation, useQuery } from "@apollo/client/react"
-import { ChevronRight, Lock, Plus, Minus, Copy, Upload, Check } from "lucide-react"
+import { ChevronRight, Lock, Plus, Minus, Copy, Upload, Check, Loader } from "lucide-react"
 
 // components:
 import { Label } from "@/components/ui/label"
@@ -297,6 +297,7 @@ export default function CreditPage() {
             {/* Transaction rows */}
             {transactionsLoading ? (
               <div className="py-12 text-center">
+                <Loader className="mx-auto mb-4 h-6 w-6 animate-spin text-orange-500" />
                 <p className="text-gray-600">Loading transactions...</p>
               </div>
             ) : transactions.length > 0 ? (

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import { MapPin, Plus, PlusIcon, Save, SettingsIcon, X, MoreVertical, Edit2, Trash2, CheckCircle } from "lucide-react"
+import { MapPin, Plus, PlusIcon, Save, SettingsIcon, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader } from "lucide-react"
 
 import { useToast } from "@/lib/toast";
 import { useLazyQuery, useMutation } from "@apollo/client/react";
@@ -43,7 +43,7 @@ export default function AddressesPage() {
   const [postalCode, setPostalCode] = React.useState("");
 
   // Apollo queries
-  const [getAddresses, { data: addressesData, refetch }] =
+  const [getAddresses, { data: addressesData, loading: addressesLoading, refetch }] =
     useLazyQuery<GetCustomerAddressesResponse>(QUERY_CUSTOMER_ADDRESS, {
       fetchPolicy: "no-cache",
     });
@@ -343,7 +343,12 @@ export default function AddressesPage() {
         </div>
       </div>
 
-      {addressesData?.getCustomerAddresses?.data.length ?? 0 > 0 ?
+      {addressesLoading ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Loader className="h-8 w-8 animate-spin text-orange-500 mb-4" />
+          <p className="text-gray-600">Loading addresses...</p>
+        </div>
+      ) : addressesData?.getCustomerAddresses?.data.length ?? 0 > 0 ?
         <div className="w-full grid grid-cols-1 gap-4 lg:grid-cols-2 pb-16 px-0 sm:px-8">
           {addressesData?.getCustomerAddresses?.data?.map((row) => (
             <div
