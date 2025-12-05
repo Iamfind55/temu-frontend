@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState, useEffect, useRef } from "react"
 import { Eye, EyeOff, CircleCheck, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -10,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
-export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | null
+export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | "signup-verification" | null
 
 interface AuthModalsProps {
    activeModal: AuthModalType
@@ -18,6 +19,7 @@ interface AuthModalsProps {
 }
 
 export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
+   const router = useRouter()
    // Sign In form state
    const [signInEmail, setSignInEmail] = useState("")
    const [signInPassword, setSignInPassword] = useState("")
@@ -88,7 +90,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
    // Countdown timer for resend code
    useEffect(() => {
       let timer: NodeJS.Timeout
-      if (activeModal === "verification" && resendCountdown > 0) {
+      if ((activeModal === "verification" || activeModal === "signup-verification") && resendCountdown > 0) {
          timer = setInterval(() => {
             setResendCountdown((prev) => {
                if (prev <= 1) {
@@ -110,6 +112,12 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
    const handleSignUpSubmit = (e: React.FormEvent) => {
       e.preventDefault()
       console.log("Sign Up:", { email: signUpEmail, password: signUpPassword, confirmPassword: signUpConfirmPassword })
+      // After sign up, show verification modal
+      setForgotPasswordEmail(signUpEmail)
+      setResendCountdown(30)
+      setCanResend(false)
+      setOtpDigits(["", "", "", "", "", ""])
+      onModalChange("signup-verification")
    }
 
    const switchToSignUp = () => {
@@ -173,6 +181,14 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       onModalChange("reset-password")
    }
 
+   const handleSignupVerificationSubmit = (e: React.FormEvent) => {
+      e.preventDefault()
+      const otp = otpDigits.join("")
+      console.log("Signup Verification Code:", { otp, email: forgotPasswordEmail })
+      onModalChange(null)
+      router.push("/shop-landing/application")
+   }
+
    const handleResetPasswordSubmit = (e: React.FormEvent) => {
       e.preventDefault()
       console.log("Reset Password:", { newPassword, confirmNewPassword })
@@ -189,6 +205,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
    const backToVerification = () => {
       onModalChange("verification")
+   }
+
+   const backToSignUp = () => {
+      onModalChange("signup")
    }
 
    const handleModalClose = () => {
@@ -622,6 +642,73 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors"
                         >
                            Reset password
+                        </Button>
+                     </form>
+                  </div>
+               </div>
+            </DialogContent>
+         </Dialog>
+
+         {/* Sign Up Verification Modal */}
+         <Dialog open={activeModal === "signup-verification"} onOpenChange={(open) => !open && handleModalClose()}>
+            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
+               <VisuallyHidden>
+                  <DialogTitle>Verify your email</DialogTitle>
+               </VisuallyHidden>
+               <div className="relative">
+                  <div className="p-6 sm:p-8">
+                     <button
+                        type="button"
+                        onClick={backToSignUp}
+                        className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
+                     >
+                        <ArrowLeft className="h-4 w-4" />
+                        <span className="text-sm">Back</span>
+                     </button>
+
+                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Verify your email</h2>
+                     <p className="text-gray-600 text-sm mb-6">
+                        Enter the 6-digit code sent to{" "}
+                        <span className="text-orange-500 font-medium">{forgotPasswordEmail}</span>
+                     </p>
+
+                     <form onSubmit={handleSignupVerificationSubmit} className="space-y-5">
+                        <div className="flex justify-center gap-2">
+                           {otpDigits.map((digit, index) => (
+                              <input
+                                 key={index}
+                                 ref={(el) => { otpInputRefs.current[index] = el }}
+                                 type="text"
+                                 inputMode="numeric"
+                                 maxLength={1}
+                                 value={digit}
+                                 onChange={(e) => handleOtpChange(index, e.target.value)}
+                                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                                 className="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                              />
+                           ))}
+                        </div>
+
+                        <div className="text-center">
+                           <button
+                              type="button"
+                              onClick={handleResendCode}
+                              disabled={!canResend}
+                              className={cn(
+                                 "text-sm",
+                                 canResend ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
+                              )}
+                           >
+                              {canResend ? "Resend code" : `${resendCountdown}s Resend code`}
+                           </button>
+                        </div>
+
+                        <Button
+                           type="submit"
+                           disabled={otpDigits.some((d) => !d)}
+                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                           Verify & Continue
                         </Button>
                      </form>
                   </div>

@@ -2,18 +2,31 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
-import { TrendingUp, Zap, DollarSign, Headphones, Eye, EyeOff, CreditCard, MessageCircle, Wallet, ChevronUp, ChevronDown } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { TrendingUp, Zap, DollarSign, Headphones, Eye, EyeOff, CreditCard, MessageCircle, Wallet, ChevronUp, ChevronDown, ArrowLeft } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 // Components
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { AuthModals, AuthModalType } from "@/components/auth-modals"
 
 export default function ShopLandingPage() {
+   const router = useRouter()
    const [showPassword, setShowPassword] = useState(false)
    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
    const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
+   const [activeModal, setActiveModal] = useState<AuthModalType>(null)
+
+   // Hero sign up verification state
+   const [isHeroVerificationOpen, setIsHeroVerificationOpen] = useState(false)
+   const [heroOtpDigits, setHeroOtpDigits] = useState(["", "", "", "", "", ""])
+   const [heroResendCountdown, setHeroResendCountdown] = useState(30)
+   const [heroCanResend, setHeroCanResend] = useState(false)
 
    // Form state
    const [email, setEmail] = useState("")
@@ -131,9 +144,70 @@ export default function ShopLandingPage() {
 
    const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault()
-      // Handle form submission
       console.log({ email, password, confirmPassword })
+      // Show verification modal
+      setHeroResendCountdown(30)
+      setHeroCanResend(false)
+      setHeroOtpDigits(["", "", "", "", "", ""])
+      setIsHeroVerificationOpen(true)
    }
+
+   const handleHeroOtpChange = (index: number, value: string) => {
+      if (value.length > 1) {
+         value = value.slice(-1)
+      }
+      if (!/^\d*$/.test(value)) return
+
+      const newOtpDigits = [...heroOtpDigits]
+      newOtpDigits[index] = value
+      setHeroOtpDigits(newOtpDigits)
+
+      // Auto-focus next input
+      if (value && index < 5) {
+         const nextInput = document.getElementById(`hero-otp-${index + 1}`)
+         nextInput?.focus()
+      }
+   }
+
+   const handleHeroOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Backspace" && !heroOtpDigits[index] && index > 0) {
+         const prevInput = document.getElementById(`hero-otp-${index - 1}`)
+         prevInput?.focus()
+      }
+   }
+
+   const handleHeroResendCode = () => {
+      if (heroCanResend) {
+         console.log("Resending code to:", email)
+         setHeroResendCountdown(30)
+         setHeroCanResend(false)
+      }
+   }
+
+   const handleHeroVerificationSubmit = (e: React.FormEvent) => {
+      e.preventDefault()
+      const otp = heroOtpDigits.join("")
+      console.log("Hero Verification Code:", { otp, email })
+      setIsHeroVerificationOpen(false)
+      router.push("/shop-landing/application")
+   }
+
+   // Countdown timer for hero verification
+   useEffect(() => {
+      let timer: NodeJS.Timeout
+      if (isHeroVerificationOpen && heroResendCountdown > 0) {
+         timer = setInterval(() => {
+            setHeroResendCountdown((prev) => {
+               if (prev <= 1) {
+                  setHeroCanResend(true)
+                  return 0
+               }
+               return prev - 1
+            })
+         }, 1000)
+      }
+      return () => clearInterval(timer)
+   }, [isHeroVerificationOpen, heroResendCountdown])
 
    return (
       <div className="min-h-screen">
@@ -252,9 +326,13 @@ export default function ShopLandingPage() {
 
                            <p className="text-center text-sm text-gray-700 font-bold">
                               Already have a Temu seller account?{" "}
-                              <Link href="/shop-login" className="text-orange-500 font-medium hover:underline">
+                              <button
+                                 type="button"
+                                 onClick={() => setActiveModal("signin")}
+                                 className="text-orange-500 font-medium hover:underline"
+                              >
                                  Sign in
-                              </Link>
+                              </button>
                            </p>
                         </form>
                      </div>
@@ -405,6 +483,75 @@ export default function ShopLandingPage() {
             </div>
          </section>
 
+         {/* Hero Sign Up Verification Modal */}
+         <Dialog open={isHeroVerificationOpen} onOpenChange={setIsHeroVerificationOpen}>
+            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
+               <VisuallyHidden>
+                  <DialogTitle>Verify your email</DialogTitle>
+               </VisuallyHidden>
+               <div className="relative">
+                  <div className="p-6 sm:p-8">
+                     <button
+                        type="button"
+                        onClick={() => setIsHeroVerificationOpen(false)}
+                        className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
+                     >
+                        <ArrowLeft className="h-4 w-4" />
+                        <span className="text-sm">Back</span>
+                     </button>
+
+                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Verify your email</h2>
+                     <p className="text-gray-600 text-sm mb-6">
+                        Enter the 6-digit code sent to{" "}
+                        <span className="text-orange-500 font-medium">{email}</span>
+                     </p>
+
+                     <form onSubmit={handleHeroVerificationSubmit} className="space-y-5">
+                        <div className="flex justify-center gap-2">
+                           {heroOtpDigits.map((digit, index) => (
+                              <input
+                                 key={index}
+                                 id={`hero-otp-${index}`}
+                                 type="text"
+                                 inputMode="numeric"
+                                 maxLength={1}
+                                 value={digit}
+                                 onChange={(e) => handleHeroOtpChange(index, e.target.value)}
+                                 onKeyDown={(e) => handleHeroOtpKeyDown(index, e)}
+                                 className="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                              />
+                           ))}
+                        </div>
+
+                        <div className="text-center">
+                           <button
+                              type="button"
+                              onClick={handleHeroResendCode}
+                              disabled={!heroCanResend}
+                              className={cn(
+                                 "text-sm",
+                                 heroCanResend ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
+                              )}
+                           >
+                              {heroCanResend ? "Resend code" : `${heroResendCountdown}s Resend code`}
+                           </button>
+                        </div>
+
+                        <Button
+                           type="submit"
+                           disabled={heroOtpDigits.some((d) => !d)}
+                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                           Verify & Continue
+                        </Button>
+                     </form>
+                  </div>
+               </div>
+            </DialogContent>
+         </Dialog>
+
+         {/* Auth Modals for Sign In */}
+         <AuthModals activeModal={activeModal} onModalChange={setActiveModal} />
       </div>
    )
 }
