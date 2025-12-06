@@ -448,11 +448,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       <>
          {/* Sign In Modal */}
          <Dialog open={activeModal === "signin"} onOpenChange={(open) => !open && handleModalClose()}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
                   <DialogTitle className="text-md sm:text-xl">Sign in to Temu Seller</DialogTitle>
                </VisuallyHidden>
-               <div className="relative">
+               <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <h2 className="text-md sm:text-2xl font-bold text-center text-gray-900 mb-6">Sign in</h2>
 
@@ -516,7 +516,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <p className="text-center text-xs sm:text-sm text-gray-600">
                            By continuing, you agree to our{" "}
-                           <Link href="/seller-privacy-policy" className="text-xs sm:text-sm text-blue-500 hover:underline">
+                           <Link href="/shop-landing/seller-policy" className="text-xs sm:text-sm text-blue-500 hover:underline">
                               Seller Privacy Policy
                            </Link>
                            .
@@ -542,11 +542,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
          {/* Sign Up Modal */}
          <Dialog open={activeModal === "signup"} onOpenChange={(open) => !open && handleModalClose()}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
                   <DialogTitle>Sign up to sell on Temu</DialogTitle>
                </VisuallyHidden>
-               <div className="relative">
+               <div className="relative py-4 sm:py-0">
                   <div className="bg-orange-50 p-6 sm:p-8 pb-4">
                      <h2 className="text-xl font-bold text-center text-gray-900 mb-4">Sign up to sell on Temu</h2>
 
@@ -657,7 +657,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <p className="text-center text-sm text-gray-600">
                            By continuing, you agree to our{" "}
-                           <Link href="/seller-privacy-policy" className="text-blue-500 underline">
+                           <Link href="/shop-landing/seller-policy" className="text-blue-500 underline">
                               Seller Privacy Policy
                            </Link>
                            .
@@ -683,11 +683,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
          {/* Forgot Password Modal */}
          <Dialog open={activeModal === "forgot-password"} onOpenChange={(open) => !open && handleModalClose()}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
                   <DialogTitle>Forgot password</DialogTitle>
                </VisuallyHidden>
-               <div className="relative py-8 sm:py-0">
+               <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"
@@ -739,11 +739,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
          {/* Verification Code Modal */}
          <Dialog open={activeModal === "verification"} onOpenChange={(open) => !open && handleModalClose()}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
                   <DialogTitle>Enter verification code</DialogTitle>
                </VisuallyHidden>
-               <div className="relative py-6 sm:py-0">
+               <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"
@@ -813,11 +813,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
          {/* Reset Password Modal */}
          <Dialog open={activeModal === "reset-password"} onOpenChange={(open) => !open && handleModalClose()}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
                   <DialogTitle>Reset password</DialogTitle>
                </VisuallyHidden>
-               <div className="relative">
+               <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"
@@ -919,11 +919,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
          {/* Sign Up Verification Modal */}
          <Dialog open={activeModal === "signup-verification"} onOpenChange={(open) => !open && handleModalClose()}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
                   <DialogTitle>Verify your email</DialogTitle>
                </VisuallyHidden>
-               <div className="relative">
+               <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"

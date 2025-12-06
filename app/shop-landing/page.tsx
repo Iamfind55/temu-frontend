@@ -333,7 +333,7 @@ export default function ShopLandingPage() {
             <div className="absolute inset-0 z-0">
                <Image
                   src="/images/shop-hero-bg.webp"
-                  alt="Start selling on Temu"
+                  alt=""
                   fill
                   className="object-cover"
                   priority
@@ -464,18 +464,18 @@ export default function ShopLandingPage() {
 
                            <p className="text-center text-xs sm:text-sm text-gray-600">
                               By continuing, you agree to our{" "}
-                              <Link href="/seller-privacy-policy" className="text-blue-500 underline ">
-                                 Privacy Policy
+                              <Link href="/shop-landing/seller-policy" className="text-blue-500 underline ">
+                                 Seller Privacy Policy
                               </Link>
                               .
                            </p>
 
-                           <p className="text-center text-xs sm:text-sm text-gray-700 font-bold">
-                              Already have a Temu seller account?{" "}
+                           <p className="text-center text-sm sm:text-md text-gray-700 font-bold">
+                              Already have a Temu seller account?{" "}&nbsp;
                               <button
                                  type="button"
                                  onClick={() => setActiveModal("signin")}
-                                 className="text-orange-500 font-medium hover:underline"
+                                 className="text-orange-500 font-bold hover:underline"
                               >
                                  Sign in
                               </button>
@@ -631,11 +631,11 @@ export default function ShopLandingPage() {
 
          {/* Hero Sign Up Verification Modal */}
          <Dialog open={isHeroVerificationOpen} onOpenChange={setIsHeroVerificationOpen}>
-            <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
                   <DialogTitle>Verify your email</DialogTitle>
                </VisuallyHidden>
-               <div className="relative">
+               <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"
