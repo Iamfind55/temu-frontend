@@ -3,13 +3,19 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useEffect, useRef } from "react"
-import { Eye, EyeOff, CircleCheck, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, CircleCheck, ArrowLeft, Loader } from "lucide-react"
+import { useMutation } from "@apollo/client/react"
+import Cookies from "js-cookie"
 import { cn } from "@/lib/utils"
+import { useToast } from "@/lib/toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_SHOP_LOGIN, MUTATION_SHOP_FORGOT_PASSWORD, MUTATION_RESEND_VERIFY_SHOP_EMAIL, MUTATION_SHOP_RESET_PASSWORD } from "@/app/api/shop/auth"
+import { useShopStore } from "@/store/shop-store"
+import { ShopLoginResponse } from "@/types/shop"
 
 export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | "signup-verification" | null
 
@@ -20,6 +26,19 @@ interface AuthModalsProps {
 
 export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
    const router = useRouter()
+   const { successMessage, errorMessage } = useToast()
+
+   // Shop store
+   const setShop = useShopStore((state) => state.setShop)
+
+   // Shop mutations
+   const [shopRegister, { loading: registerLoading }] = useMutation(MUTATION_SHOP_REGISTER)
+   const [verifyShopEmail, { loading: verifyLoading }] = useMutation(MUTATION_VERIFY_SHOP_EMAIL)
+   const [shopLogin, { loading: loginLoading }] = useMutation<ShopLoginResponse>(MUTATION_SHOP_LOGIN)
+   const [shopForgotPassword, { loading: forgotPasswordLoading }] = useMutation(MUTATION_SHOP_FORGOT_PASSWORD)
+   const [resendShopOTP, { loading: resendLoading }] = useMutation(MUTATION_RESEND_VERIFY_SHOP_EMAIL)
+   const [shopResetPassword, { loading: resetPasswordLoading }] = useMutation(MUTATION_SHOP_RESET_PASSWORD)
+
    // Sign In form state
    const [signInEmail, setSignInEmail] = useState("")
    const [signInPassword, setSignInPassword] = useState("")
@@ -44,11 +63,12 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
    // Verification Code state
    const [otpDigits, setOtpDigits] = useState(["", "", "", "", "", ""])
-   const [resendCountdown, setResendCountdown] = useState(30)
+   const [resendCountdown, setResendCountdown] = useState(60)
    const [canResend, setCanResend] = useState(false)
    const otpInputRefs = useRef<(HTMLInputElement | null)[]>([])
 
    // Reset Password state
+   const [verifiedOtp, setVerifiedOtp] = useState("")
    const [newPassword, setNewPassword] = useState("")
    const [confirmNewPassword, setConfirmNewPassword] = useState("")
    const [showNewPassword, setShowNewPassword] = useState(false)
@@ -104,20 +124,89 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       return () => clearInterval(timer)
    }, [activeModal, resendCountdown])
 
-   const handleSignInSubmit = (e: React.FormEvent) => {
+   const handleSignInSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      console.log("Sign In:", { email: signInEmail, password: signInPassword })
+
+      if (!signInEmail || !signInPassword) {
+         errorMessage({ message: "Please enter email and password" })
+         return
+      }
+
+      try {
+         const response = await shopLogin({
+            variables: {
+               where: {
+                  email: signInEmail,
+                  password: signInPassword,
+               },
+            },
+         })
+
+         if (response.data?.shopLogin?.success && response.data.shopLogin.data) {
+            const { token, data } = response.data.shopLogin.data
+
+            // Save token to cookie
+            Cookies.set("auth_token", token)
+
+            // Save shop data to store
+            setShop(data)
+
+            successMessage({ message: "Login successful!" })
+            onModalChange(null)
+            router.push("/shop-dashboard")
+         } else {
+            const error = response.data?.shopLogin?.error
+            errorMessage({ message: error?.message || "Login failed. Please try again." })
+         }
+      } catch (error) {
+         console.error("Login error:", error)
+         errorMessage({ message: "An error occurred during login. Please try again." })
+      }
    }
 
-   const handleSignUpSubmit = (e: React.FormEvent) => {
+   const handleSignUpSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      console.log("Sign Up:", { email: signUpEmail, password: signUpPassword, confirmPassword: signUpConfirmPassword })
-      // After sign up, show verification modal
-      setForgotPasswordEmail(signUpEmail)
-      setResendCountdown(30)
-      setCanResend(false)
-      setOtpDigits(["", "", "", "", "", ""])
-      onModalChange("signup-verification")
+
+      // Validate passwords match
+      if (signUpPassword !== signUpConfirmPassword) {
+         errorMessage({ message: "Passwords do not match" })
+         return
+      }
+
+      // Validate password requirements
+      if (!passwordValidation.minLength || !passwordValidation.mixedChars || !passwordValidation.noEmail) {
+         errorMessage({ message: "Please meet all password requirements" })
+         return
+      }
+
+      try {
+         const response = await shopRegister({
+            variables: {
+               data: {
+                  email: signUpEmail,
+                  password: signUpPassword,
+               },
+            },
+         })
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const result = response.data as any
+         if (result?.shopRegister?.success) {
+            successMessage({ message: "Registration successful! Please verify your email." })
+            // After sign up, show verification modal
+            setForgotPasswordEmail(signUpEmail)
+            setResendCountdown(60)
+            setCanResend(false)
+            setOtpDigits(["", "", "", "", "", ""])
+            onModalChange("signup-verification")
+         } else {
+            const error = result?.shopRegister?.error
+            errorMessage({ message: error?.message || "Registration failed. Please try again." })
+         }
+      } catch (error) {
+         console.error("Registration error:", error)
+         errorMessage({ message: "An error occurred during registration. Please try again." })
+      }
    }
 
    const switchToSignUp = () => {
@@ -133,13 +222,37 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       onModalChange("forgot-password")
    }
 
-   const handleForgotPasswordSubmit = (e: React.FormEvent) => {
+   const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      console.log("Forgot Password:", { email: forgotPasswordEmail })
-      setResendCountdown(30)
-      setCanResend(false)
-      setOtpDigits(["", "", "", "", "", ""])
-      onModalChange("verification")
+
+      if (!forgotPasswordEmail) {
+         errorMessage({ message: "Please enter your email address" })
+         return
+      }
+
+      try {
+         const response = await shopForgotPassword({
+            variables: {
+               email: forgotPasswordEmail,
+            },
+         })
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const result = response.data as any
+         if (result?.shopForgotPassword?.success) {
+            successMessage({ message: "Verification code sent to your email!" })
+            setResendCountdown(60)
+            setCanResend(false)
+            setOtpDigits(["", "", "", "", "", ""])
+            onModalChange("verification")
+         } else {
+            const error = result?.shopForgotPassword?.error
+            errorMessage({ message: error?.message || "Failed to send verification code. Please try again." })
+         }
+      } catch (error) {
+         console.error("Forgot password error:", error)
+         errorMessage({ message: "An error occurred. Please try again." })
+      }
    }
 
    const handleOtpChange = (index: number, value: string) => {
@@ -164,35 +277,123 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       }
    }
 
-   const handleResendCode = () => {
-      if (canResend) {
-         console.log("Resending code to:", forgotPasswordEmail)
-         setResendCountdown(30)
-         setCanResend(false)
+   const handleResendCode = async () => {
+      if (!canResend || resendLoading) return
+
+      try {
+         const response = await resendShopOTP({
+            variables: {
+               data: {
+                  email: forgotPasswordEmail,
+               },
+            },
+         })
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const result = response.data as any
+         if (result?.shopResendOTP?.success) {
+            successMessage({ message: "Verification code resent!" })
+            setResendCountdown(60)
+            setCanResend(false)
+         } else {
+            const error = result?.shopResendOTP?.error
+            errorMessage({ message: error?.message || "Failed to resend code. Please try again." })
+         }
+      } catch (error) {
+         console.error("Resend code error:", error)
+         errorMessage({ message: "An error occurred. Please try again." })
       }
    }
 
    const handleVerificationSubmit = (e: React.FormEvent) => {
       e.preventDefault()
       const otp = otpDigits.join("")
-      console.log("Verification Code:", { otp, email: forgotPasswordEmail })
+      // Store OTP for reset password mutation
+      setVerifiedOtp(otp)
       setNewPassword("")
       setConfirmNewPassword("")
       onModalChange("reset-password")
    }
 
-   const handleSignupVerificationSubmit = (e: React.FormEvent) => {
+   const handleSignupVerificationSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
       const otp = otpDigits.join("")
-      console.log("Signup Verification Code:", { otp, email: forgotPasswordEmail })
-      onModalChange(null)
-      router.push("/shop-landing/application")
+
+      try {
+         const response = await verifyShopEmail({
+            variables: {
+               data: {
+                  email: forgotPasswordEmail,
+                  otp: otp,
+               },
+            },
+         })
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const result = response.data as any
+         if (result?.shopVerifyOTP?.success) {
+            // Save token to cookie for shop update mutation (Apollo client uses auth_token cookie)
+            const token = result?.shopVerifyOTP?.data?.token
+            if (token) {
+               Cookies.set("auth_token", token)
+            }
+            successMessage({ message: "Email verified successfully!" })
+            onModalChange(null)
+            router.push("/shop-landing/application")
+         } else {
+            const error = result?.shopVerifyOTP?.error
+            errorMessage({ message: error?.message || "Verification failed. Please try again." })
+         }
+      } catch (error) {
+         console.error("Verification error:", error)
+         errorMessage({ message: "An error occurred during verification. Please try again." })
+      }
    }
 
-   const handleResetPasswordSubmit = (e: React.FormEvent) => {
+   const handleResetPasswordSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
-      console.log("Reset Password:", { newPassword, confirmNewPassword })
-      onModalChange("signin")
+
+      // Validate passwords match
+      if (newPassword !== confirmNewPassword) {
+         errorMessage({ message: "Passwords do not match" })
+         return
+      }
+
+      // Validate password requirements
+      if (!resetPasswordValidation.minLength || !resetPasswordValidation.mixedChars || !resetPasswordValidation.noEmail) {
+         errorMessage({ message: "Please meet all password requirements" })
+         return
+      }
+
+      try {
+         const response = await shopResetPassword({
+            variables: {
+               data: {
+                  email: forgotPasswordEmail,
+                  otp: verifiedOtp,
+                  new_password: newPassword,
+               },
+            },
+         })
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const result = response.data as any
+         if (result?.shopResetPassword?.success) {
+            successMessage({ message: "Password reset successfully! Please sign in." })
+            // Clear states
+            setVerifiedOtp("")
+            setNewPassword("")
+            setConfirmNewPassword("")
+            setForgotPasswordEmail("")
+            onModalChange("signin")
+         } else {
+            const error = result?.shopResetPassword?.error
+            errorMessage({ message: error?.message || "Failed to reset password. Please try again." })
+         }
+      } catch (error) {
+         console.error("Reset password error:", error)
+         errorMessage({ message: "An error occurred. Please try again." })
+      }
    }
 
    const backToSignIn = () => {
@@ -221,16 +422,16 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "signin"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden">
                <VisuallyHidden>
-                  <DialogTitle>Sign in to Temu Seller</DialogTitle>
+                  <DialogTitle className="text-md sm:text-xl">Sign in to Temu Seller</DialogTitle>
                </VisuallyHidden>
                <div className="relative">
                   <div className="p-6 sm:p-8">
-                     <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">Sign in</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-center text-gray-900 mb-6">Sign in</h2>
 
                      <form onSubmit={handleSignInSubmit} className="space-y-5">
                         <div>
-                           <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Email or phone number
+                           <Label className="text-sm text-gray-900 mb-2 block">
+                              Email or phone number <span className="text-rose-500">*</span>
                            </Label>
                            <Input
                               type="text"
@@ -241,8 +442,8 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         </div>
 
                         <div>
-                           <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Password
+                           <Label className="text-sm text-gray-900 mb-2 block">
+                              Password <span className="text-rose-500">*</span>
                            </Label>
                            <div className="relative">
                               <Input
@@ -272,14 +473,22 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <Button
                            type="submit"
-                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors"
+                           disabled={loginLoading}
+                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 sm:py-6 rounded-lg text-sm sm:text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                           Continue
+                           {loginLoading ? (
+                              <>
+                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 Signing in...
+                              </>
+                           ) : (
+                              "Continue"
+                           )}
                         </Button>
 
-                        <p className="text-center text-sm text-gray-600">
+                        <p className="text-center text-xs sm:text-sm text-gray-600">
                            By continuing, you agree to our{" "}
-                           <Link href="/seller-privacy-policy" className="text-blue-500 hover:underline">
+                           <Link href="/seller-privacy-policy" className="text-xs sm:text-sm text-blue-500 hover:underline">
                               Seller Privacy Policy
                            </Link>
                            .
@@ -405,9 +614,17 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <Button
                            type="submit"
-                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors"
+                           disabled={registerLoading}
+                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                           Continue
+                           {registerLoading ? (
+                              <>
+                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 Creating account...
+                              </>
+                           ) : (
+                              "Continue"
+                           )}
                         </Button>
 
                         <p className="text-center text-sm text-gray-600">
@@ -442,7 +659,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                <VisuallyHidden>
                   <DialogTitle>Forgot password</DialogTitle>
                </VisuallyHidden>
-               <div className="relative">
+               <div className="relative py-8 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"
@@ -453,7 +670,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         <span className="text-sm">Back</span>
                      </button>
 
-                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Forgot password</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Forgot password</h2>
                      <p className="text-gray-600 text-sm mb-6">
                         Enter your email address and we'll send you a verification code.
                      </p>
@@ -461,22 +678,30 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                      <form onSubmit={handleForgotPasswordSubmit} className="space-y-5">
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Email
+                              Email <span className="text-rose-500">*</span>
                            </Label>
                            <Input
                               type="email"
                               value={forgotPasswordEmail}
                               onChange={(e) => setForgotPasswordEmail(e.target.value)}
                               placeholder="Enter your email address"
-                              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                              className="text-sm w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                            />
                         </div>
 
                         <Button
                            type="submit"
-                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors"
+                           disabled={forgotPasswordLoading}
+                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 sm:py-6 rounded-md sm:rounded-lg text-sm sm:text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                           Continue
+                           {forgotPasswordLoading ? (
+                              <>
+                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 Sending...
+                              </>
+                           ) : (
+                              "Continue"
+                           )}
                         </Button>
                      </form>
                   </div>
@@ -490,7 +715,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                <VisuallyHidden>
                   <DialogTitle>Enter verification code</DialogTitle>
                </VisuallyHidden>
-               <div className="relative">
+               <div className="relative py-6 sm:py-0">
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"
@@ -501,7 +726,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         <span className="text-sm">Back</span>
                      </button>
 
-                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Enter verification code</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Enter verification code</h2>
                      <p className="text-gray-600 text-sm mb-6">
                         Enter the 6-digit code sent to{" "}
                         <span className="text-orange-500 font-medium">{forgotPasswordEmail}</span>
@@ -528,20 +753,20 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            <button
                               type="button"
                               onClick={handleResendCode}
-                              disabled={!canResend}
+                              disabled={!canResend || resendLoading}
                               className={cn(
                                  "text-sm",
-                                 canResend ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
+                                 canResend && !resendLoading ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
                               )}
                            >
-                              {canResend ? "Resend code" : `${resendCountdown}s Resend code`}
+                              {resendLoading ? "Sending..." : canResend ? "Resend code" : `${resendCountdown}s Resend code`}
                            </button>
                         </div>
 
                         <Button
                            type="submit"
                            disabled={otpDigits.some((d) => !d)}
-                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 sm:py-6 rounded-sm sm:rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                            Continue
                         </Button>
@@ -568,7 +793,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         <span className="text-sm">Back</span>
                      </button>
 
-                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Reset password</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Reset password</h2>
                      <p className="text-gray-600 text-sm mb-6">
                         Create a new password for your account.
                      </p>
@@ -576,7 +801,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                      <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              New password
+                              New password <span className="text-rose-500">*</span>
                            </Label>
                            <div className="relative">
                               <Input
@@ -618,7 +843,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Confirm new password
+                              Confirm new password <span className="text-rose-500">*</span>
                            </Label>
                            <div className="relative">
                               <Input
@@ -639,9 +864,17 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <Button
                            type="submit"
-                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors"
+                           disabled={resetPasswordLoading}
+                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 sm:py-6 rounded-lg text-sm sm:text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                           Reset password
+                           {resetPasswordLoading ? (
+                              <>
+                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 Resetting...
+                              </>
+                           ) : (
+                              "Reset password"
+                           )}
                         </Button>
                      </form>
                   </div>
@@ -693,22 +926,29 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            <button
                               type="button"
                               onClick={handleResendCode}
-                              disabled={!canResend}
+                              disabled={!canResend || resendLoading}
                               className={cn(
                                  "text-sm",
-                                 canResend ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
+                                 canResend && !resendLoading ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
                               )}
                            >
-                              {canResend ? "Resend code" : `${resendCountdown}s Resend code`}
+                              {resendLoading ? "Sending..." : canResend ? "Resend code" : `${resendCountdown}s Resend code`}
                            </button>
                         </div>
 
                         <Button
                            type="submit"
-                           disabled={otpDigits.some((d) => !d)}
+                           disabled={otpDigits.some((d) => !d) || verifyLoading}
                            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                           Verify & Continue
+                           {verifyLoading ? (
+                              <>
+                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 Verifying...
+                              </>
+                           ) : (
+                              "Verify & Continue"
+                           )}
                         </Button>
                      </form>
                   </div>

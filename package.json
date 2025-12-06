@@ -65,11 +65,13 @@
     "react-toastify": "^11.0.5",
     "recharts": "2.15.4",
     "redux-persist": "^6.0.0",
+    "rxjs": "^7.8.2",
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
-    "zod": "3.25.76"
+    "zod": "3.25.76",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.9",

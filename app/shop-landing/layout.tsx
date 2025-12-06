@@ -13,7 +13,6 @@ export default function AccountLayout({
          <div className="w-full flex items-start justify-center">
             <main className="w-full">{children}</main>
          </div>
-         Footer
          <ShopFooter />
       </div>
    )

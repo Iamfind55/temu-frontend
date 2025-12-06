@@ -106,6 +106,7 @@ export function SiteHeader({ className }: { className?: string }) {
             <Button
               size="sm"
               className="text-xs font-bold rounded-full bg-orange-400"
+              onClick={() => router.push("/shop-landing")}
             >
               <span>Join Now</span>
               <ChevronRight />

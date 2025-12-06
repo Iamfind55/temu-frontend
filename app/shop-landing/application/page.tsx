@@ -2,11 +2,15 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useMutation } from "@apollo/client/react"
 import { cn } from "@/lib/utils"
+import { useToast } from "@/lib/toast"
+import { uploadToCloudinary } from "@/lib/cloudinary-upload"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ChevronDown, ChevronUp, Info, Upload, X, CheckCircle, Clock } from "lucide-react"
+import { ChevronDown, ChevronUp, Info, Upload, X, CheckCircle, Clock, Loader } from "lucide-react"
+import { MUTATION_SHOP_UPDATE_INFORMATION } from "@/app/api/shop/auth"
 
 // Business types data
 const businessTypes = [
@@ -69,6 +73,9 @@ const steps = [
 ]
 
 export default function ApplicationPage() {
+   const { successMessage, errorMessage } = useToast()
+   const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION)
+
    const [currentStep, setCurrentStep] = useState(1)
 
    // Step 1: Business Information
@@ -78,6 +85,7 @@ export default function ApplicationPage() {
 
    // Step 2: Seller Information
    const [fullName, setFullName] = useState("")
+   const [username, setUsername] = useState("")
    const [storeName, setStoreName] = useState("")
    const [phoneNumber, setPhoneNumber] = useState("")
    const [dateOfBirth, setDateOfBirth] = useState("")
@@ -86,6 +94,9 @@ export default function ApplicationPage() {
    const [idBackImage, setIdBackImage] = useState<File | null>(null)
    const [idFrontPreview, setIdFrontPreview] = useState<string | null>(null)
    const [idBackPreview, setIdBackPreview] = useState<string | null>(null)
+
+   // Loading state for submit (includes upload + mutation)
+   const [isSubmitting, setIsSubmitting] = useState(false)
 
    // FAQ state
    const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
@@ -126,19 +137,60 @@ export default function ApplicationPage() {
       }
    }
 
-   const handleSubmit = () => {
-      console.log("Application submitted:", {
-         country,
-         businessType,
-         fullName,
-         storeName,
-         phoneNumber,
-         dateOfBirth,
-         remark,
-         idFrontImage,
-         idBackImage,
-      })
-      setCurrentStep(3)
+   const handleSubmit = async () => {
+      if (!idFrontImage || !idBackImage) {
+         errorMessage({ message: "Please upload both front and back ID card images" })
+         return
+      }
+
+      setIsSubmitting(true)
+
+      try {
+         // Upload ID card images to Cloudinary
+         const [frontUpload, backUpload] = await Promise.all([
+            uploadToCloudinary(idFrontImage, "id-cards"),
+            uploadToCloudinary(idBackImage, "id-cards"),
+         ])
+
+         if (!frontUpload.success || !backUpload.success) {
+            errorMessage({ message: "Failed to upload ID card images. Please try again." })
+            setIsSubmitting(false)
+            return
+         }
+
+         // Call mutation to update shop information (Apollo client handles auth via cookie)
+         const response = await updateShopInfo({
+            variables: {
+               data: {
+                  fullname: fullName,
+                  username: username,
+                  store_name: storeName,
+                  phone_number: phoneNumber,
+                  dob: dateOfBirth,
+                  remark: remark || "",
+                  id_card_info: {
+                     id_card_image_front: frontUpload.url,
+                     id_card_image_back: backUpload.url,
+                  },
+               },
+            },
+         })
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const result = response.data as any
+         if (result?.updateShopInformation?.success) {
+            successMessage({ message: "Application submitted successfully!" })
+            setCurrentStep(3)
+         } else {
+            const error = result?.updateShopInformation?.error
+            errorMessage({ message: error?.message || "Failed to submit application. Please try again." })
+         }
+      } catch (error) {
+         console.error("Application submission error:", error)
+         errorMessage({ message: "An error occurred. Please try again." })
+      } finally {
+         setIsSubmitting(false)
+      }
    }
 
    return (
@@ -192,50 +244,9 @@ export default function ApplicationPage() {
                <div className="flex-1">
                   {/* Step 1: Business Information */}
                   {currentStep === 1 && (
-                     <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm">
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Business information</h1>
+                     <div className="bg-white rounded-lg p-4 md:p-8 shadow-sm">
+                        <h1 className="text-md sm:text-xl font-bold text-gray-900 mb-2">Business information</h1>
                         <p className="text-gray-600 mb-8">Welcome! Let us know about your business.</p>
-
-                        {/* Business Location */}
-                        <div className="mb-8">
-                           <Label className="text-sm font-semibold text-gray-900 mb-1 block">
-                              Business location
-                           </Label>
-                           <p className="text-sm text-gray-500 mb-3 flex items-center gap-1">
-                              <Info className="w-4 h-4" />
-                              US registered companies only or US resident only if you don't have a business.
-                           </p>
-                           <div className="relative">
-                              <button
-                                 type="button"
-                                 onClick={() => setShowCountryDropdown(!showCountryDropdown)}
-                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg flex items-center justify-between text-left focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                              >
-                                 <span>{countries.find((c) => c.code === country)?.name}</span>
-                                 <ChevronDown className="w-5 h-5 text-gray-400" />
-                              </button>
-                              {showCountryDropdown && (
-                                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                    {countries.map((c) => (
-                                       <button
-                                          key={c.code}
-                                          type="button"
-                                          onClick={() => {
-                                             setCountry(c.code)
-                                             setShowCountryDropdown(false)
-                                          }}
-                                          className={cn(
-                                             "w-full px-4 py-3 text-left hover:bg-gray-50",
-                                             country === c.code && "bg-orange-50 text-orange-600"
-                                          )}
-                                       >
-                                          {c.name}
-                                       </button>
-                                    ))}
-                                 </div>
-                              )}
-                           </div>
-                        </div>
 
                         {/* Business Type */}
                         <div className="mb-8">
@@ -295,7 +306,7 @@ export default function ApplicationPage() {
                            <Button
                               onClick={handleNext}
                               disabled={!businessType}
-                              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-16 py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-16 py-4 rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                            >
                               Next
                            </Button>
@@ -305,7 +316,7 @@ export default function ApplicationPage() {
 
                   {currentStep === 2 && (
                      <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm">
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">Seller information</h1>
+                        <h1 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Seller information</h1>
                         <p className="text-gray-600 mb-8">Please provide your personal details.</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -318,6 +329,19 @@ export default function ApplicationPage() {
                                  value={fullName}
                                  onChange={(e) => setFullName(e.target.value)}
                                  placeholder="Enter your full name"
+                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                              />
+                           </div>
+
+                           <div>
+                              <Label className="text-sm font-semibold text-gray-900 mb-2 block">
+                                 Username <span className="text-red-500">*</span>
+                              </Label>
+                              <Input
+                                 type="text"
+                                 value={username}
+                                 onChange={(e) => setUsername(e.target.value)}
+                                 placeholder="Enter your username"
                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                               />
                            </div>
@@ -451,20 +475,28 @@ export default function ApplicationPage() {
                            </div>
                         </div>
 
-                        <div className="flex justify-center gap-4">
+                        <div className="flex justify-center gap-2 sm:gap-4">
                            <Button
                               onClick={handleBack}
                               variant="outline"
-                              className="px-12 py-6 rounded-lg text-md"
+                              disabled={isSubmitting}
+                              className="px-12 py-4 rounded-lg text-md"
                            >
                               Back
                            </Button>
                            <Button
                               onClick={handleSubmit}
-                              disabled={!fullName || !storeName || !phoneNumber || !dateOfBirth || !idFrontImage || !idBackImage}
-                              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-12 py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              disabled={!fullName || !username || !storeName || !phoneNumber || !dateOfBirth || !idFrontImage || !idBackImage || isSubmitting}
+                              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-12 py-4 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                            >
-                              Submit Application
+                              {isSubmitting ? (
+                                 <>
+                                    <Loader className="h-5 w-5 animate-spin" />
+                                    Submitting...
+                                 </>
+                              ) : (
+                                 "Submit"
+                              )}
                            </Button>
                         </div>
                      </div>
@@ -474,12 +506,12 @@ export default function ApplicationPage() {
                   {currentStep === 3 && (
                      <div className="bg-white rounded-lg p-8 md:p-12 shadow-sm text-center">
                         <div className="flex justify-center mb-6">
-                           <div className="w-24 h-24 rounded-full bg-orange-100 flex items-center justify-center">
-                              <Clock className="w-12 h-12 text-orange-500" />
+                           <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center">
+                              <Clock className="w-8 h-8 text-orange-500" />
                            </div>
                         </div>
 
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                        <h1 className="text-md md:text-xl font-bold text-gray-900 mb-4">
                            Application Submitted Successfully!
                         </h1>
                         <p className="text-gray-600 mb-8 max-w-lg mx-auto">
@@ -531,7 +563,7 @@ export default function ApplicationPage() {
                         </div>
 
                         <Link href="/shop-landing">
-                           <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-12 py-6 rounded-lg text-md transition-colors">
+                           <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-12 py-5 rounded-lg text-sm transition-colors">
                               Back to Home
                            </Button>
                         </Link>

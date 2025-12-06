@@ -4,16 +4,16 @@ import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { TrendingUp, Zap, DollarSign, Headphones, Eye, EyeOff, CreditCard, MessageCircle, Wallet, ChevronUp, ChevronDown, ArrowLeft } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 // Components
+import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { AuthModals, AuthModalType } from "@/components/auth-modals"
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 export default function ShopLandingPage() {
    const router = useRouter()
@@ -223,9 +223,9 @@ export default function ShopLandingPage() {
                <div className="absolute inset-0 bg-black/30" />
             </div>
 
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-4">
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start justify-start">
-                  <div className="text-white">
+                  <div className="hidden sm:block text-white">
                      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-8">
                         Start Selling to<br />
                         Millions of<br />
@@ -243,18 +243,18 @@ export default function ShopLandingPage() {
                   </div>
 
                   <div className="flex justify-center lg:justify-end">
-                     <div className="bg-white rounded-md p-8 w-full max-w-md shadow-2xl">
+                     <div className="bg-white rounded-sm sm:rounded-md p-4 sm:p-8 w-full max-w-md shadow-2xl">
                         <div className="text-center mb-6">
-                           <h2 className="text-2xl font-bold text-gray-900 mb-3">Sign up</h2>
-                           <span className="inline-block bg-orange-500 text-white text-sm font-medium px-4 py-1 rounded-sm">
+                           <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-3">Sign up</h2>
+                           <span className="inline-block bg-orange-500 text-white text-xs sm:text-sm font-medium px-4 py-1 rounded-sm">
                               0% Commission Fees
                            </span>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-5">
+                        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-5">
                            <div>
                               <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                                 Email or phone number
+                                 Email or phone number <span className="text-rose-500">*</span>
                               </Label>
                               <Input
                                  type="text"
@@ -267,7 +267,7 @@ export default function ShopLandingPage() {
 
                            <div>
                               <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                                 Password
+                                 Password <span className="text-rose-500">*</span>
                               </Label>
                               <div className="relative">
                                  <Input
@@ -289,7 +289,7 @@ export default function ShopLandingPage() {
 
                            <div>
                               <Label className="text-sm font-medium text-gray-700 mb-2 block">
-                                 Confirm password
+                                 Confirm password <span className="text-rose-500">*</span>
                               </Label>
                               <div className="relative">
                                  <Input
@@ -311,20 +311,20 @@ export default function ShopLandingPage() {
 
                            <Button
                               type="submit"
-                              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-md text-md transition-colors"
+                              className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 sm:py-6 rounded-md text-sm sm:text-md transition-colors"
                            >
                               Continue
                            </Button>
 
-                           <p className="text-center text-sm text-gray-600">
+                           <p className="text-center text-xs sm:text-sm text-gray-600">
                               By continuing, you agree to our{" "}
                               <Link href="/seller-privacy-policy" className="text-blue-500 underline ">
-                                 Seller Privacy Policy
+                                 Privacy Policy
                               </Link>
                               .
                            </p>
 
-                           <p className="text-center text-sm text-gray-700 font-bold">
+                           <p className="text-center text-xs sm:text-sm text-gray-700 font-bold">
                               Already have a Temu seller account?{" "}
                               <button
                                  type="button"
@@ -342,27 +342,27 @@ export default function ShopLandingPage() {
 
             <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-sm">
                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0">
-                     <div className="flex items-center justify-center sm:justify-start gap-4 sm:border-r sm:border-gray-600 sm:pr-8">
-                        <span className="text-5xl sm:text-6xl font-bold text-white">1</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
+                     <div className="flex items-center justify-start gap-4 sm:border-r sm:border-gray-600 sm:pr-8">
+                        <span className="text-xl sm:text-6xl font-bold text-white">1</span>
                         <div className="text-white">
-                           <p className="text-lg font-semibold">Minute</p>
+                           <p className="text-md sm:text-lg font-semibold">Minute</p>
                            <p className="text-sm text-gray-300">Create your account</p>
                         </div>
                      </div>
 
                      <div className="flex items-center justify-center gap-4 sm:border-r sm:border-gray-600 sm:px-8">
-                        <span className="text-5xl sm:text-6xl font-bold text-white">10</span>
+                        <span className="text-xl sm:text-6xl font-bold text-white">10</span>
                         <div className="text-white">
-                           <p className="text-lg font-semibold">Minutes</p>
+                           <p className="text-md sm:text-lg font-semibold">Minutes</p>
                            <p className="text-sm text-gray-300">Complete your application</p>
                         </div>
                      </div>
 
-                     <div className="flex items-center justify-center sm:justify-end gap-4 sm:pl-8">
-                        <span className="text-5xl sm:text-6xl font-bold text-white">1</span>
+                     <div className="flex items-center justify-end gap-4 sm:pl-8">
+                        <span className="text-xl sm:text-6xl font-bold text-white">1</span>
                         <div className="text-white">
-                           <p className="text-lg font-semibold">Day</p>
+                           <p className="text-md sm:text-lg font-semibold">Day</p>
                            <p className="text-sm text-gray-300">Receive application results<sup>1</sup></p>
                         </div>
                      </div>
@@ -371,20 +371,20 @@ export default function ShopLandingPage() {
             </div>
          </section>
 
-         <section className="flex items-center justify-center bg-orange-50 py-16 sm:py-24">
+         <section className="flex items-center justify-center bg-orange-50 py-12 sm:py-24">
             <div className="container px-4 sm:px-6 lg:px-8">
-               <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-12 sm:mb-16">
+               <h2 className="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-16">
                   Why Sell on Temu?
                </h2>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-14">
                   {whySellFeatures.map((feature, index) => (
-                     <div key={index} className="relative bg-white rounded-2xl p-6 sm:p-8 pl-8 sm:pl-10 transition-shadow border">
-                        <div className="absolute left-0 top-6 sm:top-14 -translate-x-1/2 w-12 h-12 sm:w-12 sm:h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                     <div key={index} className="relative bg-white rounded-md sm:rounded-2xl p-6 sm:p-8 pl-8 sm:pl-10 transition-shadow border">
+                        <div className="hidden absolute left-0 top-10 sm:top-16 -translate-x-1/2 w-12 h-12 sm:w-12 sm:h-12 bg-orange-500 rounded-xl sm:flex items-center justify-center shadow-lg">
                            <feature.icon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                         </div>
                         <div>
-                           <h3 className="text-xl sm:text-2xl font-bold mb-2">
+                           <h3 className="text-md sm:text-2xl font-bold mb-2">
                               {feature.highlightFirst ? (
                                  <>
                                     <span className="text-orange-500">{feature.titleHighlight}</span>{" "}
@@ -408,13 +408,13 @@ export default function ShopLandingPage() {
             </div>
          </section>
 
-         <section className="flex items-center justify-center bg-gray-100 py-16 sm:py-24">
+         <section className="flex items-center justify-center bg-gray-100 py-8 sm:py-24">
             <div className="container px-4 sm:px-6 lg:px-8">
-               <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-10 sm:mb-14">
-                  FAQ
+               <h2 className="text-lg sm:text-3xl font-bold text-center text-gray-900 mb-5 sm:mb-14">
+                  frequently asked questions
                </h2>
 
-               <div className="w-full space-y-4">
+               <div className="w-full space-y-2 sm:space-y-4">
                   {faqItems.map((item, index) => (
                      <div
                         key={index}
@@ -422,9 +422,9 @@ export default function ShopLandingPage() {
                      >
                         <button
                            onClick={() => toggleFaq(index)}
-                           className="w-full flex items-center justify-between p-5 sm:p-6 text-left hover:bg-gray-50 transition-colors"
+                           className="w-full flex items-center justify-between p-3 sm:p-6 text-left hover:bg-gray-50 transition-colors"
                         >
-                           <span className="text-base sm:text-lg font-semibold text-gray-900 pr-4">
+                           <span className="text-base text-sm sm:text-lg font-semibold text-gray-900 pr-4">
                               {index + 1}. {item.question}
                            </span>
                            {openFaqIndex === index ? (
@@ -461,7 +461,7 @@ export default function ShopLandingPage() {
                </div>
 
                <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
+                  <h2 className="text-xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
                      Ready to start selling?
                   </h2>
                   <p className="text-lg sm:text-xl text-white mb-8 sm:mb-10">
