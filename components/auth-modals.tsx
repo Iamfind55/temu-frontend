@@ -167,6 +167,12 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
    const handleSignUpSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
 
+      // Validate empty fields
+      if (!signUpEmail || !signUpPassword) {
+         errorMessage({ message: "Please enter email and password" })
+         return
+      }
+
       // Validate passwords match
       if (signUpPassword !== signUpConfirmPassword) {
          errorMessage({ message: "Passwords do not match" })
@@ -305,14 +311,36 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       }
    }
 
-   const handleVerificationSubmit = (e: React.FormEvent) => {
+   const handleVerificationSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
       const otp = otpDigits.join("")
-      // Store OTP for reset password mutation
-      setVerifiedOtp(otp)
-      setNewPassword("")
-      setConfirmNewPassword("")
-      onModalChange("reset-password")
+
+      try {
+         const response = await verifyShopEmail({
+            variables: {
+               data: {
+                  email: forgotPasswordEmail,
+                  otp: otp,
+               },
+            },
+         })
+
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         const result = response.data as any
+         if (result?.shopVerifyOTP?.success) {
+            // Store OTP for reset password mutation
+            setVerifiedOtp(otp)
+            setNewPassword("")
+            setConfirmNewPassword("")
+            onModalChange("reset-password")
+         } else {
+            const error = result?.shopVerifyOTP?.error
+            errorMessage({ message: error?.message || "Verification failed. Please try again." })
+         }
+      } catch (error) {
+         console.error("Verification error:", error)
+         errorMessage({ message: "An error occurred during verification. Please try again." })
+      }
    }
 
    const handleSignupVerificationSubmit = async (e: React.FormEvent) => {
@@ -765,10 +793,17 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <Button
                            type="submit"
-                           disabled={otpDigits.some((d) => !d)}
+                           disabled={otpDigits.some((d) => !d) || verifyLoading}
                            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 sm:py-6 rounded-sm sm:rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                           Continue
+                           {verifyLoading ? (
+                              <>
+                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 Verifying...
+                              </>
+                           ) : (
+                              "Continue"
+                           )}
                         </Button>
                      </form>
                   </div>

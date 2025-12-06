@@ -2,14 +2,16 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { useMutation } from "@apollo/client/react"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/lib/toast"
 import { uploadToCloudinary } from "@/lib/cloudinary-upload"
+import { ChevronDown, ChevronUp, Info, Upload, X, CheckCircle, Clock, Loader } from "lucide-react"
+
+// components
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ChevronDown, ChevronUp, Info, Upload, X, CheckCircle, Clock, Loader } from "lucide-react"
+import { useMutation } from "@apollo/client/react"
 import { MUTATION_SHOP_UPDATE_INFORMATION } from "@/app/api/shop/auth"
 
 // Business types data
@@ -240,15 +242,11 @@ export default function ApplicationPage() {
 
          <div className="container mx-auto px-4 py-8">
             <div className="flex flex-col lg:flex-row gap-8">
-               {/* Main Content */}
                <div className="flex-1">
-                  {/* Step 1: Business Information */}
                   {currentStep === 1 && (
                      <div className="bg-white rounded-lg p-4 md:p-8 shadow-sm">
                         <h1 className="text-md sm:text-xl font-bold text-gray-900 mb-2">Business information</h1>
                         <p className="text-gray-600 mb-8">Welcome! Let us know about your business.</p>
-
-                        {/* Business Type */}
                         <div className="mb-8">
                            <Label className="text-sm font-semibold text-gray-900 mb-1 block">
                               Business type
