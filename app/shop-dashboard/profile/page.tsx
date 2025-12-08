@@ -1,20 +1,25 @@
 "use client"
 
 import React from "react";
-import { User, Mail, Phone, Calendar, Save, X, Loader } from "lucide-react"
-import { useMutation, useQuery } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
+import { User, Mail, Phone, Calendar, Save, X, Loader, Upload } from "lucide-react"
 
 // API & Interfaces
 import { useToast } from "@/lib/toast";
-import { MUTATION_UPDATE_CUSTOMER_INFORMATION, QUERY_CUSTOMER_INFORMATION } from "@/app/api/customer";
-import { IUpdateCustomerInformationResponse, IGetCustomerInformationResponse } from "@/app/interface/customer";
+import { ShopData } from "@/types/shop";
+import { MUTATION_SHOP_UPDATE_INFORMATION1 } from "@/app/api/shop/profile";
+
+// Store
+import { useShopStore } from "@/store/shop-store";
+import { formatDateForInput } from "@/utils/function";
 
 // components
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface CloudinaryResponse {
   secure_url?: string;
@@ -23,93 +28,83 @@ interface CloudinaryResponse {
 export default function ProfilePage() {
   const { errorMessage, successMessage } = useToast();
 
-  // Form State
+  // Shop Store from Zustand:
+  const { shop, setShop } = useShopStore();
   const [formData, setFormData] = React.useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    username: "",
     dob: "",
-    image: "",
-    walletAddress: "",
-    bankName: "",
-    bankAccountName: "",
-    bankAccountNumber: "",
+    logo: "",
+    cover: "",
+    email: "",
+    remark: "",
+    fullname: "",
+    username: "",
+    storeName: "",
+    idCardBack: "",
+    idCardFront: "",
+    phoneNumber: "",
   });
-
-  // Loading State
   const [isLoading, setIsLoading] = React.useState(false);
-  const [selectedImage, setSelectedImage] = React.useState<File | null>(null);
-
-  // Query customer information
-  const { data: customerData, loading: queryLoading } = useQuery<IGetCustomerInformationResponse>(
-    QUERY_CUSTOMER_INFORMATION
-  );
+  const [selectedLogo, setSelectedLogo] = React.useState<File | null>(null);
+  const [selectedCover, setSelectedCover] = React.useState<File | null>(null);
 
   // Mutation
-  const [updateCustomerInfo] = useMutation<IUpdateCustomerInformationResponse>(
-    MUTATION_UPDATE_CUSTOMER_INFORMATION
-  );
+  const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION1);
 
-  // Helper function to format date for input[type="date"]
-  const formatDateForInput = (dateString: string | null | undefined): string => {
-    if (!dateString) return "";
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return "";
-      // Format as YYYY-MM-DD
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    } catch {
-      return "";
-    }
-  };
-
-  // Load customer data on mount from query
   React.useEffect(() => {
-    const customerInfo = customerData?.getCustomerInformation?.data;
-    if (customerInfo) {
+    if (shop) {
       setFormData({
-        firstName: customerInfo.firstName || "",
-        lastName: customerInfo.lastName || "",
-        email: customerInfo.email || "",
-        phoneNumber: customerInfo.phone_number || "",
-        username: customerInfo.username || "",
-        dob: formatDateForInput(customerInfo.dob),
-        image: customerInfo.image || "",
-        walletAddress: customerInfo.payment_method?.code || "",
-        bankName: customerInfo.payment_method?.bank_name || "",
-        bankAccountName: customerInfo.payment_method?.bank_account_name || "",
-        bankAccountNumber: customerInfo.payment_method?.bank_account_number || "",
+        fullname: shop.fullname || "",
+        username: shop.username || "",
+        email: shop.email || "",
+        phoneNumber: shop.phone_number || "",
+        dob: formatDateForInput(shop.dob),
+        storeName: shop.store_name || "",
+        remark: shop.remark || "",
+        logo: shop.image?.logo || "",
+        cover: shop.image?.cover || "",
+        idCardFront: shop.id_card_info?.id_card_image_front || "",
+        idCardBack: shop.id_card_info?.id_card_image_back || "",
       });
     }
-  }, [customerData]);
+  }, [shop]);
 
-  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = (type: "logo" | "cover") => (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedImage(file);
-
-      // Create preview URL
       const reader = new FileReader();
+
       reader.onloadend = () => {
-        setFormData((prev) => ({ ...prev, image: reader.result as string }));
+        const result = reader.result as string;
+        if (type === "logo") {
+          setSelectedLogo(file);
+          setFormData((prev) => ({ ...prev, logo: result }));
+        } else {
+          setSelectedCover(file);
+          setFormData((prev) => ({ ...prev, cover: result }));
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const handleRemoveImage = (type: "logo" | "cover") => {
+    if (type === "logo") {
+      setSelectedLogo(null);
+      setFormData((prev) => ({ ...prev, logo: shop?.image?.logo || "" }));
+    } else {
+      setSelectedCover(null);
+      setFormData((prev) => ({ ...prev, cover: shop?.image?.cover || "" }));
+    }
+  };
+
   const uploadToCloudinary = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append(
+    const formDataUpload = new FormData();
+    formDataUpload.append("file", file);
+    formDataUpload.append(
       "upload_preset",
       process.env.NEXT_PUBLIC_UPLOAD_PRESET || ""
     );
@@ -118,7 +113,7 @@ export default function ProfilePage() {
       process.env.NEXT_PUBLIC_CLOUDINARY_URL || "",
       {
         method: "POST",
-        body: formData,
+        body: formDataUpload,
       }
     );
 
@@ -130,48 +125,43 @@ export default function ProfilePage() {
     e.preventDefault();
     setIsLoading(true);
 
-    const customerInfo = customerData?.getCustomerInformation?.data;
-    let imageUrl = formData.image;
-
     try {
-      // Upload image to Cloudinary if a new image is selected
-      if (selectedImage) {
-        try {
-          imageUrl = await uploadToCloudinary(selectedImage);
-          setSelectedImage(null);
-        } catch (error) {
-          errorMessage({
-            message: "Failed to upload image. Try again!",
-            duration: 3000,
-          });
-          setIsLoading(false);
-          return;
-        }
+      let logoUrl = formData.logo;
+      let coverUrl = formData.cover;
+
+      // Upload images if new ones are selected
+      if (selectedLogo) {
+        logoUrl = await uploadToCloudinary(selectedLogo);
+        setSelectedLogo(null);
+      }
+      if (selectedCover) {
+        coverUrl = await uploadToCloudinary(selectedCover);
+        setSelectedCover(null);
       }
 
-      const res: any = await updateCustomerInfo({
+      const res: any = await updateShopInfo({
         variables: {
           data: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
+            fullname: formData.fullname,
+            username: formData.username,
             email: formData.email,
             phone_number: formData.phoneNumber,
-            username: formData.username,
             dob: formData.dob,
-            image: imageUrl,
-            payment_method:
-            {
-              id: customerInfo?.payment_method?.id || null,
-              code: formData.walletAddress || null,
-              bank_name: formData.bankName || null,
-              bank_account_name: formData.bankAccountName || null,
-              bank_account_number: formData.bankAccountNumber || null,
+            store_name: formData.storeName,
+            remark: formData.remark,
+            image: {
+              logo: logoUrl,
+              cover: coverUrl,
             },
           },
         },
       });
 
-      if (res?.data?.updateCustomerInformation?.success) {
+      if (res?.data?.updateShopInformation?.success) {
+        // Update Zustand store with the latest shop data
+        const updatedShopData = res.data.updateShopInformation.data as ShopData;
+        setShop(updatedShopData);
+
         successMessage({
           message: "Profile updated successfully!",
           duration: 3000,
@@ -192,107 +182,101 @@ export default function ProfilePage() {
     }
   };
 
-  const handleCancel = () => {
-    // Reset to original values
-    const customerInfo = customerData?.getCustomerInformation?.data;
-    if (customerInfo) {
-      setFormData({
-        firstName: customerInfo.firstName || "",
-        lastName: customerInfo.lastName || "",
-        email: customerInfo.email || "",
-        phoneNumber: customerInfo.phone_number || "",
-        username: customerInfo.username || "",
-        dob: formatDateForInput(customerInfo.dob),
-        image: customerInfo.image || "",
-        walletAddress: customerInfo.payment_method?.code || "",
-        bankName: customerInfo.payment_method?.bank_name || "",
-        bankAccountName: customerInfo.payment_method?.bank_account_name || "",
-        bankAccountNumber: customerInfo.payment_method?.bank_account_number || "",
-      });
-    }
-  };
-
-  if (queryLoading) {
-    return (
-      <div className="mx-auto max-w-3xl space-y-6 mb-6">
-        <Card className="rounded-sm shadow-sm">
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>Loading your profile information...</CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <Loader className="mx-auto h-8 w-8 animate-spin text-orange-500" />
-              <p className="mt-4 text-gray-600">Loading...</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <>
-      <div className="mx-auto max-w-3xl space-y-6 mb-6">
-        <Card className="rounded-sm shadow-sm">
+      <div className="mx-auto space-y-6 mb-6 px-6">
+        <Card className="rounded-sm">
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
             <CardDescription>Update your account details and personal information</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <div className="flex items-center gap-6 mb-4">
-                  <div className="flex h-24 w-24 items-center justify-center rounded-full bg-orange-100">
-                    {formData.image ? (
-                      <img src={formData.image} alt="Profile" className="h-full w-full rounded-full object-cover" />
-                    ) : (
-                      <User className="h-12 w-12 text-orange-600" />
-                    )}
+              <div className="space-y-8">
+                <div className="flex items-center justify-between gap-6">
+                  <div className="w-1/2 flex items-center gap-6 mb-4">
+                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-orange-100 overflow-hidden">
+                      {formData.logo ? (
+                        <img src={formData.logo} alt="Profile" className="h-full w-full rounded-full object-cover" />
+                      ) : (
+                        <User className="h-8 w-8 text-orange-600" />
+                      )}
+                    </div>
+                    <div>
+                      <Input
+                        id="profile-image"
+                        type="file"
+                        onChange={handleImageSelect("logo")}
+                        className="hidden"
+                        accept="image/*"
+                        disabled={isLoading}
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        onClick={() => document.getElementById('profile-image')?.click()}
+                        disabled={isLoading}
+                      >
+                        Change Photo
+                      </Button>
+                      <p className="mt-2 text-xs text-gray-500">
+                        {selectedLogo ? `Selected: ${selectedLogo.name}` : 'JPG, PNG or GIF. Max size 2MB'}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <Input
-                      id="profile-image"
-                      type="file"
-                      onChange={handleImageSelect}
-                      className="hidden"
-                      accept="image/*"
-                      disabled={isLoading}
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      type="button"
-                      onClick={() => document.getElementById('profile-image')?.click()}
-                      disabled={isLoading}
-                    >
-                      Change Photo
-                    </Button>
-                    <p className="mt-2 text-xs text-gray-500">
-                      {selectedImage ? `Selected: ${selectedImage.name}` : 'JPG, PNG or GIF. Max size 2MB'}
-                    </p>
+
+                  <div className="w-1/2">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Shop cover image</p>
+                    {formData.cover ? (
+                      <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden">
+                        <img
+                          src={formData.cover}
+                          alt="Shop Cover"
+                          className="w-full h-30 object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage("cover")}
+                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center w-full h-30 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
+                        <Upload className="w-4 h-4 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-500">Click to upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleImageSelect("cover")}
+                        />
+                      </label>
+                    )}
                   </div>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="fullname">Full Name <span className="text-rose-500">*</span></Label>
                     <Input
-                      id="firstName"
-                      placeholder="Enter first name"
-                      value={formData.firstName}
-                      onChange={handleChange("firstName")}
+                      id="fullname"
+                      placeholder="Enter full name"
+                      value={formData.fullname}
+                      onChange={handleChange("fullname")}
                       required
                       disabled={isLoading}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="username">Username <span className="text-rose-500">*</span></Label>
                     <Input
-                      id="lastName"
-                      placeholder="Enter last name"
-                      value={formData.lastName}
-                      onChange={handleChange("lastName")}
+                      id="username"
+                      placeholder="Enter username"
+                      value={formData.username}
+                      onChange={handleChange("username")}
                       required
                       disabled={isLoading}
                     />
@@ -337,12 +321,12 @@ export default function ProfilePage() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="storeName">Store Name <span className="text-rose-500">*</span></Label>
                     <Input
-                      id="username"
-                      placeholder="Enter username"
-                      value={formData.username}
-                      onChange={handleChange("username")}
+                      id="storeName"
+                      placeholder="Enter store name"
+                      value={formData.storeName}
+                      onChange={handleChange("storeName")}
                       required
                       disabled={isLoading}
                     />
@@ -364,75 +348,76 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="remark">Remark</Label>
+                  <Textarea
+                    id="remark"
+                    placeholder="Enter remark"
+                    value={formData.remark}
+                    onChange={handleChange("remark")}
+                    disabled={isLoading}
+                  />
+                </div>
               </div>
 
               <Separator className="my-6" />
 
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <CardTitle>Payment setting</CardTitle>
-                  <CardDescription>Update your payment address for refund case.</CardDescription>
-                </div>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="wallet_address">Wallet address (USDT)</Label>
-                    <Input
-                      id="wallet_address"
-                      placeholder="Enter wallet address"
-                      value={formData.walletAddress}
-                      onChange={handleChange("walletAddress")}
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bank_name">Bank Name</Label>
-                    <Input
-                      id="bank_name"
-                      placeholder="Enter bank name"
-                      value={formData.bankName}
-                      onChange={handleChange("bankName")}
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bank_account_name">Bank Account Name</Label>
-                    <Input
-                      id="bank_account_name"
-                      placeholder="Enter bank account name"
-                      value={formData.bankAccountName}
-                      onChange={handleChange("bankAccountName")}
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bank_account_number">Bank account number</Label>
-                    <Input
-                      id="bank_account_number"
-                      placeholder="Enter bank account number"
-                      value={formData.bankAccountNumber}
-                      onChange={handleChange("bankAccountNumber")}
-                      disabled={isLoading}
-                    />
+              <div>
+                <div className="mb-8">
+                  <Label className="text-sm font-semibold text-gray-900 mb-2 block">
+                    ID Card
+                  </Label>
+                  <p className="text-sm text-gray-500 mb-4">
+                    Your verified ID card images (read-only).
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">Front side</p>
+                      {formData.idCardFront ? (
+                        <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                          <img
+                            src={formData.idCardFront}
+                            alt="ID Front"
+                            className="w-full h-40 object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 rounded-lg bg-gray-50">
+                          <User className="w-8 h-8 text-gray-300 mb-2" />
+                          <span className="text-sm text-gray-400">No image</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">Back side</p>
+                      {formData.idCardBack ? (
+                        <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
+                          <img
+                            src={formData.idCardBack}
+                            alt="ID Back"
+                            className="w-full h-40 object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 rounded-lg bg-gray-50">
+                          <User className="w-8 h-8 text-gray-300 mb-2" />
+                          <span className="text-sm text-gray-400">No image</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="flex justify-end gap-3 mt-6">
                 <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCancel}
-                  disabled={isLoading}
-                >
-                  <X size={16} />
-                  Cancel
-                </Button>
-                <Button
                   type="submit"
                   className="bg-orange-500 hover:bg-orange-600"
                   disabled={isLoading}
                 >
-                  {isLoading ? <Loader size={16} /> : <Save size={16} />}
+                  {isLoading ? <Loader size={16} className="animate-spin" /> : <Save size={16} />}
                   {isLoading ? "Saving..." : "Save Changes"}
                 </Button>
               </div>

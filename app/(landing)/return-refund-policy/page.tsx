@@ -149,15 +149,13 @@ function AccordionItem({ item, isOpen, onToggle }: { item: FAQItem; isOpen: bool
       >
         <span className="text-base font-medium text-gray-900">{item.question}</span>
         <ChevronDown
-          className={`w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-4 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`w-5 h-5 text-gray-500 transition-transform duration-200 flex-shrink-0 ml-4 ${isOpen ? "rotate-180" : ""
+            }`}
         />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-200 ${
-          isOpen ? "max-h-[2000px] pb-4" : "max-h-0"
-        }`}
+        className={`overflow-hidden transition-all duration-200 ${isOpen ? "max-h-[2000px] pb-4" : "max-h-0"
+          }`}
       >
         <div className="text-gray-600 text-sm leading-relaxed">{item.answer}</div>
       </div>
@@ -177,18 +175,15 @@ export default function ReturnRefundPolicyPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-4 py-8">
-        {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Return and Refund Policy</h1>
           <p className="text-sm text-gray-500">Last Updated: Aug 27, 2025 PDT</p>
         </div>
 
-        {/* Introduction */}
         <p className="text-gray-700 mb-6 leading-relaxed">
           If you are not satisfied with what you bought on Temu, you may be eligible to return it and get a refund by following the simple procedure set out in this Return and Refund Policy.
         </p>
 
-        {/* Accordion FAQ */}
         <div className="border-t border-gray-200">
           {faqItems.map((item) => (
             <AccordionItem

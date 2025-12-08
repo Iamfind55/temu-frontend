@@ -1,21 +1,26 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useState, useEffect, useRef } from "react"
-import { Eye, EyeOff, CircleCheck, ArrowLeft, Loader } from "lucide-react"
-import { useMutation } from "@apollo/client/react"
 import Cookies from "js-cookie"
+import { useRouter } from "next/navigation"
+import { useMutation } from "@apollo/client/react"
+import { useState, useEffect, useRef } from "react"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { Eye, EyeOff, CircleCheck, ArrowLeft, Loader } from "lucide-react"
+
+// type and api:
 import { cn } from "@/lib/utils"
 import { useToast } from "@/lib/toast"
+import { ShopLoginResponse } from "@/types/shop"
+import { useShopStore } from "@/store/shop-store"
+import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_SHOP_LOGIN, MUTATION_SHOP_FORGOT_PASSWORD, MUTATION_RESEND_VERIFY_SHOP_EMAIL, MUTATION_SHOP_RESET_PASSWORD } from "@/app/api/shop/auth"
+
+// components:
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_SHOP_LOGIN, MUTATION_SHOP_FORGOT_PASSWORD, MUTATION_RESEND_VERIFY_SHOP_EMAIL, MUTATION_SHOP_RESET_PASSWORD } from "@/app/api/shop/auth"
-import { useShopStore } from "@/store/shop-store"
-import { ShopLoginResponse } from "@/types/shop"
+
 
 export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | "signup-verification" | null
 

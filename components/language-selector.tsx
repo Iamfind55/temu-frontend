@@ -18,8 +18,6 @@ export function LanguageSelector({ className }: { className?: string }) {
 
   const currentLanguage = languages.find((lang) => lang.code === selectedLanguage)
 
-  console.log("AAPPKK::", className);
-
   return (
     <div className="relative" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <button className={cn("flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer hover:text-white", className)}>

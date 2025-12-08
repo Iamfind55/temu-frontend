@@ -74,6 +74,12 @@ const menuItems = [
       href: "/shop-dashboard/vip-access",
    },
    {
+      id: "payment_method",
+      label: "Your payment method",
+      icon: CreditCard,
+      href: "/shop-dashboard/payment",
+   },
+   {
       id: "profile",
       label: "Your profile",
       icon: User,

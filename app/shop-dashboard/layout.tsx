@@ -19,7 +19,7 @@ export default function AccountLayout({
             <div className="w-1/5 hidden sm:block">
               <ShopDashboardSidebar />
             </div>
-            <main className="w-4/5">{children}</main>
+            <main className="w-full sm:w-4/5">{children}</main>
           </div>
         </div>
       </div>
