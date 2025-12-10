@@ -3,125 +3,91 @@
 import Link from "next/link"
 import { useState } from "react"
 import { useMutation, useQuery } from "@apollo/client/react"
-import { ChevronRight, Lock, Plus, Minus, Copy, Upload, Check, Loader } from "lucide-react"
+import { ChevronRight, Lock, Plus, Minus, Copy, Upload, Check, Loader, ArrowDownToLine } from "lucide-react"
 
-// components:
+// Components
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// API & Utils:
+// API
 import {
-  MUTATION_DEPOSIT_BALANCE,
-  QUERY_CUSTOMER_CREDIT_TRANSACTIONS,
-  QUERY_GET_CUSTOMER_CREDIT_BALANCE
-} from "@/app/api/credit"
+  MUTATION_DEPOSIT_SHOP_BALANCE,
+  MUTATION_WITHDRAW_SHOP_BALANCE,
+  QUERY_SHOP_CREDIT_TRANSACTIONS,
+  QUERY_GET_SHOP_CREDIT_BALANCE
+} from "@/app/api/shop/credit"
 import { useToast } from "@/lib/toast"
 
-interface CloudinaryResponse {
-  secure_url?: string
-}
+// Types
+import {
+  CloudinaryResponse,
+  ShopDepositBalanceResponse,
+  ShopWithdrawBalanceResponse,
+  ShopTransactionHistoryResponse,
+  ShopWalletBalanceResponse
+} from "@/types/credits"
 
-interface DepositBalanceResponse {
-  customerRechargeBalance: {
-    success: boolean
-    data?: {
-      id: string
-    }
-    error?: {
-      message: string
-      code: string
-      details: string
-    }
-  }
-}
-
-interface Transaction {
-  id: string
-  identifier: string
-  amount: number
-  coin_type: string
-  wallet_id: string
-  status: string
-  type: string
-  created_at: string
-  customer_id: string
-  payment_slip: string
-  account_number: string
-}
-
-interface TransactionHistoryResponse {
-  customerGetTransactionHistories: {
-    success: boolean
-    total: number
-    data: Transaction[]
-    error?: {
-      message: string
-      code: string
-      details: string
-    }
-  }
-}
-
-interface WalletData {
-  id: string
-  name: string
-  total_balance: number
-  total_frozen_balance: number
-  total_recharged: number
-  total_withdraw: number
-  total_withdraw_able_balance: number
-  status: string
-  customer_id: string
-}
-
-interface WalletBalanceResponse {
-  getCustomerWallet: {
-    success: boolean
-    data: WalletData
-    error?: {
-      message: string
-      code: string
-      details: string
-    } | null
-  }
-}
-
-export default function CreditPage() {
+export default function ShopCreditPage() {
+  // Deposit Modal State
   const [amount, setAmount] = useState(0)
   const [cryptoType, setCryptoType] = useState("ERC20")
   const [transactionId, setTransactionId] = useState("")
   const [voucherFile, setVoucherFile] = useState<File | null>(null)
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isDepositLoading, setIsDepositLoading] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
 
+  // Withdraw Modal State
+  const [withdrawAmount, setWithdrawAmount] = useState(0)
+  const [withdrawCryptoType, setWithdrawCryptoType] = useState("ERC20")
+  const [withdrawAddress, setWithdrawAddress] = useState("")
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
+  const [isWithdrawLoading, setIsWithdrawLoading] = useState(false)
+
+  // Filter & Pagination State
+  const [filterIdentifier, setFilterIdentifier] = useState<string>("")
+  const [filterCoinType, setFilterCoinType] = useState<string>("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageLimit = 10
+
   const { successMessage, errorMessage } = useToast()
-  const [depositBalance] = useMutation<DepositBalanceResponse>(MUTATION_DEPOSIT_BALANCE)
+
+  // Mutations
+  const [depositBalance] = useMutation<ShopDepositBalanceResponse>(MUTATION_DEPOSIT_SHOP_BALANCE)
+  const [withdrawBalance] = useMutation<ShopWithdrawBalanceResponse>(MUTATION_WITHDRAW_SHOP_BALANCE)
 
   // Fetch wallet balance
-  const { data: walletData, loading: walletLoading, refetch: refetchWallet } = useQuery<WalletBalanceResponse>(
-    QUERY_GET_CUSTOMER_CREDIT_BALANCE
+  const { data: walletData, loading: walletLoading, refetch: refetchWallet } = useQuery<ShopWalletBalanceResponse>(
+    QUERY_GET_SHOP_CREDIT_BALANCE
   )
 
-  const wallet = walletData?.getCustomerWallet?.data
+  const wallet = walletData?.getShopWallet?.data
 
   // Fetch transaction history
-  const { data: transactionsData, loading: transactionsLoading, refetch: refetchTransactions } = useQuery<TransactionHistoryResponse>(
-    QUERY_CUSTOMER_CREDIT_TRANSACTIONS,
+  // Build where filter
+  const whereFilter: Record<string, string> = {}
+  if (filterIdentifier) whereFilter.identifier = filterIdentifier
+  if (filterCoinType) whereFilter.coin_type = filterCoinType
+
+  const { data: transactionsData, loading: transactionsLoading, refetch: refetchTransactions } = useQuery<ShopTransactionHistoryResponse>(
+    QUERY_SHOP_CREDIT_TRANSACTIONS,
     {
       variables: {
-        page: 1,
-        limit: 20,
+        page: currentPage,
+        limit: pageLimit,
         sortedBy: "created_at_DESC",
-        where: null,
+        where: Object.keys(whereFilter).length > 0 ? whereFilter : undefined,
       },
+      fetchPolicy: "cache-and-network",
     }
   )
 
-  const transactions = transactionsData?.customerGetTransactionHistories?.data || []
+  const transactions = transactionsData?.shopGetTransactionHistories?.data || []
+  const totalTransactions = transactionsData?.shopGetTransactionHistories?.total || 0
+  const totalPages = Math.ceil(totalTransactions / pageLimit)
 
   const cryptoAddresses = {
     ERC20: "0x64595371ef111e9991c10A9C92262d13FF7C4BbA",
@@ -156,7 +122,7 @@ export default function CreditPage() {
     }
 
     try {
-      setIsLoading(true)
+      setIsDepositLoading(true)
       let data: CloudinaryResponse = {}
 
       // Upload image to Cloudinary
@@ -178,7 +144,6 @@ export default function CreditPage() {
         data = (await response.json()) as CloudinaryResponse
       }
 
-      // Call deposit mutation
       const res = await depositBalance({
         variables: {
           data: {
@@ -190,7 +155,7 @@ export default function CreditPage() {
         },
       })
 
-      if (res?.data?.customerRechargeBalance.success) {
+      if (res?.data?.shopRechargeBalance.success) {
         // Reset form
         setAmount(0)
         setTransactionId("")
@@ -198,7 +163,7 @@ export default function CreditPage() {
         setIsDepositModalOpen(false)
 
         successMessage({
-          message: "Deposit successful!",
+          message: "Deposit request submitted successfully!",
           duration: 3000,
         })
 
@@ -207,7 +172,7 @@ export default function CreditPage() {
         refetchWallet()
       } else {
         errorMessage({
-          message: res?.data?.customerRechargeBalance?.error?.details || "Deposit failed",
+          message: res?.data?.shopRechargeBalance?.error?.details || "Deposit failed",
           duration: 3000,
         })
       }
@@ -217,7 +182,73 @@ export default function CreditPage() {
         duration: 3000,
       })
     } finally {
-      setIsLoading(false)
+      setIsDepositLoading(false)
+    }
+  }
+
+  const handleWithdraw = async () => {
+    if (!withdrawAddress) {
+      errorMessage({
+        message: "Please enter your wallet address",
+        duration: 3000,
+      })
+      return
+    }
+
+    if (withdrawAmount <= 0) {
+      errorMessage({
+        message: "Please enter a valid amount",
+        duration: 3000,
+      })
+      return
+    }
+
+    if (withdrawAmount > (wallet?.total_withdraw_able_balance || 0)) {
+      errorMessage({
+        message: "Insufficient withdrawable balance",
+        duration: 3000,
+      })
+      return
+    }
+
+    try {
+      setIsWithdrawLoading(true)
+
+      const res = await withdrawBalance({
+        variables: {
+          data: {
+            coin_type: withdrawCryptoType,
+            amount_withdraw: withdrawAmount,
+            account_number: withdrawAddress,
+          },
+        },
+      })
+
+      if (res?.data?.shopWithdrawBalance.success) {
+        setWithdrawAmount(0)
+        setWithdrawAddress("")
+        setIsWithdrawModalOpen(false)
+
+        successMessage({
+          message: "Withdrawal request submitted successfully!",
+          duration: 3000,
+        })
+
+        refetchTransactions()
+        refetchWallet()
+      } else {
+        errorMessage({
+          message: res?.data?.shopWithdrawBalance?.error?.details || "Withdrawal failed",
+          duration: 3000,
+        })
+      }
+    } catch (error) {
+      errorMessage({
+        message: "Unexpected error happened!",
+        duration: 3000,
+      })
+    } finally {
+      setIsWithdrawLoading(false)
     }
   }
 
@@ -226,33 +257,44 @@ export default function CreditPage() {
       <div className="border-b bg-white">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-primary">
-              Home
+            <Link href="/shop-dashboard" className="hover:text-primary">
+              Dashboard
             </Link>
             <ChevronRight className="h-4 w-4" />
             <span className="text-gray-900">Credit balance</span>
           </div>
 
-          <Button
-            size="sm"
-            className="w-auto bg-green-500 hover:bg-green-600 text-white text-xs"
-            onClick={() => setIsDepositModalOpen(true)}
-          >
-            <Plus />
-            Deposit
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              className="w-auto bg-green-500 hover:bg-green-600 text-white text-xs"
+              onClick={() => setIsDepositModalOpen(true)}
+            >
+              <Plus className="h-4 w-4" />
+              Deposit
+            </Button>
+            <Button
+              size="sm"
+              className="w-auto bg-orange-500 hover:bg-orange-600 text-white text-xs"
+              onClick={() => setIsWithdrawModalOpen(true)}
+            >
+              <ArrowDownToLine className="h-4 w-4" />
+              Withdraw
+            </Button>
+          </div>
         </div>
       </div>
 
       <div className="flex-1 bg-white p-6">
         <div className="mx-auto max-w-5xl">
           <div className="mb-4 flex items-center justify-start gap-4">
-            <h1 className="text-lg font-bold text-gray-900">Credit balance</h1>
+            <h1 className="text-lg font-bold text-gray-900">Shop Credit Balance</h1>
             <div className="flex items-center gap-2 text-sm text-green-600">
               <Lock className="h-4 w-4" />
               <span className="font-medium">All data is safeguarded</span>
             </div>
           </div>
+
           <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-600 px-4 py-3 text-white">
             <svg className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -261,29 +303,60 @@ export default function CreditPage() {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-sm">Be wary of messages about delivery issues claiming to be from USPS.</span>
+            <span className="text-sm">Manage your shop wallet balance for receiving payments and withdrawals.</span>
           </div>
 
-          <div className="flex items-center justify-start gap-6">
+          <div className="flex flex-wrap items-center justify-start gap-6">
             <div className="mb-8">
-              <p className="mb-2 text-sm text-gray-600">Total(USD):</p>
+              <p className="mb-2 text-sm text-gray-600">Total Balance (USD):</p>
               <p className="text-3xl font-bold text-gray-900">
                 {walletLoading ? "..." : `$${(wallet?.total_balance || 0).toFixed(2)}`}
               </p>
             </div>
 
             <div className="mb-8">
-              <p className="mb-2 text-sm text-gray-600">Pending(USD):</p>
+              <p className="mb-2 text-sm text-gray-600">Pending (USD):</p>
               <p className="text-3xl font-bold text-gray-900">
                 {walletLoading ? "..." : `$${(wallet?.total_frozen_balance || 0).toFixed(2)}`}
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <p className="mb-2 text-sm text-gray-600">Withdrawable (USD):</p>
+              <p className="text-3xl font-bold text-green-600">
+                {walletLoading ? "..." : `$${(wallet?.total_withdraw_able_balance || 0).toFixed(2)}`}
               </p>
             </div>
           </div>
 
           <div className="mb-8">
-            <h2 className="mb-4 text-md font-bold text-gray-900">Histories:</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-md font-bold text-gray-900">Transaction History:</h2>
+              <div className="flex items-center gap-2">
+                <Select value={filterIdentifier || "all"} onValueChange={(val) => { setFilterIdentifier(val === "all" ? "" : val); setCurrentPage(1); }}>
+                  <SelectTrigger className="w-32 h-8 text-xs">
+                    <SelectValue placeholder="All Types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="RECHARGE">Deposit</SelectItem>
+                    <SelectItem value="WITHDRAW">Withdraw</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={filterCoinType || "all"} onValueChange={(val) => { setFilterCoinType(val === "all" ? "" : val); setCurrentPage(1); }}>
+                  <SelectTrigger className="w-28 h-8 text-xs">
+                    <SelectValue placeholder="All Coins" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Coins</SelectItem>
+                    <SelectItem value="ERC20">ERC20</SelectItem>
+                    <SelectItem value="TRC20">TRC20</SelectItem>
+                    <SelectItem value="BTC">BTC</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-            {/* Table header */}
             <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
               <div className="text-center">ID</div>
               <div>Voucher</div>
@@ -294,7 +367,6 @@ export default function CreditPage() {
               <div>Date</div>
             </div>
 
-            {/* Transaction rows */}
             {transactionsLoading ? (
               <div className="py-12 text-center">
                 <Loader className="mx-auto mb-4 h-6 w-6 animate-spin text-orange-500" />
@@ -305,7 +377,7 @@ export default function CreditPage() {
                 {transactions.map((transaction, index: number) => (
                   <div key={transaction.id} className="grid grid-cols-7 gap-4 py-3 text-sm border-b last:border-0">
                     <div className="text-center text-gray-600">
-                      {index + 1}
+                      {(currentPage - 1) * pageLimit + index + 1}
                     </div>
                     <div>
                       {transaction.payment_slip ? (
@@ -358,93 +430,96 @@ export default function CreditPage() {
                 ))}
               </div>
             ) : (
-              /* show only when transaction is empty */
-              <div>
-                <div className="flex flex-col items-center justify-center py-12">
-                  <div className="mb-6 text-gray-300">
-                    <svg className="h-32 w-32" viewBox="0 0 120 120" fill="none">
-                      <rect
-                        x="20"
-                        y="40"
-                        width="80"
-                        height="60"
-                        rx="4"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeDasharray="4 4"
-                      />
-                      <path d="M40 40 L50 25 L70 25 L80 40" stroke="currentColor" strokeWidth="2" />
-                      <line x1="45" y1="55" x2="65" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                      <line x1="65" y1="55" x2="45" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-900">You don't have any activities</p>
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="mb-6 text-gray-300">
+                  <svg className="h-32 w-32" viewBox="0 0 120 120" fill="none">
+                    <rect
+                      x="20"
+                      y="40"
+                      width="80"
+                      height="60"
+                      rx="4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeDasharray="4 4"
+                    />
+                    <path d="M40 40 L50 25 L70 25 L80 40" stroke="currentColor" strokeWidth="2" />
+                    <line x1="45" y1="55" x2="65" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="65" y1="55" x2="45" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
                 </div>
-                <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900">Can't find your credit?</h3>
-
-                  <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300 hover:bg-gray-50">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-900">Try signing in with another account</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {/* Google icon */}
-                      <svg className="h-5 w-5" viewBox="0 0 24 24">
-                        <path
-                          fill="#4285F4"
-                          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        />
-                        <path
-                          fill="#34A853"
-                          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        />
-                        <path
-                          fill="#FBBC05"
-                          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                        />
-                        <path
-                          fill="#EA4335"
-                          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                        />
-                      </svg>
-                      {/* Apple icon */}
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-                      </svg>
-                      {/* Facebook icon */}
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#1877F2">
-                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                      </svg>
-                      {/* X (Twitter) icon */}
-                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                      </svg>
-                      <ChevronRight className="h-5 w-5 text-gray-400" />
-                    </div>
-                  </button>
-
-                  <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300 hover:bg-gray-50">
-                    <span className="text-sm text-gray-900">Self-service to find credit</span>
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
-                  </button>
-                </div>
+                <p className="text-gray-900">No transaction history yet</p>
               </div>
             )}
 
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="text-xs"
+                >
+                  Previous
+                </Button>
+
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum: number
+                    if (totalPages <= 5) {
+                      pageNum = i + 1
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i
+                    } else {
+                      pageNum = currentPage - 2 + i
+                    }
+
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`w-8 h-8 text-xs ${currentPage === pageNum ? "bg-orange-500 hover:bg-orange-600" : ""}`}
+                      >
+                        {pageNum}
+                      </Button>
+                    )
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="text-xs"
+                >
+                  Next
+                </Button>
+
+                <span className="text-xs text-gray-500 ml-2">
+                  Page {currentPage} of {totalPages}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Deposit Modal */}
       <Dialog open={isDepositModalOpen} onOpenChange={setIsDepositModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">Top-Up Your Wallet Balance:</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            {/* Select Type */}
-            <div className="space-y-2">
+            <div className="w-1/2 space-y-2">
               <Label htmlFor="crypto-type" className="text-sm font-medium">
                 Select type
               </Label>
@@ -460,7 +535,6 @@ export default function CreditPage() {
               </Select>
             </div>
 
-            {/* Amount Input */}
             <div className="space-y-2">
               <Label htmlFor="amount" className="text-sm font-medium">
                 Amount
@@ -571,10 +645,138 @@ export default function CreditPage() {
             {/* Deposit Button */}
             <Button
               onClick={handleDeposit}
-              disabled={!transactionId || amount <= 0 || !voucherFile || isLoading}
+              disabled={!transactionId || amount <= 0 || !voucherFile || isDepositLoading}
+              className="w-full bg-green-500 hover:bg-green-600 text-white"
+            >
+              {isDepositLoading ? <Loader className="h-5 w-5 animate-spin" /> : null}
+              {isDepositLoading ? "Processing..." : "Deposit"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Withdraw Modal */}
+      <Dialog open={isWithdrawModalOpen} onOpenChange={setIsWithdrawModalOpen}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold">Withdraw Your Balance:</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Available Balance Info */}
+            <div className="rounded-lg border border-green-200 p-4 bg-green-50">
+              <p className="text-sm text-gray-600">Available for withdrawal:</p>
+              <p className="text-2xl font-bold text-green-600">
+                ${(wallet?.total_withdraw_able_balance || 0).toFixed(2)}
+              </p>
+            </div>
+
+            {/* Select Type */}
+            <div className="w-1/2 space-y-2">
+              <Label htmlFor="withdraw-crypto-type" className="text-sm font-medium">
+                Select type
+              </Label>
+              <Select value={withdrawCryptoType} onValueChange={setWithdrawCryptoType}>
+                <SelectTrigger id="withdraw-crypto-type">
+                  <SelectValue placeholder="Select cryptocurrency type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ERC20">ERC20</SelectItem>
+                  <SelectItem value="TRC20">TRC20</SelectItem>
+                  <SelectItem value="BTC">BTC</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Amount Input */}
+            <div className="space-y-2">
+              <Label htmlFor="withdraw-amount" className="text-sm font-medium">
+                Amount
+              </Label>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setWithdrawAmount(Math.max(0, withdrawAmount - 10))}
+                  className="h-10 w-10"
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <Input
+                  id="withdraw-amount"
+                  type="number"
+                  value={withdrawAmount}
+                  onChange={(e) => setWithdrawAmount(Number(e.target.value))}
+                  className="text-center"
+                  min="0"
+                  max={wallet?.total_withdraw_able_balance || 0}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setWithdrawAmount(Math.min(withdrawAmount + 10, wallet?.total_withdraw_able_balance || 0))}
+                  className="h-10 w-10"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="text-orange-500 p-0 h-auto"
+                onClick={() => setWithdrawAmount(wallet?.total_withdraw_able_balance || 0)}
+              >
+                Withdraw all
+              </Button>
+            </div>
+
+            {/* Wallet Address */}
+            <div className="space-y-2">
+              <Label htmlFor="withdraw-address" className="text-sm font-medium">
+                Your Wallet Address <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="withdraw-address"
+                type="text"
+                value={withdrawAddress}
+                onChange={(e) => setWithdrawAddress(e.target.value)}
+                placeholder="Enter your wallet address"
+                required
+              />
+            </div>
+
+            {/* Withdraw Information */}
+            <div className="rounded-lg border border-gray-200 p-4 space-y-3 bg-gray-50">
+              <h4 className="text-sm font-semibold">Withdrawal Summary</h4>
+
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Withdraw Amount:</span>
+                  <span className="font-medium">${withdrawAmount.toFixed(2)}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Network:</span>
+                  <span className="font-medium">{withdrawCryptoType}</span>
+                </div>
+
+                <div className="flex justify-between pt-2 border-t">
+                  <span className="text-gray-600">You will receive:</span>
+                  <span className="font-bold text-green-600">${withdrawAmount.toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <Button
+              onClick={handleWithdraw}
+              disabled={!withdrawAddress || withdrawAmount <= 0 || isWithdrawLoading}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white"
             >
-              {isLoading ? "Processing..." : "Deposit"}
+              {isDepositLoading ? <Loader className="h-5 w-5 animate-spin" /> : null}
+              {isWithdrawLoading ? "Processing..." : "Withdraw"}
             </Button>
           </div>
         </DialogContent>
