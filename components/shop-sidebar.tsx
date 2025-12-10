@@ -65,7 +65,7 @@ const menuItems = [
       id: "notification",
       label: "Notification",
       icon: Bell,
-      href: "/shop-dashboard/addresses",
+      href: "/shop-dashboard/notification",
    },
    {
       id: "vip_access",

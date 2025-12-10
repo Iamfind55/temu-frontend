@@ -1,12 +1,14 @@
 "use client"
 
 import React from "react";
-import { MapPin, Plus, PlusIcon, Save, SettingsIcon, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader } from "lucide-react"
+import { MapPin, Plus, Save, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader } from "lucide-react"
 
 import { useToast } from "@/lib/toast";
+import { useShopStore } from "@/store/shop-store";
 import { useLazyQuery, useMutation } from "@apollo/client/react";
-import { GetCityResponse, GetCountryResponse, GetCustomerAddressesResponse, GetStateResponse } from "@/app/interface/address";
-import { MUTATION_CREATE_CUSTOMER_ADDRESS, MUTATION_DELETE_CUSTOMER_ADDRESS, MUTATION_SET_DEFAULT_ADDRESS, MUTATION_UPDATE_CUSTOMER_ADDRESS, QUERY_CITIES, QUERY_COUNTRIES, QUERY_CUSTOMER_ADDRESS, QUERY_STATES } from "@/app/api/address";
+import { QUERY_CITIES, QUERY_COUNTRIES, QUERY_STATES } from "@/app/api/address";
+import { GetCityResponse, GetCountryResponse, GetStateResponse } from "@/app/interface/address";
+import { QUERY_SHOP_ADDRESSES, MUTATION_CREATE_SHOP_ADDRESS, MUTATION_UPDATE_SHOP_ADDRESS, MUTATION_DELETE_SHOP_ADDRESS, MUTATION_SET_SHOP_ADDRESS_USED } from "@/app/api/shop/address";
 
 // components:
 import { Label } from "@/components/ui/label"
@@ -14,7 +16,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useSelector } from "react-redux";
 
 export default function AddressesPage() {
   const { errorMessage, successMessage } = useToast();
@@ -34,7 +35,7 @@ export default function AddressesPage() {
   const [isSettingDefault, setIsSettingDefault] = React.useState(false);
   const [isDeleting, setIsDeleting] = React.useState(false);
 
-  const { customer } = useSelector((state: any) => state.customerAuth);
+  const { shop } = useShopStore();
 
   // Form fields
   const [email, setEmail] = React.useState("");
@@ -44,7 +45,7 @@ export default function AddressesPage() {
 
   // Apollo queries
   const [getAddresses, { data: addressesData, loading: addressesLoading, refetch }] =
-    useLazyQuery<GetCustomerAddressesResponse>(QUERY_CUSTOMER_ADDRESS, {
+    useLazyQuery<any>(QUERY_SHOP_ADDRESSES, {
       fetchPolicy: "no-cache",
     });
 
@@ -52,18 +53,26 @@ export default function AddressesPage() {
   const [getStates, { data: stateData }] = useLazyQuery<GetStateResponse>(QUERY_STATES, { fetchPolicy: "no-cache" });
   const [getCountries, { data: countryData }] = useLazyQuery<GetCountryResponse>(QUERY_COUNTRIES, { fetchPolicy: "no-cache" });
 
-  const [createAddress] = useMutation(MUTATION_CREATE_CUSTOMER_ADDRESS);
-  const [updateAddress] = useMutation(MUTATION_UPDATE_CUSTOMER_ADDRESS);
-  const [deleteAddress] = useMutation(MUTATION_DELETE_CUSTOMER_ADDRESS);
-  const [setDefaultAddress] = useMutation(MUTATION_SET_DEFAULT_ADDRESS);
+  const [createAddress] = useMutation(MUTATION_CREATE_SHOP_ADDRESS);
+  const [updateAddress] = useMutation(MUTATION_UPDATE_SHOP_ADDRESS);
+  const [deleteAddress] = useMutation(MUTATION_DELETE_SHOP_ADDRESS);
+  const [setDefaultAddress] = useMutation(MUTATION_SET_SHOP_ADDRESS_USED);
 
   React.useEffect(() => {
-    getAddresses({
-      variables: {
-        where: { status: "ACTIVE", customer_id: customer.id },
-      },
-    });
-  }, [getAddresses]);
+    if (shop?.id) {
+      getAddresses({
+        variables: {
+          page: 1,
+          limit: 100,
+          sortedBy: "created_at_DESC",
+          where: {
+            shop_id: shop?.id,
+            status: "ACTIVE"
+          },
+        },
+      });
+    }
+  }, [getAddresses, shop?.id]);
 
   React.useEffect(() => {
     getCountries();
@@ -153,11 +162,11 @@ export default function AddressesPage() {
     try {
       const res: any = await setDefaultAddress({
         variables: {
-          setCustomerAddressDefaultToUseId: id,
+          setShopAddressDefaultToUseId: id,
         },
       });
 
-      if (res?.data?.setCustomerAddressDefaultToUse?.success) {
+      if (res?.data?.setShopAddressDefaultToUse?.success) {
         await refetch();
         successMessage({
           message: "Default address set successfully!",
@@ -185,11 +194,11 @@ export default function AddressesPage() {
     try {
       const res: any = await deleteAddress({
         variables: {
-          deleteCustomerAddressId: deleteTargetId,
+          deleteShopAddressId: deleteTargetId,
         },
       });
 
-      if (res?.data?.deleteCustomerAddress?.success) {
+      if (res?.data?.deleteShopAddress?.success) {
         await refetch();
         successMessage({
           message: "Address deleted successfully!",
@@ -247,7 +256,7 @@ export default function AddressesPage() {
           },
         });
 
-        if (res?.data?.updateCustomerAddress?.success) {
+        if (res?.data?.updateShopAddress?.success) {
           await refetch();
           successMessage({
             message: "Update address successful!",
@@ -282,7 +291,7 @@ export default function AddressesPage() {
           },
         });
 
-        if (res?.data?.createCustomerAddress?.success) {
+        if (res?.data?.createShopAddress?.success) {
           await refetch();
           successMessage({
             message: "Create address successful!",
@@ -322,8 +331,6 @@ export default function AddressesPage() {
     }
   };
 
-
-
   return (
     <>
       <div className="bg-white px-0 sm:px-8 py-6">
@@ -348,21 +355,24 @@ export default function AddressesPage() {
           <Loader className="h-8 w-8 animate-spin text-orange-500 mb-4" />
           <p className="text-gray-600">Loading addresses...</p>
         </div>
-      ) : addressesData?.getCustomerAddresses?.data.length ?? 0 > 0 ?
+      ) : addressesData?.getShopAddresses?.data?.length ?? 0 > 0 ?
         <div className="w-full grid grid-cols-1 gap-4 lg:grid-cols-2 pb-16 px-0 sm:px-8">
-          {addressesData?.getCustomerAddresses?.data?.map((row) => (
+          {addressesData?.getShopAddresses?.data?.map((row: any) => (
             <div
               key={row.id}
               className={`relative border rounded ${row.is_used && "bg-orange-100 border-orange-400"
                 } p-4 h-62 flex items-start justify-center flex-col gap-1 text-gray-400`}
             >
-              <div className="absolute top-2 right-2 menu-dropdown">
-                <button
-                  onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
-                  className="p-1 hover:bg-orange-500 hover:text-white rounded-full cursor-pointer"
-                >
-                  <MoreVertical size={18} />
-                </button>
+              <div className="w-full absolute top-2 right-2 menu-dropdown px-6">
+                <div className="w-full flex items-center justify-between">
+                  <p className="text-gray-800 text-sm font-bold">Address details:</p>
+                  <button
+                    onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
+                    className="p-1 hover:bg-orange-500 hover:text-white rounded-full cursor-pointer"
+                  >
+                    <MoreVertical size={18} />
+                  </button>
+                </div>
                 {openMenuId === row.id && (
                   <div className="absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                     <button
@@ -415,19 +425,21 @@ export default function AddressesPage() {
                   {row.city.city}
                 </strong>
               </p>
-              <p className="text-xs text-gray-500">
-                States:&nbsp;
-                <strong className="text-black font-bold">
-                  {row?.state?.state ?? ""}
-                </strong>
-              </p>
+              {row?.state?.state &&
+                <p className="text-xs text-gray-500">
+                  States:&nbsp;
+                  <strong className="text-black font-bold">
+                    {row?.state?.state ?? ""}
+                  </strong>
+                </p>
+              }
               <p className="text-xs text-gray-500">
                 Country:&nbsp;
                 <strong className="text-black font-bold">
                   {row.country.country}
                 </strong>
               </p>
-              <p className="text-xs text-black mt-2">
+              <p className="text-sm font-bold text-black mt-2">
                 Contact person:
               </p>
               <p className="text-xs text-gray-500">
@@ -635,7 +647,7 @@ export default function AddressesPage() {
                 className="bg-orange-500 hover:bg-orange-600"
                 disabled={isLoading}
               >
-                <Save size={14} />
+                {isLoading ? <Loader size={14} className="animate-spin" /> : <Save size={14} />}
                 {isLoading ? "Saving..." : "Save"}
               </Button>
             </div>
@@ -672,6 +684,7 @@ export default function AddressesPage() {
               onClick={handleDeleteAddress}
               disabled={isDeleting}
             >
+              {isLoading && <Loader size={14} className="animate-spin" />}
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </div>
