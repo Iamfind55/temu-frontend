@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useLazyQuery, useMutation } from "@apollo/client/react"
-import { ChevronRight, ShoppingBasket, Package, Truck, CheckCircle, RotateCcw, Loader, ChevronDown, MoreVertical, Eye, Trash2, X } from "lucide-react"
+import { ChevronRight, ShoppingBasket, Package, Truck, CheckCircle, Loader, ChevronDown, MoreVertical, Eye, X } from "lucide-react"
 
 // Components
 import {
@@ -19,50 +19,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 // API & Utils
 import { useToast } from "@/lib/toast"
-import { QUERY_GET_CUSTOMER_ORDERS, MUTATION_DELETE_ORDER } from "@/app/api/order"
+import { QUERY_SHOP_ORDERS, QUERY_SHOP_ORDER_DETAILS, MUTATION_SHOP_CONFIRM_ORDER, MUTATION_SHOP_CANCEL_ORDER } from "@/app/api/shop/order"
 
-interface OrderDetail {
-  id: string
-  product_name: string | null
-  product_cover_image: string | null
-  price: number
-  order_no: string
-  discount: number
-  delivery_type: string | null
-  quantity: number
-  product_id: string
-}
-
-interface Order {
-  id: string
-  order_no: string
-  order_status: string
-  total_products: number
-  total_quantity: number
-  total_price: number
-  total_discount: number
-  delivery_type: string
-  status: string
-  created_at: string
-  order_details: OrderDetail[]
-}
-
-interface GetOrdersResponse {
-  customerGetOrders: {
-    success: boolean
-    total: number
-    data: Order[]
-    error?: {
-      message: string
-      code: string
-      details: string
-    }
-  }
-}
+// Types
+import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsResponse, ShopConfirmOrderResponse, ShopCancelOrderResponse } from "@/types/shopOrder"
 
 const orderTabs = [
+  { label: "No Pickup", value: "no_pickup", icon: Package, statusFilter: "NO_PICKUP" },
   { label: "All orders", value: "all", icon: Package, statusFilter: null },
-  { label: "Processing", value: "processing", icon: Loader, statusFilter: "NO_PICKUP" },
+  { label: "Processing", value: "processing", icon: Loader, statusFilter: "PROCESSING" },
   { label: "Packing", value: "packing", icon: Package, statusFilter: "PACKING" },
   { label: "Shipping", value: "shipping", icon: Truck, statusFilter: "SHIPPING" },
   { label: "Completed", value: "completed", icon: CheckCircle, statusFilter: "SUCCESS" },
@@ -72,9 +37,9 @@ const orderTabs = [
 const getStatusBadgeStyle = (status: string) => {
   switch (status) {
     case "NO_PICKUP":
-      return "bg-yellow-100 text-yellow-800"
+      return "bg-green-100 text-green-800"
     case "PROCESSING":
-      return "bg-orange-100 text-orange-800"
+      return "bg-yellow-100 text-yellow-800"
     case "PACKING":
       return "bg-purple-100 text-purple-800"
     case "SHIPPING":
@@ -82,7 +47,7 @@ const getStatusBadgeStyle = (status: string) => {
     case "SUCCESS":
       return "bg-green-100 text-green-800"
     case "CANCELLED":
-      return "bg-gray-100 text-gray-800"
+      return "bg-red-100 text-red-800"
     case "FAILED":
       return "bg-red-100 text-red-800"
     default:
@@ -92,10 +57,8 @@ const getStatusBadgeStyle = (status: string) => {
 
 const getStatusLabel = (status: string) => {
   switch (status) {
-    case "NO_PICKUP":
-      return "Pending"
-    case "PROCESSING":
-      return "Processing"
+    case "ACTIVE":
+      return "Active"
     case "PACKING":
       return "Packing"
     case "SHIPPING":
@@ -121,27 +84,55 @@ const formatDate = (dateString: string) => {
   })
 }
 
-export default function OrdersPage() {
+const formatDateTime = (dateString: string) => {
+  if (!dateString) return "-"
+  const date = new Date(dateString)
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  })
+}
+
+export default function ShopOrdersPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { successMessage, errorMessage } = useToast()
+  const { errorMessage, successMessage } = useToast()
 
-  const currentStatus = searchParams.get("status") || "all"
+  const currentStatus = searchParams.get("status") || "no_pickup"
   const [searchQuery, setSearchQuery] = useState("")
   const [page, setPage] = useState(1)
-  const [allOrders, setAllOrders] = useState<Order[]>([])
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [allOrders, setAllOrders] = useState<ShopOrder[]>([])
+  const [selectedOrder, setSelectedOrder] = useState<ShopOrder | null>(null)
+  const [orderDetails, setOrderDetails] = useState<ShopOrderDetail[]>([])
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
-  const limit = 10
+  const [isDetailsLoading, setIsDetailsLoading] = useState(false)
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
+  const [isConfirmLoading, setIsConfirmLoading] = useState(false)
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
+  const [isCancelLoading, setIsCancelLoading] = useState(false)
+  const limit = 20
 
   // Get orders query
-  const [getOrders, { data, loading, error }] = useLazyQuery<GetOrdersResponse>(
-    QUERY_GET_CUSTOMER_ORDERS,
+  const [getOrders, { data, loading, error }] = useLazyQuery<ShopGetOrdersResponse>(
+    QUERY_SHOP_ORDERS,
     { fetchPolicy: "network-only" }
   )
 
-  // Delete order mutation
-  const [deleteOrder, { loading: deleteLoading }] = useMutation(MUTATION_DELETE_ORDER)
+  // Get order details query
+  const [getOrderDetails] = useLazyQuery<ShopGetOrderDetailsResponse>(
+    QUERY_SHOP_ORDER_DETAILS,
+    { fetchPolicy: "network-only" }
+  )
+
+  // Confirm order mutation
+  const [confirmOrder] = useMutation<ShopConfirmOrderResponse>(MUTATION_SHOP_CONFIRM_ORDER)
+
+  // Cancel order mutation
+  const [cancelOrder] = useMutation<ShopCancelOrderResponse>(MUTATION_SHOP_CANCEL_ORDER)
 
   // Get status filter based on current tab
   const getStatusFilter = () => {
@@ -167,18 +158,18 @@ export default function OrdersPage() {
 
   // Update orders when data changes
   useEffect(() => {
-    if (data?.customerGetOrders?.success && data.customerGetOrders.data) {
+    if (data?.shopGetOrders?.success && data.shopGetOrders.data) {
       if (page === 1) {
-        setAllOrders(data.customerGetOrders.data)
+        setAllOrders(data.shopGetOrders.data)
       }
     }
   }, [data, page])
 
   const handleTabClick = (value: string) => {
     const newUrl =
-      value === "all"
-        ? "/account/orders"
-        : `/account/orders?status=${value}`
+      value === "no_pickup"
+        ? "/shop-dashboard/orders"
+        : `/shop-dashboard/orders?status=${value}`
 
     router.push(newUrl)
   }
@@ -197,8 +188,8 @@ export default function OrdersPage() {
         },
       })
 
-      if (result.data?.customerGetOrders?.success && result.data.customerGetOrders.data) {
-        setAllOrders((prev) => [...prev, ...result.data!.customerGetOrders.data])
+      if (result.data?.shopGetOrders?.success && result.data.shopGetOrders.data) {
+        setAllOrders((prev) => [...prev, ...result.data!.shopGetOrders.data])
         setPage(nextPage)
       }
     } catch (err) {
@@ -206,32 +197,140 @@ export default function OrdersPage() {
     }
   }
 
-  const handleViewDetails = (order: Order, e: React.MouseEvent) => {
+  const handleViewDetails = async (order: ShopOrder, e: React.MouseEvent) => {
     e.stopPropagation()
     setSelectedOrder(order)
+    setOrderDetails([])
     setIsDetailModalOpen(true)
-  }
-
-  const handleDeleteOrder = async (orderId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (!confirm("Are you sure you want to delete this order?")) return
+    setIsDetailsLoading(true)
 
     try {
-      const result: any = await deleteOrder({
-        variables: { id: orderId },
+      const result = await getOrderDetails({
+        variables: {
+          where: { order_no: order.order_no },
+          page: 1,
+          limit: 100,
+          sortedBy: "created_at_DESC",
+        },
       })
 
-      if (result?.data?.deleteOrder?.success) {
-        successMessage({ message: "Order deleted successfully", duration: 3000 })
-        // Remove order from local state
-        setAllOrders((prev) => prev.filter((order) => order.id !== orderId))
+      if (result.data?.shopGetOrderDetails?.success) {
+        setOrderDetails(result.data.shopGetOrderDetails.data)
       } else {
-        const errorMsg = result?.data?.deleteOrder?.error?.message || "Failed to delete order"
-        errorMessage({ message: errorMsg, duration: 3000 })
+        errorMessage({
+          message: result.data?.shopGetOrderDetails?.error?.details || "Failed to load order details",
+          duration: 3000,
+        })
       }
     } catch (err) {
-      console.error("Error deleting order:", err)
-      errorMessage({ message: "An error occurred while deleting the order", duration: 3000 })
+      console.error("Error fetching order details:", err)
+      errorMessage({
+        message: "Failed to load order details",
+        duration: 3000,
+      })
+    } finally {
+      setIsDetailsLoading(false)
+    }
+  }
+
+  const handleOpenConfirmModal = (order: ShopOrder, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSelectedOrder(order)
+    setIsConfirmModalOpen(true)
+  }
+
+  const handleConfirmShipping = async () => {
+    if (!selectedOrder) return
+
+    setIsConfirmLoading(true)
+    try {
+      const result = await confirmOrder({
+        variables: {
+          shopConfirmOrderId: selectedOrder.id,
+        },
+      })
+
+      if (result.data?.shopConfirmOrder?.success) {
+        successMessage({
+          message: result.data.shopConfirmOrder.message || "Order confirmed successfully",
+          duration: 3000,
+        })
+        setIsConfirmModalOpen(false)
+
+        const statusFilter = getStatusFilter()
+        getOrders({
+          variables: {
+            page: 1,
+            limit: limit,
+            sortedBy: "created_at_DESC",
+            where: statusFilter ? { order_status: statusFilter } : null,
+          },
+        })
+      } else {
+        errorMessage({
+          message: result.data?.shopConfirmOrder?.error?.details || "Failed to confirm order",
+          duration: 3000,
+        })
+      }
+    } catch (err) {
+      console.error("Error confirming order:", err)
+      errorMessage({
+        message: "Failed to confirm order",
+        duration: 3000,
+      })
+    } finally {
+      setIsConfirmLoading(false)
+    }
+  }
+
+  const handleOpenCancelModal = (order: ShopOrder, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSelectedOrder(order)
+    setIsCancelModalOpen(true)
+  }
+
+  const handleCancelOrder = async () => {
+    if (!selectedOrder) return
+
+    setIsCancelLoading(true)
+    try {
+      const result = await cancelOrder({
+        variables: {
+          shopCancelOrderId: selectedOrder.id,
+        },
+      })
+
+      if (result.data?.shopCancelOrder?.success) {
+        successMessage({
+          message: result.data.shopCancelOrder.message || "Order cancelled successfully",
+          duration: 3000,
+        })
+        setIsCancelModalOpen(false)
+
+        // Refresh orders list
+        const statusFilter = getStatusFilter()
+        getOrders({
+          variables: {
+            page: 1,
+            limit: limit,
+            sortedBy: "created_at_DESC",
+            where: statusFilter ? { order_status: statusFilter } : null,
+          },
+        })
+      } else {
+        errorMessage({
+          message: result.data?.shopCancelOrder?.error?.details || "Failed to cancel order",
+          duration: 3000,
+        })
+      }
+    } catch (err) {
+      console.error("Error cancelling order:", err)
+      errorMessage({
+        message: "Failed to cancel order",
+        duration: 3000,
+      })
+    } finally {
+      setIsCancelLoading(false)
     }
   }
 
@@ -239,15 +338,10 @@ export default function OrdersPage() {
   const filteredOrders = allOrders.filter(order => {
     if (!searchQuery) return true
     const query = searchQuery.toLowerCase()
-    return (
-      order.order_no.toLowerCase().includes(query) ||
-      order.order_details.some(detail =>
-        detail.product_name?.toLowerCase().includes(query)
-      )
-    )
+    return order.order_no.toLowerCase().includes(query)
   })
 
-  const totalOrders = data?.customerGetOrders?.total || 0
+  const totalOrders = data?.shopGetOrders?.total || 0
   const hasMore = allOrders.length < totalOrders
 
   return (
@@ -275,9 +369,7 @@ export default function OrdersPage() {
             </div>
           </div>
 
-          {/* Orders */}
           <div className="mb-8">
-            {/* Desktop Table header - hidden on mobile */}
             <div className="hidden md:grid mb-4 grid-cols-8 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
               <div className="text-center">#</div>
               <div>Order No</div>
@@ -289,7 +381,6 @@ export default function OrdersPage() {
               <div className="text-center">Actions</div>
             </div>
 
-            {/* Loading state */}
             {loading && allOrders.length === 0 ? (
               <div className="py-12 text-center flex items-center justify-center gap-2">
                 <Loader className="h-5 w-5 animate-spin text-orange-500" />
@@ -301,14 +392,12 @@ export default function OrdersPage() {
               </div>
             ) : filteredOrders.length > 0 ? (
               <>
-                {/* Mobile Card View */}
                 <div className="md:hidden space-y-3">
                   {filteredOrders.map((order) => (
                     <div
                       key={order.id}
                       className="bg-white border border-gray-200 rounded-xl p-2 shadow-sm"
                     >
-                      {/* Card Header */}
                       <div className="flex items-center justify-between mb-3">
                         <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
                           #{order.order_no.slice(-8)}
@@ -333,23 +422,32 @@ export default function OrdersPage() {
                                 onClick={(e) => handleViewDetails(order, e)}
                                 className="cursor-pointer"
                               >
-                                <Eye className="mr-2 h-4 w-4" />
+                                <Eye className="h-4 w-4" />
                                 View Details
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(e) => handleDeleteOrder(order.id, e)}
-                                className="cursor-pointer text-red-600 focus:text-red-600"
-                                disabled={deleteLoading}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
+                              {order.order_status === "NO_PICKUP" && (
+                                <DropdownMenuItem
+                                  onClick={(e) => handleOpenConfirmModal(order, e)}
+                                  className="cursor-pointer text-green-500"
+                                >
+                                  <Truck className="h-4 w-4 text-green-500" />
+                                  Confirm & shipping
+                                </DropdownMenuItem>
+                              )}
+                              {order.order_status === "NO_PICKUP" && (
+                                <DropdownMenuItem
+                                  onClick={(e) => handleOpenCancelModal(order, e)}
+                                  className="cursor-pointer text-red-500"
+                                >
+                                  <X className="h-4 w-4 text-red-500" />
+                                  Cancel order
+                                </DropdownMenuItem>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
                       </div>
 
-                      {/* Card Body */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-500">Products</span>
@@ -365,21 +463,19 @@ export default function OrdersPage() {
                         </div>
                       </div>
 
-                      {/* Card Footer - View Details Button */}
                       <Button
                         variant="outline"
                         size="sm"
                         className="w-full mt-3 text-orange-600 border-orange-200 hover:bg-orange-50"
                         onClick={(e) => handleViewDetails(order, e)}
                       >
-                        <Eye className="mr-2 h-4 w-4" />
+                        <Eye className="h-4 w-4" />
                         View Details
                       </Button>
                     </div>
                   ))}
                 </div>
 
-                {/* Desktop Table View */}
                 <div className="hidden md:block space-y-2">
                   {filteredOrders.map((order, index: number) => (
                     <div
@@ -432,17 +528,27 @@ export default function OrdersPage() {
                               onClick={(e) => handleViewDetails(order, e)}
                               className="cursor-pointer"
                             >
-                              <Eye className="mr-2 h-4 w-4" />
+                              <Eye className="h-4 w-4" />
                               View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={(e) => handleDeleteOrder(order.id, e)}
-                              className="cursor-pointer text-red-600 focus:text-red-600"
-                              disabled={deleteLoading}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              {deleteLoading ? "Deleting..." : "Delete"}
-                            </DropdownMenuItem>
+                            {order.order_status === "NO_PICKUP" && (
+                              <DropdownMenuItem
+                                onClick={(e) => handleOpenConfirmModal(order, e)}
+                                className="cursor-pointer text-green-500"
+                              >
+                                <Truck className="h-4 w-4 text-green-500" />
+                                Confirm & shipping
+                              </DropdownMenuItem>
+                            )}
+                            {order.order_status === "NO_PICKUP" && (
+                              <DropdownMenuItem
+                                onClick={(e) => handleOpenCancelModal(order, e)}
+                                className="cursor-pointer text-red-500"
+                              >
+                                <X className="h-4 w-4 text-red-500" />
+                                Cancel order
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -451,7 +557,7 @@ export default function OrdersPage() {
                 </div>
               </>
             ) : (
-              /* Empty state */
+
               <div className="flex flex-col items-center justify-center py-4 sm:py-16">
                 <div className="mb-2 text-gray-300">
                   <ShoppingBasket size={56} />
@@ -459,40 +565,9 @@ export default function OrdersPage() {
                 <h3 className="mb-8 text-sm sm:text-lg sm:font-semibold text-gray-900">
                   You don't have any {currentStatus === "all" ? "" : currentStatus} orders
                 </h3>
-                <div className="w-full max-w-3xl space-y-3">
-                  <h4 className="text-sm font-semibold text-gray-900">
-                    Can't find your order?
-                  </h4>
-
-                  <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300">
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-900">
-                        Try signing in with another account
-                      </span>
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
-                  </button>
-
-                  <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300">
-                    <span className="text-sm text-gray-900">
-                      Self-service to find order
-                    </span>
-                    <ChevronRight className="h-5 w-5 text-gray-400" />
-                  </button>
-
-                  <Link href="/">
-                    <button className="flex w-full items-center justify-between rounded-lg border border-orange-500 bg-orange-50 p-4 text-left transition-colors hover:bg-orange-100">
-                      <span className="text-sm text-orange-600 font-medium">
-                        Start shopping now
-                      </span>
-                      <ChevronRight className="h-5 w-5 text-orange-500" />
-                    </button>
-                  </Link>
-                </div>
               </div>
             )}
 
-            {/* Pagination / Load More */}
             {hasMore && filteredOrders.length > 0 && (
               <div className="flex items-center justify-center pt-6">
                 <Button
@@ -503,7 +578,7 @@ export default function OrdersPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader className="h-4 w-4 animate-spin" />
                       Loading...
                     </>
                   ) : (
@@ -522,7 +597,6 @@ export default function OrdersPage() {
               </div>
             )}
 
-            {/* Order count summary */}
             {filteredOrders.length > 0 && (
               <div className="text-center text-xs text-gray-400">
                 Showing {filteredOrders.length} of {totalOrders} orders
@@ -532,9 +606,8 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Order Details Modal */}
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
-        <DialogContent className="sm:!max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:!max-w-[1000px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
               <Package className="h-5 w-5 text-orange-500" />
@@ -543,99 +616,266 @@ export default function OrdersPage() {
           </DialogHeader>
 
           {selectedOrder && (
-            <div className="space-y-6 py-4">
-              {/* Order Info */}
-              <div className="rounded-lg border border-gray-200 p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Order Number:</span>
-                  <span className="font-mono text-sm font-medium">#{selectedOrder.order_no}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Status:</span>
-                  <Badge className={`text-xs ${getStatusBadgeStyle(selectedOrder.order_status)}`}>
-                    {getStatusLabel(selectedOrder.order_status)}
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Date:</span>
-                  <span className="text-sm">{formatDate(selectedOrder.created_at)}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Delivery Type:</span>
-                  <span className="text-sm px-2 py-1 bg-blue-50 text-blue-700 rounded">
-                    {selectedOrder.delivery_type === "DOOR_TO_DOOR" ? "Door-to-Door" : selectedOrder.delivery_type}
-                  </span>
-                </div>
+            <div className="space-y-4 py-2">
+              <div className="flex items-center justify-between text-sm text-gray-500 border-b pb-3">
+                <span>Order #{selectedOrder.order_no}</span>
+                <span>{formatDateTime(selectedOrder.created_at)}</span>
               </div>
 
-              {/* Order Items */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3">Order Items ({selectedOrder.order_details.length})</h3>
-                <div className="space-y-3">
-                  {selectedOrder.order_details.map((detail) => (
-                    <div
-                      key={detail.id}
-                      className="flex items-center gap-4 p-3 rounded-lg border border-gray-200 hover:bg-gray-50"
-                    >
-                      <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-                        {detail.product_cover_image ? (
-                          <img
-                            src={detail.product_cover_image}
-                            alt={detail.product_name || "Product"}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <Package className="w-8 h-8 text-gray-400" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">
-                          {detail.product_name || "Product"}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Qty: {detail.quantity}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-green-600">
-                          ${detail.price.toFixed(2)}
-                        </p>
-                        {detail.discount > 0 && (
-                          <p className="text-xs text-gray-500">
-                            -${detail.discount.toFixed(2)}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+              {isDetailsLoading ? (
+                <div className="py-8 text-center flex flex-col items-center justify-center gap-2">
+                  <Loader className="h-6 w-6 animate-spin text-orange-500" />
+                  <p className="text-sm text-gray-600">Loading order details...</p>
                 </div>
-              </div>
+              ) : orderDetails.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {orderDetails.map((item) => {
+                    const profitRatio = item.profit / 100
+                    const orderPayment = item.price * item.quantity
+                    const commodityPayment = orderPayment * (1 - profitRatio)
+                    const expectedRevenue = orderPayment * profitRatio
 
-              {/* Order Summary */}
-              <div className="rounded-lg bg-gray-50 p-4 space-y-2">
+                    return (
+                      <div key={item.id} className="rounded-lg border border-gray-200 p-4 space-y-4">
+                        <div className="flex gap-4">
+                          <div className="w-20 h-20 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            {item.product_cover_image ? (
+                              <img
+                                src={item.product_cover_image}
+                                alt={item.product_name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <Package className="w-8 h-8 text-gray-400" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 line-clamp-3">
+                              {item.product_name}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">Payment Status:</span>
+                            <Badge className={`text-xs ${item.payment_status === "COMPLETED"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-yellow-100 text-yellow-800"
+                              }`}>
+                              <span className={`inline-block w-2 h-2 rounded-full mr-1.5 ${item.payment_status === "COMPLETED" ? "bg-green-500" : "bg-yellow-500"
+                                }`}></span>
+                              {item.payment_status}
+                            </Badge>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">Order Status:</span>
+                            <Badge className={`text-xs ${item.order_status === "SUCCESS"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                              }`}>
+                              <span className={`inline-block w-2 h-2 rounded-full mr-1.5 ${item.order_status === "SUCCESS" ? "bg-green-500" : "bg-red-500"
+                                }`}></span>
+                              {item.order_status}
+                            </Badge>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">Sign in Status:</span>
+                            <Badge className={`text-xs ${item.sign_in_status === "DELIVERED"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                              }`}>
+                              <span className={`inline-block w-2 h-2 rounded-full mr-1.5 ${item.sign_in_status === "DELIVERED" ? "bg-green-500" : "bg-red-500"
+                                }`}></span>
+                              {item.sign_in_status}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 pt-2 border-t">
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Order Quantity:</span>
+                            <span className="font-medium">{item.quantity}</span>
+                          </div>
+
+                          {item.discount > 0 && (
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-gray-600">Discount:</span>
+                              <span className="font-medium text-red-600">{item.discount}%</span>
+                            </div>
+                          )}
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Commodity Payment:</span>
+                            <span className="font-medium text-green-600">${commodityPayment.toFixed(2)}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Order Payment:</span>
+                            <span className="font-medium text-green-600">${orderPayment.toFixed(2)}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Profit ratio:</span>
+                            <span className="font-medium text-green-600">{item.profit}%</span>
+                          </div>
+
+                          <div className="flex items-center justify-between text-sm">
+                            <span className="text-gray-600">Expected revenue:</span>
+                            <span className="font-bold text-green-600">+ {expectedRevenue.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ) : (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-gray-500">No items found for this order</p>
+                </div>
+              )}
+
+              <div className="rounded-lg bg-gray-50 p-4 space-y-2 mt-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Total Items:</span>
+                  <span className="text-gray-600">Total Products:</span>
+                  <span>{selectedOrder.total_products}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Total Quantity:</span>
                   <span>{selectedOrder.total_quantity}</span>
                 </div>
-                {selectedOrder.total_discount > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Discount:</span>
-                    <span className="text-red-600">-${selectedOrder.total_discount.toFixed(2)}</span>
-                  </div>
-                )}
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
-                  <span>Total:</span>
+                  <span>Total Payment:</span>
                   <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
                 </div>
               </div>
 
-              {/* Close Button */}
-              <Button
-                onClick={() => setIsDetailModalOpen(false)}
-                className="w-full bg-orange-500 hover:bg-orange-600"
-              >
-                Close
-              </Button>
+              <div className="flex items-center justify-end gap-4">
+                <Button
+                  onClick={() => setIsDetailModalOpen(false)}
+                  className="w-auto bg-gray-500 hover:bg-gray-600"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isConfirmModalOpen} onOpenChange={setIsConfirmModalOpen}>
+        <DialogContent className="sm:!max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold flex items-center gap-2">
+              <Truck className="h-5 w-5 text-orange-500" />
+              Confirm & Shipping
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedOrder && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-lg bg-gray-50 p-4 space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Order No:</span>
+                  <span className="font-mono font-medium">#{selectedOrder.order_no}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Total Price:</span>
+                  <span className="font-medium">${selectedOrder.total_price.toFixed(2)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Total Quantity:</span>
+                  <span className="font-medium">{selectedOrder.total_quantity}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Total Discount:</span>
+                  <span className="font-medium text-red-600">{selectedOrder.total_discount}%</span>
+                </div>
+                <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
+                  <span>Total Paid:</span>
+                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsConfirmModalOpen(false)}
+                  disabled={isConfirmLoading}
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={handleConfirmShipping}
+                  disabled={isConfirmLoading}
+                  className="bg-orange-500 hover:bg-orange-600"
+                >
+                  {isConfirmLoading ? (
+                    <>
+                      <Loader className="h-4 w-4 animate-spin" />
+                      Confirming...
+                    </>
+                  ) : (
+                    <>
+                      <Truck className="h-4 w-4" />
+                      Confirm & Shipping
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
+        <DialogContent className="sm:!max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-bold flex items-center gap-2">
+              <X className="h-5 w-5 text-red-500" />
+              Cancel Order
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedOrder && (
+            <div className="space-y-4 py-2">
+              <div className="rounded-lg bg-red-50 p-4 border border-red-100">
+                <p className="text-sm text-gray-700">
+                  Are you sure you want to cancel order <span className="font-mono font-bold">#{selectedOrder.order_no}</span>?
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCancelModalOpen(false)}
+                  disabled={isCancelLoading}
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={handleCancelOrder}
+                  disabled={isCancelLoading}
+                  className="bg-red-500 hover:bg-red-600"
+                >
+                  {isCancelLoading ? (
+                    <>
+                      <Loader className="h-4 w-4 animate-spin" />
+                      Cancelling...
+                    </>
+                  ) : (
+                    <>
+                      <X className="h-4 w-4" />
+                      Cancel
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
