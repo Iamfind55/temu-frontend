@@ -11,7 +11,7 @@ export default function AccountLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col py-6 mb-4">
       <SiteHeader className="bg-white text-black border-b" />
       <div className="flex items-center justify-center mt-4">
         <div className="px-2 sm:container w-full">

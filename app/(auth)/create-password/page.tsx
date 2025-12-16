@@ -3,18 +3,19 @@
 import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
+import { useDispatch } from "react-redux"
 import { useMutation } from "@apollo/client/react"
 import { Lock, Eye, EyeOff, Loader } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useDispatch } from "react-redux"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SiteFooter } from "@/components/site-footer"
+import { calculatePasswordQuality } from "./functions"
+import { signIn } from "@/app/redux/slice/customerAuthSlice"
 import { MUTATION_CUSTOMER_CREATE_PASSWORD } from "@/app/api/auth"
 import { ICreatePasswordResponse } from "@/app/interface/customer"
-import { signIn } from "@/app/redux/slice/customerAuthSlice"
 
 export default function CreatePasswordPage() {
   const router = useRouter()
@@ -31,21 +32,6 @@ export default function CreatePasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const [createPassword] = useMutation<ICreatePasswordResponse>(MUTATION_CUSTOMER_CREATE_PASSWORD)
-
-  const calculatePasswordQuality = (pwd: string): string => {
-    if (pwd.length === 0) return "-"
-    if (pwd.length < 8) return "Weak"
-
-    let strength = 0
-    if (pwd.length >= 12) strength++
-    if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++
-    if (/\d/.test(pwd)) strength++
-    if (/[^a-zA-Z0-9]/.test(pwd)) strength++
-
-    if (strength >= 3) return "Strong"
-    if (strength >= 2) return "Medium"
-    return "Weak"
-  }
 
   const handlePasswordChange = (value: string) => {
     setPassword(value)

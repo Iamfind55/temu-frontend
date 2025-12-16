@@ -1,10 +1,9 @@
 "use client"
 
-import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useLazyQuery, useMutation } from "@apollo/client/react"
-import { ChevronRight, ShoppingBasket, Package, Truck, CheckCircle, Loader, ChevronDown, MoreVertical, Eye, X } from "lucide-react"
+import { useLazyQuery, useMutation, useApolloClient } from "@apollo/client/react"
+import { ShoppingBasket, Package, Truck, Loader, ChevronDown, MoreVertical, Eye, X } from "lucide-react"
 
 // Components
 import {
@@ -19,87 +18,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 // API & Utils
 import { useToast } from "@/lib/toast"
+import { orderTabs } from "./constants"
 import { QUERY_SHOP_ORDERS, QUERY_SHOP_ORDER_DETAILS, MUTATION_SHOP_CONFIRM_ORDER, MUTATION_SHOP_CANCEL_ORDER } from "@/app/api/shop/order"
 
 // Types
 import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsResponse, ShopConfirmOrderResponse, ShopCancelOrderResponse } from "@/types/shopOrder"
-
-const orderTabs = [
-  { label: "No Pickup", value: "no_pickup", icon: Package, statusFilter: "NO_PICKUP" },
-  { label: "All orders", value: "all", icon: Package, statusFilter: null },
-  { label: "Processing", value: "processing", icon: Loader, statusFilter: "PROCESSING" },
-  { label: "Packing", value: "packing", icon: Package, statusFilter: "PACKING" },
-  { label: "Shipping", value: "shipping", icon: Truck, statusFilter: "SHIPPING" },
-  { label: "Completed", value: "completed", icon: CheckCircle, statusFilter: "SUCCESS" },
-  { label: "Cancelled", value: "cancelled", icon: X, statusFilter: "CANCELLED" },
-]
-
-const getStatusBadgeStyle = (status: string) => {
-  switch (status) {
-    case "NO_PICKUP":
-      return "bg-green-100 text-green-800"
-    case "PROCESSING":
-      return "bg-yellow-100 text-yellow-800"
-    case "PACKING":
-      return "bg-purple-100 text-purple-800"
-    case "SHIPPING":
-      return "bg-blue-100 text-blue-800"
-    case "SUCCESS":
-      return "bg-green-100 text-green-800"
-    case "CANCELLED":
-      return "bg-red-100 text-red-800"
-    case "FAILED":
-      return "bg-red-100 text-red-800"
-    default:
-      return "bg-gray-100 text-gray-800"
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case "ACTIVE":
-      return "Active"
-    case "PACKING":
-      return "Packing"
-    case "SHIPPING":
-      return "Shipping"
-    case "SUCCESS":
-      return "Completed"
-    case "CANCELLED":
-      return "Cancelled"
-    case "FAILED":
-      return "Failed"
-    default:
-      return status
-  }
-}
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return "-"
-  const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  })
-}
-
-const formatDateTime = (dateString: string) => {
-  if (!dateString) return "-"
-  const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  })
-}
+import { formatDate, formatDateTime, getStatusBadgeStyle, getStatusLabel } from "./functions"
 
 export default function ShopOrdersPage() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const client = useApolloClient()
   const { errorMessage, successMessage } = useToast()
 
   const currentStatus = searchParams.get("status") || "no_pickup"
@@ -114,6 +43,7 @@ export default function ShopOrdersPage() {
   const [isConfirmLoading, setIsConfirmLoading] = useState(false)
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
   const [isCancelLoading, setIsCancelLoading] = useState(false)
+  const [tabCounts, setTabCounts] = useState<Record<string, number>>({})
   const limit = 20
 
   // Get orders query
@@ -139,6 +69,39 @@ export default function ShopOrdersPage() {
     const tab = orderTabs.find(t => t.value === currentStatus)
     return tab?.statusFilter || null
   }
+
+  // Function to fetch tab counts
+  const fetchTabCounts = async () => {
+    const counts: Record<string, number> = {}
+
+    const promises = orderTabs.map(async (tab) => {
+      try {
+        const result = await client.query<ShopGetOrdersResponse>({
+          query: QUERY_SHOP_ORDERS,
+          variables: {
+            page: 1,
+            limit: 1,
+            where: tab.statusFilter ? { order_status: tab.statusFilter } : null,
+          },
+          fetchPolicy: "network-only",
+        })
+
+        if (result.data?.shopGetOrders?.success) {
+          counts[tab.value] = result.data.shopGetOrders.total
+        }
+      } catch (err) {
+        console.error(`Error fetching count for ${tab.value}:`, err)
+      }
+    })
+
+    await Promise.all(promises)
+    setTabCounts(counts)
+  }
+
+  // Fetch tab counts on mount
+  useEffect(() => {
+    fetchTabCounts()
+  }, [])
 
   // Fetch orders when tab changes
   useEffect(() => {
@@ -257,6 +220,7 @@ export default function ShopOrdersPage() {
         })
         setIsConfirmModalOpen(false)
 
+        // Refresh orders list and tab counts
         const statusFilter = getStatusFilter()
         getOrders({
           variables: {
@@ -266,6 +230,7 @@ export default function ShopOrdersPage() {
             where: statusFilter ? { order_status: statusFilter } : null,
           },
         })
+        fetchTabCounts()
       } else {
         errorMessage({
           message: result.data?.shopConfirmOrder?.error?.details || "Failed to confirm order",
@@ -307,7 +272,7 @@ export default function ShopOrdersPage() {
         })
         setIsCancelModalOpen(false)
 
-        // Refresh orders list
+        // Refresh orders list and tab counts
         const statusFilter = getStatusFilter()
         getOrders({
           variables: {
@@ -317,6 +282,7 @@ export default function ShopOrdersPage() {
             where: statusFilter ? { order_status: statusFilter } : null,
           },
         })
+        fetchTabCounts()
       } else {
         errorMessage({
           message: result.data?.shopCancelOrder?.error?.details || "Failed to cancel order",
@@ -360,7 +326,13 @@ export default function ShopOrdersPage() {
                       : ""
                       }`}
                   >
-                    {tab.value !== "all" && <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+                    {tabCounts[tab.value] > 0 ? (
+                      <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1 text-xs font-semibold rounded-full bg-orange-400 text-white">
+                        {tabCounts[tab.value]}
+                      </span>
+                    ) : (
+                      tab.value !== "all" && <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    )}
                     <span className="hidden sm:inline">{tab.label}</span>
                     <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
                   </button>

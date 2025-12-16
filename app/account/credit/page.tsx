@@ -19,87 +19,22 @@ import {
   QUERY_GET_CUSTOMER_CREDIT_BALANCE
 } from "@/app/api/credit"
 import { useToast } from "@/lib/toast"
-
-interface CloudinaryResponse {
-  secure_url?: string
-}
-
-interface DepositBalanceResponse {
-  customerRechargeBalance: {
-    success: boolean
-    data?: {
-      id: string
-    }
-    error?: {
-      message: string
-      code: string
-      details: string
-    }
-  }
-}
-
-interface Transaction {
-  id: string
-  identifier: string
-  amount: number
-  coin_type: string
-  wallet_id: string
-  status: string
-  type: string
-  created_at: string
-  customer_id: string
-  payment_slip: string
-  account_number: string
-}
-
-interface TransactionHistoryResponse {
-  customerGetTransactionHistories: {
-    success: boolean
-    total: number
-    data: Transaction[]
-    error?: {
-      message: string
-      code: string
-      details: string
-    }
-  }
-}
-
-interface WalletData {
-  id: string
-  name: string
-  total_balance: number
-  total_frozen_balance: number
-  total_recharged: number
-  total_withdraw: number
-  total_withdraw_able_balance: number
-  status: string
-  customer_id: string
-}
-
-interface WalletBalanceResponse {
-  getCustomerWallet: {
-    success: boolean
-    data: WalletData
-    error?: {
-      message: string
-      code: string
-      details: string
-    } | null
-  }
-}
+import { cryptoAddresses } from "./constants"
+import { CloudinaryResponse, DepositBalanceResponse, TransactionHistoryResponse, WalletBalanceResponse } from "./interfaces"
 
 export default function CreditPage() {
+  const { successMessage, errorMessage } = useToast()
+  const [depositBalance] = useMutation<DepositBalanceResponse>(MUTATION_DEPOSIT_BALANCE)
+
+  // states
   const [amount, setAmount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  const [copySuccess, setCopySuccess] = useState(false)
   const [cryptoType, setCryptoType] = useState("ERC20")
   const [transactionId, setTransactionId] = useState("")
   const [voucherFile, setVoucherFile] = useState<File | null>(null)
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [copySuccess, setCopySuccess] = useState(false)
 
-  const { successMessage, errorMessage } = useToast()
-  const [depositBalance] = useMutation<DepositBalanceResponse>(MUTATION_DEPOSIT_BALANCE)
 
   // Fetch wallet balance
   const { data: walletData, loading: walletLoading, refetch: refetchWallet } = useQuery<WalletBalanceResponse>(
@@ -122,13 +57,6 @@ export default function CreditPage() {
   )
 
   const transactions = transactionsData?.customerGetTransactionHistories?.data || []
-
-  const cryptoAddresses = {
-    ERC20: "0x64595371ef111e9991c10A9C92262d13FF7C4BbA",
-    TRC20: "TUmVmsJGN58H5ntcvqrx5SdV8hUiRQMP5D",
-    BTC: "bc1p62l8tycjh7f2e5zrn06hkmy7mj9acme0sg75p5thcc3gltwqr6msy0m9nn",
-  }
-
   const accountAddress = cryptoAddresses[cryptoType as keyof typeof cryptoAddresses]
   const conversionRate = 1.00
 
@@ -283,7 +211,6 @@ export default function CreditPage() {
           <div className="mb-8">
             <h2 className="mb-4 text-md font-bold text-gray-900">Histories:</h2>
 
-            {/* Table header */}
             <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
               <div className="text-center">ID</div>
               <div>Voucher</div>
@@ -294,7 +221,6 @@ export default function CreditPage() {
               <div>Date</div>
             </div>
 
-            {/* Transaction rows */}
             {transactionsLoading ? (
               <div className="py-12 text-center">
                 <Loader className="mx-auto mb-4 h-6 w-6 animate-spin text-orange-500" />

@@ -151,7 +151,7 @@ export function ShopDashboardSidebar() {
                                  ) || "all";
 
                               const isSubActive =
-                                 pathname === "/account/orders" && subStatus === status;
+                                 pathname === "/shop-dashboard/orders" && subStatus === status;
 
                               return (
                                  <Link

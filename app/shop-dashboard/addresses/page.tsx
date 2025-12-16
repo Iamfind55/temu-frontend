@@ -20,20 +20,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export default function AddressesPage() {
   const { errorMessage, successMessage } = useToast();
   const [cityId, setCityId] = React.useState<string>("");
-  const [cityName, setCityName] = React.useState<string>("");
   const [stateId, setStateId] = React.useState<string>("");
+  const [isDeleting, setIsDeleting] = React.useState(false);
+  const [cityName, setCityName] = React.useState<string>("");
   const [stateName, setStateName] = React.useState<string>("");
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [countryId, setCountryId] = React.useState<string>("");
+  const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
   const [countryName, setCountryName] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
   const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [deleteTargetId, setDeleteTargetId] = React.useState<string>("");
   const [editingAddressId, setEditingAddressId] = React.useState<string>("");
   const [isSettingDefault, setIsSettingDefault] = React.useState(false);
-  const [isDeleting, setIsDeleting] = React.useState(false);
 
   const { shop } = useShopStore();
 

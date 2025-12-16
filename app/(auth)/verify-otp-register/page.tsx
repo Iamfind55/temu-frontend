@@ -2,24 +2,24 @@
 
 import Link from "next/link"
 import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Lock, ChevronLeft, Loader } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
+import { useState, useRef, useEffect } from "react"
+import { Lock, ChevronLeft, Loader } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SiteFooter } from "@/components/site-footer"
-import { MUTATION_CUSTOMER_VERIFY_OTP_REGISTER, MUTATION_CUSTOMER_REGISTER_EMAIL } from "@/app/api/auth"
 import { IVerifyOtpRegisterResponse, IRegisterEmailResponse } from "@/app/interface/customer"
+import { MUTATION_CUSTOMER_VERIFY_OTP_REGISTER, MUTATION_CUSTOMER_REGISTER_EMAIL } from "@/app/api/auth"
 
 export default function VerifyOtpRegisterPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { successMessage, errorMessage } = useToast()
-  const email = searchParams.get("email") || ""
 
+  const email = searchParams.get("email") || ""
   const [countdown, setCountdown] = useState(120)
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const [isLoading, setIsLoading] = useState(false)

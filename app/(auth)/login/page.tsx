@@ -3,10 +3,10 @@
 import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
-import { Loader, Lock } from "lucide-react"
-import { useRouter, useSearchParams } from "next/navigation"
 import { useDispatch } from "react-redux"
+import { Loader, Lock } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
@@ -32,7 +32,6 @@ export default function LoginPage() {
 
   // Get redirect URL from query params
   const redirectUrl = searchParams.get("redirect") || "/account/orders"
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value })
   }

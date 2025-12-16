@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react";
-import { MapPin, Plus, PlusIcon, Save, SettingsIcon, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader } from "lucide-react"
+import { useSelector } from "react-redux";
+import { MapPin, Plus, Save, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader } from "lucide-react"
 
 import { useToast } from "@/lib/toast";
 import { useLazyQuery, useMutation } from "@apollo/client/react";
@@ -14,7 +15,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useSelector } from "react-redux";
 
 export default function AddressesPage() {
   const { errorMessage, successMessage } = useToast();

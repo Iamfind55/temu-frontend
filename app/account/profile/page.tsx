@@ -1,8 +1,8 @@
 "use client"
 
 import React from "react";
-import { User, Mail, Phone, Calendar, Save, X, Loader } from "lucide-react"
 import { useMutation, useQuery } from "@apollo/client/react";
+import { User, Mail, Phone, Calendar, Save, X, Loader } from "lucide-react"
 
 // API & Interfaces
 import { useToast } from "@/lib/toast";
@@ -10,11 +10,11 @@ import { MUTATION_UPDATE_CUSTOMER_INFORMATION, QUERY_CUSTOMER_INFORMATION } from
 import { IUpdateCustomerInformationResponse, IGetCustomerInformationResponse } from "@/app/interface/customer";
 
 // components
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 interface CloudinaryResponse {
   secure_url?: string;
@@ -58,7 +58,6 @@ export default function ProfilePage() {
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return "";
-      // Format as YYYY-MM-DD
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');

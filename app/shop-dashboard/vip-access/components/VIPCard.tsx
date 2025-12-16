@@ -1,5 +1,5 @@
+import { VIPLevel } from "@/app/interface/vip-level"
 import { Crown, Check, Sparkles } from "lucide-react"
-import { VIPLevel } from "./types"
 
 interface VIPCardProps {
    level: VIPLevel

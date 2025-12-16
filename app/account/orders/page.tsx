@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useLazyQuery, useMutation } from "@apollo/client/react"
-import { ChevronRight, ShoppingBasket, Package, Truck, CheckCircle, RotateCcw, Loader, ChevronDown, MoreVertical, Eye, Trash2, X } from "lucide-react"
+import { ChevronRight, ShoppingBasket, Package, Loader, ChevronDown, MoreVertical, Eye, Trash2 } from "lucide-react"
 
 // Components
 import {
@@ -19,107 +19,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 
 // API & Utils
 import { useToast } from "@/lib/toast"
+import { orderTabs } from "./constants"
+import { GetOrdersResponse, Order } from "./interfaces"
+import { formatDate, getStatusBadgeStyle, getStatusLabel } from "./functions"
 import { QUERY_GET_CUSTOMER_ORDERS, MUTATION_DELETE_ORDER } from "@/app/api/order"
-
-interface OrderDetail {
-  id: string
-  product_name: string | null
-  product_cover_image: string | null
-  price: number
-  order_no: string
-  discount: number
-  delivery_type: string | null
-  quantity: number
-  product_id: string
-}
-
-interface Order {
-  id: string
-  order_no: string
-  order_status: string
-  total_products: number
-  total_quantity: number
-  total_price: number
-  total_discount: number
-  delivery_type: string
-  status: string
-  created_at: string
-  order_details: OrderDetail[]
-}
-
-interface GetOrdersResponse {
-  customerGetOrders: {
-    success: boolean
-    total: number
-    data: Order[]
-    error?: {
-      message: string
-      code: string
-      details: string
-    }
-  }
-}
-
-const orderTabs = [
-  { label: "All orders", value: "all", icon: Package, statusFilter: null },
-  { label: "Processing", value: "processing", icon: Loader, statusFilter: "NO_PICKUP" },
-  { label: "Packing", value: "packing", icon: Package, statusFilter: "PACKING" },
-  { label: "Shipping", value: "shipping", icon: Truck, statusFilter: "SHIPPING" },
-  { label: "Completed", value: "completed", icon: CheckCircle, statusFilter: "SUCCESS" },
-  { label: "Cancelled", value: "cancelled", icon: X, statusFilter: "CANCELLED" },
-]
-
-const getStatusBadgeStyle = (status: string) => {
-  switch (status) {
-    case "NO_PICKUP":
-      return "bg-yellow-100 text-yellow-800"
-    case "PROCESSING":
-      return "bg-orange-100 text-orange-800"
-    case "PACKING":
-      return "bg-purple-100 text-purple-800"
-    case "SHIPPING":
-      return "bg-blue-100 text-blue-800"
-    case "SUCCESS":
-      return "bg-green-100 text-green-800"
-    case "CANCELLED":
-      return "bg-gray-100 text-gray-800"
-    case "FAILED":
-      return "bg-red-100 text-red-800"
-    default:
-      return "bg-gray-100 text-gray-800"
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case "NO_PICKUP":
-      return "Pending"
-    case "PROCESSING":
-      return "Processing"
-    case "PACKING":
-      return "Packing"
-    case "SHIPPING":
-      return "Shipping"
-    case "SUCCESS":
-      return "Completed"
-    case "CANCELLED":
-      return "Cancelled"
-    case "FAILED":
-      return "Failed"
-    default:
-      return status
-  }
-}
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return "-"
-  const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  })
-}
 
 export default function OrdersPage() {
   const searchParams = useSearchParams()
@@ -139,11 +42,7 @@ export default function OrdersPage() {
     QUERY_GET_CUSTOMER_ORDERS,
     { fetchPolicy: "network-only" }
   )
-
-  // Delete order mutation
   const [deleteOrder, { loading: deleteLoading }] = useMutation(MUTATION_DELETE_ORDER)
-
-  // Get status filter based on current tab
   const getStatusFilter = () => {
     const tab = orderTabs.find(t => t.value === currentStatus)
     return tab?.statusFilter || null
@@ -275,9 +174,7 @@ export default function OrdersPage() {
             </div>
           </div>
 
-          {/* Orders */}
           <div className="mb-8">
-            {/* Desktop Table header - hidden on mobile */}
             <div className="hidden md:grid mb-4 grid-cols-8 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
               <div className="text-center">#</div>
               <div>Order No</div>
@@ -289,7 +186,6 @@ export default function OrdersPage() {
               <div className="text-center">Actions</div>
             </div>
 
-            {/* Loading state */}
             {loading && allOrders.length === 0 ? (
               <div className="py-12 text-center flex items-center justify-center gap-2">
                 <Loader className="h-5 w-5 animate-spin text-orange-500" />
@@ -301,14 +197,12 @@ export default function OrdersPage() {
               </div>
             ) : filteredOrders.length > 0 ? (
               <>
-                {/* Mobile Card View */}
                 <div className="md:hidden space-y-3">
                   {filteredOrders.map((order) => (
                     <div
                       key={order.id}
                       className="bg-white border border-gray-200 rounded-xl p-2 shadow-sm"
                     >
-                      {/* Card Header */}
                       <div className="flex items-center justify-between mb-3">
                         <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
                           #{order.order_no.slice(-8)}
@@ -349,7 +243,6 @@ export default function OrdersPage() {
                         </div>
                       </div>
 
-                      {/* Card Body */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-500">Products</span>
@@ -365,7 +258,6 @@ export default function OrdersPage() {
                         </div>
                       </div>
 
-                      {/* Card Footer - View Details Button */}
                       <Button
                         variant="outline"
                         size="sm"
@@ -379,7 +271,6 @@ export default function OrdersPage() {
                   ))}
                 </div>
 
-                {/* Desktop Table View */}
                 <div className="hidden md:block space-y-2">
                   {filteredOrders.map((order, index: number) => (
                     <div
@@ -451,7 +342,6 @@ export default function OrdersPage() {
                 </div>
               </>
             ) : (
-              /* Empty state */
               <div className="flex flex-col items-center justify-center py-4 sm:py-16">
                 <div className="mb-2 text-gray-300">
                   <ShoppingBasket size={56} />
@@ -492,7 +382,6 @@ export default function OrdersPage() {
               </div>
             )}
 
-            {/* Pagination / Load More */}
             {hasMore && filteredOrders.length > 0 && (
               <div className="flex items-center justify-center pt-6">
                 <Button
@@ -532,7 +421,6 @@ export default function OrdersPage() {
         </div>
       </div>
 
-      {/* Order Details Modal */}
       <Dialog open={isDetailModalOpen} onOpenChange={setIsDetailModalOpen}>
         <DialogContent className="sm:!max-w-[600px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -544,7 +432,6 @@ export default function OrdersPage() {
 
           {selectedOrder && (
             <div className="space-y-6 py-4">
-              {/* Order Info */}
               <div className="rounded-lg border border-gray-200 p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Order Number:</span>
@@ -568,7 +455,6 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              {/* Order Items */}
               <div>
                 <h3 className="text-sm font-semibold mb-3">Order Items ({selectedOrder.order_details.length})</h3>
                 <div className="space-y-3">
@@ -611,7 +497,6 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              {/* Order Summary */}
               <div className="rounded-lg bg-gray-50 p-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">Total Items:</span>
@@ -629,7 +514,6 @@ export default function OrdersPage() {
                 </div>
               </div>
 
-              {/* Close Button */}
               <Button
                 onClick={() => setIsDetailModalOpen(false)}
                 className="w-full bg-orange-500 hover:bg-orange-600"

@@ -4,8 +4,8 @@ import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Lock, ChevronLeft, Loader } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
+import { Lock, ChevronLeft, Loader } from "lucide-react"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
@@ -105,7 +105,7 @@ export default function RegisterPage() {
               Enter your email address to get started. We'll send you a verification code.
             </p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-medium">

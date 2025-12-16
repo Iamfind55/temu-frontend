@@ -8,99 +8,31 @@ import { uploadToCloudinary } from "@/lib/cloudinary-upload"
 import { ChevronDown, ChevronUp, Info, Upload, X, CheckCircle, Clock, Loader } from "lucide-react"
 
 // components
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 import { useMutation } from "@apollo/client/react"
+import { businessTypes, faqItems, steps } from "./constants"
 import { MUTATION_SHOP_UPDATE_INFORMATION } from "@/app/api/shop/auth"
-
-// Business types data
-const businessTypes = [
-   {
-      id: "sole_proprietorship",
-      name: "Sole proprietorship",
-      description: "You own an unincorporated business by yourself.",
-   },
-   {
-      id: "corporation",
-      name: "Corporation",
-      description: "The legal entity of your business is independent from its owners.",
-   },
-   {
-      id: "partnership",
-      name: "Partnership",
-      description: "You and one or more people run a business together.",
-   },
-   {
-      id: "individual",
-      name: "Individual",
-      description: "You're selling under your own name, not as a registered business.",
-   },
-]
-
-// Countries data
-const countries = [
-   { code: "US", name: "United States" },
-   { code: "GB", name: "United Kingdom" },
-   { code: "CA", name: "Canada" },
-   { code: "AU", name: "Australia" },
-   { code: "DE", name: "Germany" },
-   { code: "FR", name: "France" },
-   { code: "JP", name: "Japan" },
-   { code: "CN", name: "China" },
-   { code: "KR", name: "South Korea" },
-   { code: "SG", name: "Singapore" },
-]
-
-// FAQ data
-const faqItems = [
-   {
-      question: "Why do I need to provide my 'Business Type'?",
-      answer: "Your business type helps us understand your legal structure and ensures we provide the appropriate seller experience and tax documentation for your situation.",
-   },
-   {
-      question: "What if my country is not listed?",
-      answer: "Currently, Temu seller services are only available in select countries. We're continuously expanding to new regions. Please check back later or contact support for updates.",
-   },
-   {
-      question: "What is 'EIN'?",
-      answer: "An EIN (Employer Identification Number) is a unique nine-digit number assigned by the IRS to businesses operating in the United States for tax purposes.",
-   },
-]
-
-const steps = [
-   { number: 1, label: "Business information" },
-   { number: 2, label: "Seller information" },
-   { number: 3, label: "Shop" },
-]
 
 export default function ApplicationPage() {
    const { successMessage, errorMessage } = useToast()
    const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION)
 
-   const [currentStep, setCurrentStep] = useState(1)
-
-   // Step 1: Business Information
-   const [country, setCountry] = useState("US")
-   const [businessType, setBusinessType] = useState("")
-   const [showCountryDropdown, setShowCountryDropdown] = useState(false)
-
-   // Step 2: Seller Information
+   const [remark, setRemark] = useState("")
    const [fullName, setFullName] = useState("")
    const [username, setUsername] = useState("")
    const [storeName, setStoreName] = useState("")
-   const [phoneNumber, setPhoneNumber] = useState("")
+   const [currentStep, setCurrentStep] = useState(1)
    const [dateOfBirth, setDateOfBirth] = useState("")
-   const [remark, setRemark] = useState("")
+   const [phoneNumber, setPhoneNumber] = useState("")
+   const [businessType, setBusinessType] = useState("")
    const [idFrontImage, setIdFrontImage] = useState<File | null>(null)
    const [idBackImage, setIdBackImage] = useState<File | null>(null)
    const [idFrontPreview, setIdFrontPreview] = useState<string | null>(null)
    const [idBackPreview, setIdBackPreview] = useState<string | null>(null)
 
-   // Loading state for submit (includes upload + mutation)
    const [isSubmitting, setIsSubmitting] = useState(false)
-
-   // FAQ state
    const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
    const handleNext = () => {

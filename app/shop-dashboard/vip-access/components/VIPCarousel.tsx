@@ -1,14 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { VIPCard } from "./VIPCard"
 import { vipLevels } from "../constant"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 export function VIPCarousel() {
    const [currentIndex, setCurrentIndex] = useState(0)
-   const [touchStart, setTouchStart] = useState<number | null>(null)
    const [touchEnd, setTouchEnd] = useState<number | null>(null)
+   const [touchStart, setTouchStart] = useState<number | null>(null)
 
    const minSwipeDistance = 50
 

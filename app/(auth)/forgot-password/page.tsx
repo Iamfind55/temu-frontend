@@ -4,9 +4,8 @@ import Link from "next/link"
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Lock, ChevronLeft, Loader } from "lucide-react"
-
 import { useMutation } from "@apollo/client/react"
+import { Lock, ChevronLeft, Loader } from "lucide-react"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
@@ -18,9 +17,9 @@ import { IForgotPasswordResponse } from "@/app/interface/customer"
 
 export default function ForgotPasswordPage() {
   const router = useRouter()
-  const { successMessage, errorMessage } = useToast()
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const { successMessage, errorMessage } = useToast()
   const [forgotPassword] = useMutation<IForgotPasswordResponse>(MUTATION_CUSTOMER_FORGOT_PASSWORD)
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -2,36 +2,39 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import { TrendingUp, Zap, DollarSign, Headphones, Eye, EyeOff, CreditCard, MessageCircle, Wallet, ChevronUp, ChevronDown, ArrowLeft, Loader, CircleCheck } from "lucide-react"
-import { useMutation } from "@apollo/client/react"
 import Cookies from "js-cookie"
-
-// Components
 import { cn } from "@/lib/utils"
 import { useToast } from "@/lib/toast"
-import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_RESEND_VERIFY_SHOP_EMAIL } from "@/app/api/shop/auth"
+import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useMutation } from "@apollo/client/react"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { Eye, EyeOff, ChevronUp, ChevronDown, ArrowLeft, Loader, CircleCheck } from "lucide-react"
+
+// Components
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { AuthModals, AuthModalType } from "@/components/auth-modals"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
+// constants:
+import { features, whySellFeatures } from "./constants"
+import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_RESEND_VERIFY_SHOP_EMAIL } from "@/app/api/shop/auth"
+
 export default function ShopLandingPage() {
    const router = useRouter()
    const { successMessage, errorMessage } = useToast()
    const [showPassword, setShowPassword] = useState(false)
-   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
    const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0)
    const [activeModal, setActiveModal] = useState<AuthModalType>(null)
+   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
    // Hero sign up verification state
+   const [heroCanResend, setHeroCanResend] = useState(false)
+   const [heroResendCountdown, setHeroResendCountdown] = useState(60)
    const [isHeroVerificationOpen, setIsHeroVerificationOpen] = useState(false)
    const [heroOtpDigits, setHeroOtpDigits] = useState(["", "", "", "", "", ""])
-   const [heroResendCountdown, setHeroResendCountdown] = useState(60)
-   const [heroCanResend, setHeroCanResend] = useState(false)
 
    // Form state
    const [email, setEmail] = useState("")
@@ -63,45 +66,6 @@ export default function ShopLandingPage() {
          noEmail: noEmail,
       })
    }, [password, email])
-
-   const features = [
-      { icon: TrendingUp, text: "Trending Platform" },
-      { icon: Zap, text: "Fast First Sale" },
-      { icon: DollarSign, text: "Cost-efficient from the Start" },
-      { icon: Headphones, text: "Personalized Seller Support" },
-   ]
-
-   const whySellFeatures = [
-      {
-         icon: TrendingUp,
-         titleHighlight: "Trending",
-         titleNormal: "Platform",
-         highlightFirst: true,
-         description: "Thanks to Temu's global popularity and influence, you'll be able to easily promote your products to more potential customers.",
-      },
-      {
-         icon: CreditCard,
-         titleHighlight: "First Sale",
-         titleNormal: "Fast",
-         highlightFirst: false,
-         description: "With Temu's high traffic, 50% of new sellers make their first sale within 20 days.",
-         footnote: "2",
-      },
-      {
-         icon: Wallet,
-         titleHighlight: "Cost-efficient",
-         titleNormal: "from the Start",
-         highlightFirst: true,
-         description: "Benefit from cost-efficiency in store setup, selling, operation and marketing",
-      },
-      {
-         icon: MessageCircle,
-         titleHighlight: "Personalized",
-         titleNormal: "Seller Support",
-         highlightFirst: true,
-         description: "Our dedicated team of specialists is here to support your success. From onboarding to boosting product competitiveness, our experienced team provides the guidance you need every step.",
-      },
-   ]
 
    const faqItems = [
       {
@@ -176,19 +140,16 @@ export default function ShopLandingPage() {
    const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
 
-      // Validate empty fields
       if (!email || !password) {
          errorMessage({ message: "Please enter email and password" })
          return
       }
 
-      // Validate passwords match
       if (password !== confirmPassword) {
          errorMessage({ message: "Passwords do not match" })
          return
       }
 
-      // Validate password requirements
       if (!passwordValidation.minLength || !passwordValidation.mixedChars || !passwordValidation.noEmail) {
          errorMessage({ message: "Please meet all password requirements" })
          return
@@ -204,11 +165,9 @@ export default function ShopLandingPage() {
             },
          })
 
-         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopRegister?.success) {
             successMessage({ message: "Registration successful! Please verify your email." })
-            // Show verification modal
             setHeroResendCountdown(60)
             setHeroCanResend(false)
             setHeroOtpDigits(["", "", "", "", "", ""])
@@ -249,7 +208,6 @@ export default function ShopLandingPage() {
 
    const handleHeroResendCode = async () => {
       if (!heroCanResend || resendLoading) return
-
       try {
          const response = await resendShopOTP({
             variables: {
@@ -259,7 +217,6 @@ export default function ShopLandingPage() {
             },
          })
 
-         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopResendOTP?.success) {
             successMessage({ message: "Verification code resent!" })
@@ -289,10 +246,8 @@ export default function ShopLandingPage() {
             },
          })
 
-         // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopVerifyOTP?.success) {
-            // Save token to cookie for shop update mutation
             const token = result?.shopVerifyOTP?.data?.token
             if (token) {
                Cookies.set("auth_token", token)
@@ -310,7 +265,6 @@ export default function ShopLandingPage() {
       }
    }
 
-   // Countdown timer for hero verification
    useEffect(() => {
       let timer: NodeJS.Timeout
       if (isHeroVerificationOpen && heroResendCountdown > 0) {
@@ -629,7 +583,6 @@ export default function ShopLandingPage() {
             </div>
          </section>
 
-         {/* Hero Sign Up Verification Modal */}
          <Dialog open={isHeroVerificationOpen} onOpenChange={setIsHeroVerificationOpen}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
@@ -703,7 +656,6 @@ export default function ShopLandingPage() {
             </DialogContent>
          </Dialog>
 
-         {/* Auth Modals for Sign In */}
          <AuthModals activeModal={activeModal} onModalChange={setActiveModal} />
       </div>
    )

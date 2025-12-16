@@ -2,17 +2,17 @@
 
 import Link from "next/link"
 import type React from "react"
-import { useState, useRef, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Lock, ChevronLeft, Loader } from "lucide-react"
 import { useMutation } from "@apollo/client/react"
+import { useState, useRef, useEffect } from "react"
+import { Lock, ChevronLeft, Loader } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { SiteFooter } from "@/components/site-footer"
-import { MUTATION_CUSTOMER_OTP_VERIFY, MUTATION_CUSTOMER_RESEND_OTP } from "@/app/api/auth"
 import { IVerifyOtpResponse, IResendOtpResponse } from "@/app/interface/customer"
+import { MUTATION_CUSTOMER_OTP_VERIFY, MUTATION_CUSTOMER_RESEND_OTP } from "@/app/api/auth"
 
 export default function VerifyOtpPage() {
   const router = useRouter()
@@ -36,13 +36,11 @@ export default function VerifyOtpPage() {
     }
   }, [countdown])
 
-  // Auto-focus first input on mount
   useEffect(() => {
     inputRefs.current[0]?.focus()
   }, [])
 
   const handleChange = (index: number, value: string) => {
-    // Only allow single digit
     if (!/^\d*$/.test(value)) return
     if (value.length > 1) return
 
@@ -50,14 +48,12 @@ export default function VerifyOtpPage() {
     newOtp[index] = value
     setOtp(newOtp)
 
-    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus()
     }
   }
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Handle backspace
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus()
     }
@@ -76,7 +72,6 @@ export default function VerifyOtpPage() {
 
     setOtp(newOtp)
 
-    // Focus next empty field or last field
     const nextEmptyIndex = newOtp.findIndex(digit => digit === "")
     if (nextEmptyIndex !== -1) {
       inputRefs.current[nextEmptyIndex]?.focus()
@@ -93,14 +88,11 @@ export default function VerifyOtpPage() {
       errorMessage({ message: "Please enter all 6 digits", duration: 2000 })
       return
     }
-
     if (!email) {
       errorMessage({ message: "Email is missing", duration: 2000 })
       return
     }
-
     setIsLoading(true)
-
     try {
       const { data } = await verifyOtp({
         variables: {
