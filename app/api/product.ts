@@ -48,6 +48,7 @@ export const QUERY_GET_PRODUCTS = gql`
         price_str
         market_price
         origin_image_url
+        shopProductStatus
       }
       error {
         message

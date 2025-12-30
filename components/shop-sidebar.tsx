@@ -91,7 +91,16 @@ export function ShopDashboardSidebar() {
    const pathname = usePathname();
    const searchParams = useSearchParams();
    const status = searchParams.get("status") || "all";
-   const [expandedItem, setExpandedItem] = useState<string | null>("orders");
+
+   // Determine which menu item should be expanded based on current path
+   const getInitialExpandedItem = () => {
+      const activeItem = menuItems.find(
+         (item) => item.subItems && pathname.startsWith(item.href)
+      );
+      return activeItem?.id || null;
+   };
+
+   const [expandedItem, setExpandedItem] = useState<string | null>(getInitialExpandedItem);
 
    return (
       <aside className="bg-background">
@@ -145,13 +154,20 @@ export function ShopDashboardSidebar() {
                      {hasSubItems && isExpanded && (
                         <div className="ml-4 mt-1 space-y-1">
                            {item.subItems.map((subItem) => {
-                              const subStatus =
-                                 new URLSearchParams(subItem.href.split("?")[1]).get(
-                                    "status"
-                                 ) || "all";
+                              // Check if subItem uses query params (orders) or path (products)
+                              const hasQueryParam = subItem.href.includes("?");
+                              const subItemPath = subItem.href.split("?")[0];
 
-                              const isSubActive =
-                                 pathname === "/shop-dashboard/orders" && subStatus === status;
+                              let isSubActive = false;
+
+                              if (hasQueryParam) {
+                                 // For items with query params (orders)
+                                 const subStatus = new URLSearchParams(subItem.href.split("?")[1]).get("status") || "all";
+                                 isSubActive = pathname === subItemPath && subStatus === status;
+                              } else {
+                                 // For items with direct paths (products)
+                                 isSubActive = pathname === subItem.href;
+                              }
 
                               return (
                                  <Link

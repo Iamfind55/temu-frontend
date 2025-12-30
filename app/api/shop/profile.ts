@@ -42,3 +42,4 @@ export const MUTATION_SHOP_UPDATE_INFORMATION1 = gql`
     }
   }
 `;
+

@@ -52,7 +52,6 @@ export function ProductGrid() {
     }
   }
 
-  // Map API product to ProductCard product format
   const mapApiProductToProduct = (apiProduct: IProduct): Product => {
     return {
       id: apiProduct.id,

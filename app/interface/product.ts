@@ -31,6 +31,7 @@ export interface IProduct {
     content: string;
   }[];
   discount: number;
+  shopProductStatus?: string;
 }
 
 export interface IGetProductsResponse {

@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Star, Package, ChevronLeft, ChevronRight, Check, ShieldCheck } from "lucide-react"
+import { useQuery, useMutation } from "@apollo/client/react"
+import { Star, Package, ChevronLeft, ChevronRight, Check, Loader } from "lucide-react"
 
 // Components
 import { Badge } from "@/components/ui/badge"
@@ -22,169 +23,25 @@ import {
    PaginationEllipsis,
 } from "@/components/ui/pagination"
 
-// Category structure with sub-categories
-const categories = [
-   {
-      id: "electronics",
-      name: "Electronics",
-      sub1: [
-         {
-            id: "phones",
-            name: "Phones & Tablets",
-            sub2: [
-               { id: "smartphones", name: "Smartphones" },
-               { id: "tablets", name: "Tablets" },
-               { id: "accessories", name: "Phone Accessories" },
-            ],
-         },
-         {
-            id: "computers",
-            name: "Computers",
-            sub2: [
-               { id: "laptops", name: "Laptops" },
-               { id: "desktops", name: "Desktops" },
-               { id: "monitors", name: "Monitors" },
-            ],
-         },
-         {
-            id: "audio",
-            name: "Audio",
-            sub2: [
-               { id: "headphones", name: "Headphones" },
-               { id: "speakers", name: "Speakers" },
-               { id: "earbuds", name: "Earbuds" },
-            ],
-         },
-      ],
-   },
-   {
-      id: "fashion",
-      name: "Fashion",
-      sub1: [
-         {
-            id: "mens",
-            name: "Men's Clothing",
-            sub2: [
-               { id: "shirts", name: "Shirts" },
-               { id: "pants", name: "Pants" },
-               { id: "jackets", name: "Jackets" },
-            ],
-         },
-         {
-            id: "womens",
-            name: "Women's Clothing",
-            sub2: [
-               { id: "dresses", name: "Dresses" },
-               { id: "tops", name: "Tops" },
-               { id: "skirts", name: "Skirts" },
-            ],
-         },
-      ],
-   },
-   {
-      id: "home",
-      name: "Home & Garden",
-      sub1: [
-         {
-            id: "furniture",
-            name: "Furniture",
-            sub2: [
-               { id: "sofas", name: "Sofas" },
-               { id: "tables", name: "Tables" },
-               { id: "chairs", name: "Chairs" },
-            ],
-         },
-         {
-            id: "kitchen",
-            name: "Kitchen",
-            sub2: [
-               { id: "cookware", name: "Cookware" },
-               { id: "appliances", name: "Appliances" },
-               { id: "utensils", name: "Utensils" },
-            ],
-         },
-      ],
-   },
-]
+// API & Types
+import { QUERY_GET_PRODUCTS } from "@/app/api/product"
+import { QUERY_GET_ALL_CATEGORIES } from "@/app/api/category"
+import { MUTATION_SHOP_APPLY_PRODUCTS } from "@/app/api/shop/product"
+import { IProduct, IGetProductsResponse } from "@/app/interface/product"
+import { IGetCategoriesResponse } from "@/app/interface/category"
+import { useShopStore } from "@/store/shop-store"
+import { useToast } from "@/lib/toast"
 
-// Product interface
-interface ApplyProduct {
-   id: string
-   title: string
-   price: number
-   originalPrice: number
-   images: string[]
-   categoryId: string
-   sub1Id: string
-   sub2Id: string
-   rating: number
-   reviewCount: number
-   soldCount: string
-   badges: string[]
-   brand?: string
-   applyStatus: "none" | "pending" | "approved" | "rejected"
-}
-
-// Generate sample products
-const generateProducts = (): ApplyProduct[] => {
-   const statuses: ApplyProduct["applyStatus"][] = ["none", "none", "none", "pending", "approved", "rejected"]
-   const sampleTitles = [
-      "Sports Smart Watch, 1.83'' Full Touch Screen Display",
-      "USB Socket and 3-Color Adjustable Light",
-      "Portable Mini Projector - Compatible with Phone",
-      "Wireless Bluetooth Earbuds with Charging Case",
-      "Smart Watch Fitness Tracker",
-      "40-inch Smartphone Selfie Stick Tripod",
-      "Customizable Metal Sign, Personalized",
-      "30-Day Chair Yoga Guide for Seniors",
-   ]
-
-   const products: ApplyProduct[] = []
-   let productIndex = 0
-
-   categories.forEach((cat) => {
-      cat.sub1.forEach((sub1) => {
-         sub1.sub2.forEach((sub2) => {
-            for (let i = 0; i < 4; i++) {
-               productIndex++
-               const basePrice = Math.floor(Math.random() * 200) + 10
-               products.push({
-                  id: `apply-prod-${productIndex}`,
-                  title: sampleTitles[productIndex % sampleTitles.length] + ` - Item ${productIndex}`,
-                  price: basePrice,
-                  originalPrice: basePrice * 1.5,
-                  images: ["/placeholder.svg"],
-                  categoryId: cat.id,
-                  sub1Id: sub1.id,
-                  sub2Id: sub2.id,
-                  rating: 3.5 + Math.random() * 1.5,
-                  reviewCount: Math.floor(Math.random() * 10000),
-                  soldCount: `${Math.floor(Math.random() * 100)}k+`,
-                  badges: productIndex % 5 === 0 ? ["Star store"] : [],
-                  brand: productIndex % 4 === 0 ? "Brand X" : undefined,
-                  applyStatus: statuses[productIndex % statuses.length],
-               })
-            }
-         })
-      })
-   })
-
-   return products
-}
-
-const allProducts = generateProducts()
-
-// Status badge styles
-const getStatusBadge = (status: ApplyProduct["applyStatus"]) => {
-   switch (status) {
-      case "pending":
-         return { text: "Pending", className: "bg-yellow-100 text-yellow-800 border-yellow-300" }
-      case "approved":
-         return { text: "Approved", className: "bg-green-100 text-green-800 border-green-300" }
-      case "rejected":
-         return { text: "Rejected", className: "bg-red-100 text-red-800 border-red-300" }
-      default:
-         return null
+// Mutation response type
+interface ApplyProductsResponse {
+   createManyShopProducts: {
+      success: boolean
+      total: number
+      error?: {
+         message: string
+         code: string
+         details: string
+      }
    }
 }
 
@@ -194,39 +51,26 @@ function ApplyProductCard({
    isSelected,
    onSelect,
 }: {
-   product: ApplyProduct
+   product: IProduct
    isSelected: boolean
    onSelect: (id: string, checked: boolean) => void
 }) {
-   const isDisabled = product.applyStatus !== "none"
-   const statusBadge = getStatusBadge(product.applyStatus)
+   const isOnShelf = product.shopProductStatus === "ON_SHELF"
 
    return (
       <div
-         className={`group overflow-hidden shadow-md rounded-md transition-all duration-300 relative p-0 bg-white ${isDisabled ? "opacity-70 cursor-not-allowed" : "cursor-pointer hover:shadow-lg"
-            } ${isSelected && !isDisabled ? "ring-2 ring-orange-500" : ""}`}
-         onClick={() => !isDisabled && onSelect(product.id, !isSelected)}
+         className={`group overflow-hidden shadow-md rounded-md transition-all duration-300 relative p-0 ${isOnShelf ? "opacity-70 cursor-not-allowed border border-orange-200 bg-orange-50" : "bg-white cursor-pointer hover:shadow-lg"} ${isSelected && !isOnShelf ? "ring-2 ring-orange-500" : ""}`}
+         onClick={() => !isOnShelf && onSelect(product.id, !isSelected)}
       >
          <div className="aspect-square bg-background overflow-hidden relative">
             <img
-               src={product.images[0] || "/placeholder.svg"}
-               alt={product.title}
-               className={`h-full w-full object-cover transition-transform duration-300 rounded-md ${!isDisabled ? "group-hover:scale-105" : ""
-                  }`}
+               src={product.cover_image || product.origin_image_url || "/placeholder.svg"}
+               alt={product.name}
+               className={`h-full w-full object-cover transition-transform duration-300 rounded-md ${!isOnShelf ? "group-hover:scale-105" : ""}`}
             />
 
-            {/* Status Badge Overlay for applied products */}
-            {isDisabled && statusBadge && (
-               <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                  <div className={`px-3 py-1.5 rounded-full border ${statusBadge.className} flex items-center gap-1.5`}>
-                     <ShieldCheck className="h-4 w-4" />
-                     <span className="font-semibold text-sm">{statusBadge.text}</span>
-                  </div>
-               </div>
-            )}
-
             {/* Checkbox - only show for non-applied products */}
-            {!isDisabled && (
+            {!isOnShelf && (
                <div
                   className="absolute top-2 right-2 z-10"
                   onClick={(e) => e.stopPropagation()}
@@ -241,97 +85,174 @@ function ApplyProductCard({
          </div>
 
          <div className="p-3 space-y-1.5">
-            <h3 className="text-sm line-clamp-2 min-h-[2rem] text-foreground leading-tight">{product.title}</h3>
+            <h3 className="text-sm line-clamp-2 min-h-[2rem] text-foreground leading-tight">{product.name}</h3>
 
             <div className="flex items-baseline gap-2">
                <span className="text-xl font-bold text-primary">${product.price.toFixed(2)}</span>
-               <span className="text-xs text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
+               {product.market_price && product.market_price > product.price && (
+                  <span className="text-xs text-muted-foreground line-through">${product.market_price.toFixed(2)}</span>
+               )}
             </div>
 
             <div className="flex items-center gap-1">
                {[...Array(5)].map((_, i) => (
                   <Star
                      key={i}
-                     className={`h-3 w-3 ${i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"}`}
+                     className={`h-3 w-3 ${i < Math.floor(product.total_star) ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"}`}
                   />
                ))}
-               <span className="text-xs text-muted-foreground ml-1">({product.reviewCount.toLocaleString()})</span>
+               <span className="text-xs text-muted-foreground ml-1">({product.total_comment.toLocaleString()})</span>
             </div>
 
-            <div className="text-xs text-muted-foreground">{product.soldCount} sold</div>
+            <div className="text-xs text-muted-foreground">{product.sell_count}+ sold</div>
 
-            {product.badges.includes("Star store") && (
-               <Badge className="bg-purple-600 text-white text-xs font-medium px-2 py-0.5 w-fit">Star store</Badge>
-            )}
-
-            {product.brand && (
+            {product.brandData && (
                <div className="inline-block w-auto text-xs border font-bold text-black py-0.5 px-1 rounded bg-gray-200">
-                  Brand: {product.brand}
+                  Brand: {product.brandData.name}
                </div>
             )}
 
-            {/* Status badge at bottom for applied products */}
-            {statusBadge && (
-               <div className="pt-2">
-                  <Badge className={`${statusBadge.className} border text-xs`}>
-                     {statusBadge.text}
-                  </Badge>
+            {product.categoryData && (
+               <div className="inline-block ml-1 w-auto text-xs border font-medium text-gray-600 py-0.5 px-1 rounded bg-gray-100">
+                  {product.categoryData.name}
                </div>
             )}
+
+            <div className="flex items-center justify-between pt-2">
+               {isOnShelf ? (
+                  <Badge className="bg-green-100 text-green-800">
+                     Already on shelf
+                  </Badge>
+               ) : (
+                  product.discount > 0 && (
+                     <Badge className="bg-red-100 text-red-800 border border-red-300 text-xs">
+                        -{product.discount}%
+                     </Badge>
+                  )
+               )}
+            </div>
          </div>
       </div>
    )
 }
 
+// Product Grid Component
+function ProductGrid({
+   products,
+   selectedProducts,
+   onSelect,
+   loading,
+}: {
+   products: IProduct[]
+   selectedProducts: Set<string>
+   onSelect: (id: string, checked: boolean) => void
+   loading?: boolean
+}) {
+   if (loading) {
+      return (
+         <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg">
+            <Loader className="h-8 w-8 text-orange-500 animate-spin mb-4" />
+            <p className="text-sm text-gray-600">Loading products...</p>
+         </div>
+      )
+   }
+
+   if (products.length === 0) {
+      return (
+         <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg border">
+            <Package className="h-16 w-16 text-gray-300 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
+            <p className="text-sm text-gray-600">Try adjusting your category filters</p>
+         </div>
+      )
+   }
+
+   return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+         {products.map((product) => (
+            <ApplyProductCard
+               key={product.id}
+               product={product}
+               isSelected={selectedProducts.has(product.id)}
+               onSelect={onSelect}
+            />
+         ))}
+      </div>
+   )
+}
+
 export default function ApplyNewPage() {
+   const { shop } = useShopStore()
+   const { successMessage, errorMessage } = useToast()
    const [selectedCategory, setSelectedCategory] = useState<string>("all")
    const [selectedSub1, setSelectedSub1] = useState<string>("all")
    const [selectedSub2, setSelectedSub2] = useState<string>("all")
    const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set())
    const [currentPage, setCurrentPage] = useState(1)
-   const itemsPerPage = 12
+   const [isApplying, setIsApplying] = useState(false)
+   const itemsPerPage = 20
+
+   // Apply products mutation
+   const [applyProducts] = useMutation<ApplyProductsResponse>(MUTATION_SHOP_APPLY_PRODUCTS)
+
+   // Fetch categories
+   const { data: categoriesData } = useQuery<IGetCategoriesResponse>(QUERY_GET_ALL_CATEGORIES, {
+      variables: {
+         limit: 100,
+         where: { parent_id: null },
+      },
+      fetchPolicy: "cache-and-network",
+   })
+
+   const categories = categoriesData?.getCategories?.data || []
 
    // Get sub1 options based on selected category
    const sub1Options = useMemo(() => {
       if (selectedCategory === "all") return []
       const category = categories.find((c) => c.id === selectedCategory)
-      return category?.sub1 || []
-   }, [selectedCategory])
+      return category?.subcategories || []
+   }, [selectedCategory, categories])
 
    // Get sub2 options based on selected sub1
    const sub2Options = useMemo(() => {
       if (selectedSub1 === "all") return []
       const category = categories.find((c) => c.id === selectedCategory)
-      const sub1 = category?.sub1.find((s) => s.id === selectedSub1)
-      return sub1?.sub2 || []
-   }, [selectedCategory, selectedSub1])
+      const sub1 = category?.subcategories.find((s) => s.id === selectedSub1)
+      return sub1?.subcategories || []
+   }, [selectedCategory, selectedSub1, categories])
 
-   // Filter products based on category selection
-   const filteredProducts = useMemo(() => {
-      let filtered = [...allProducts]
+   // Build where clause for products query
+   const buildWhereClause = () => {
+      const where: Record<string, string> = {}
 
-      if (selectedCategory !== "all") {
-         filtered = filtered.filter((p) => p.categoryId === selectedCategory)
-      }
-      if (selectedSub1 !== "all") {
-         filtered = filtered.filter((p) => p.sub1Id === selectedSub1)
-      }
+      // Determine which category_id to use (most specific one)
       if (selectedSub2 !== "all") {
-         filtered = filtered.filter((p) => p.sub2Id === selectedSub2)
+         where.category_id = selectedSub2
+      } else if (selectedSub1 !== "all") {
+         where.category_id = selectedSub1
+      } else if (selectedCategory !== "all") {
+         where.category_id = selectedCategory
       }
 
-      return filtered
-   }, [selectedCategory, selectedSub1, selectedSub2])
+      return Object.keys(where).length > 0 ? where : null
+   }
 
-   // Pagination
-   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
-   const paginatedProducts = filteredProducts.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-   )
+   // Fetch products
+   const { data, loading, refetch } = useQuery<IGetProductsResponse>(QUERY_GET_PRODUCTS, {
+      variables: {
+         page: currentPage,
+         limit: itemsPerPage,
+         sortedBy: "created_at_DESC",
+         where: buildWhereClause(),
+      },
+      fetchPolicy: "cache-and-network",
+   })
 
-   // Get selectable products (not already applied)
-   const selectableProducts = paginatedProducts.filter((p) => p.applyStatus === "none")
+   const products = data?.getProducts?.data || []
+   const totalProducts = data?.getProducts?.total || 0
+   const totalPages = Math.ceil(totalProducts / itemsPerPage)
+
+   // console.log("products::", products);
 
    // Handle category change
    const handleCategoryChange = (value: string) => {
@@ -370,7 +291,10 @@ export default function ApplyNewPage() {
       })
    }
 
-   // Handle select all (only selectable products)
+   // Get selectable products (not already on shelf)
+   const selectableProducts = products.filter((p) => p.shopProductStatus !== "ON_SHELF")
+
+   // Handle select all
    const handleSelectAll = (checked: boolean) => {
       if (checked) {
          const selectableIds = selectableProducts.map((p) => p.id)
@@ -381,8 +305,7 @@ export default function ApplyNewPage() {
    }
 
    // Check if all selectable products are selected
-   const isAllSelected = selectableProducts.length > 0 &&
-      selectableProducts.every((p) => selectedProducts.has(p.id))
+   const isAllSelected = selectableProducts.length > 0 && selectableProducts.every((p) => selectedProducts.has(p.id))
 
    // Generate pagination items
    const getPaginationItems = () => {
@@ -411,31 +334,69 @@ export default function ApplyNewPage() {
             items.push("ellipsis")
          }
 
-         items.push(totalPages)
+         if (totalPages > 1) {
+            items.push(totalPages)
+         }
       }
 
       return items
    }
 
    // Handle apply
-   const handleApply = () => {
-      console.log("Applying products:", Array.from(selectedProducts))
-   }
+   const handleApply = async () => {
+      if (!shop?.id) {
+         errorMessage({ message: "Shop not found. Please try again." })
+         return
+      }
 
-   // Count stats
-   const availableCount = filteredProducts.filter((p) => p.applyStatus === "none").length
-   const appliedCount = filteredProducts.filter((p) => p.applyStatus !== "none").length
+      if (selectedProducts.size === 0) {
+         errorMessage({ message: "Please select at least one product." })
+         return
+      }
+
+      setIsApplying(true)
+
+      try {
+         // Build the data array with shop_id, product_id, and quantity
+         const data = Array.from(selectedProducts).map((productId) => {
+            const product = products.find((p) => p.id === productId)
+            return {
+               shop_id: shop.id,
+               product_id: productId,
+               quantity: product?.quantity || 1,
+            }
+         })
+
+         const result = await applyProducts({
+            variables: { data },
+         })
+
+         if (result.data?.createManyShopProducts?.success) {
+            successMessage({ message: `Successfully applied ${selectedProducts.size} product${selectedProducts.size > 1 ? "s" : ""}!` })
+            setSelectedProducts(new Set())
+            refetch()
+         } else {
+            const error = result.data?.createManyShopProducts?.error
+            errorMessage({ message: error?.message || "Failed to apply products. Please try again." })
+         }
+      } catch (error: any) {
+         errorMessage({ message: error?.message || "An error occurred while applying products." })
+      } finally {
+         setIsApplying(false)
+      }
+   }
 
    return (
       <div className="flex flex-col h-full">
          <div className="flex-1 p-4 sm:p-6">
             <div className="mx-auto max-w-7xl">
-               <div>
+               <div className="mb-4">
                   <h1 className="text-lg font-bold text-gray-900">Apply New Products</h1>
                   <p className="text-sm text-gray-600 mt-1">Select products to apply for listing</p>
                </div>
 
-               <div className="mb-4 p-4 bg-white">
+               {/* Category Filters */}
+               <div className="mb-4 p-4 bg-white rounded-lg">
                   <div className="flex flex-wrap gap-4 items-end">
                      <div className="w-[200px]">
                         <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
@@ -498,20 +459,12 @@ export default function ApplyNewPage() {
                   </div>
                </div>
 
-               <div className="py-2 px-4 bg-white flex items-center justify-between">
+               <div className="py-2 px-4 bg-white flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
                      <h2 className="font-semibold text-gray-900">Products</h2>
                      <div className="flex items-center gap-3 text-sm">
                         <span className="text-gray-600">
-                           <span className="font-medium text-gray-900">{filteredProducts.length}</span> total
-                        </span>
-                        <span className="text-gray-400">|</span>
-                        <span className="text-green-600">
-                           <span className="font-medium">{availableCount}</span> available
-                        </span>
-                        <span className="text-gray-400">|</span>
-                        <span className="text-orange-600">
-                           <span className="font-medium">{appliedCount}</span> applied
+                           <span className="font-medium text-gray-900">{totalProducts}</span> total
                         </span>
                      </div>
                   </div>
@@ -528,7 +481,7 @@ export default function ApplyNewPage() {
                         htmlFor="select-all"
                         className="text-sm font-medium text-gray-700 cursor-pointer select-none"
                      >
-                        Select all
+                        Select all ({selectableProducts.length} available)
                      </label>
                   </div>
                </div>
@@ -544,32 +497,40 @@ export default function ApplyNewPage() {
                      </div>
                      <Button
                         onClick={handleApply}
+                        disabled={isApplying}
                         className="bg-orange-500 hover:bg-orange-600 text-white"
                      >
-                        Apply Selected Products
+                        {isApplying ? (
+                           <>
+                              <Loader className="h-4 w-4 animate-spin mr-2" />
+                              Applying...
+                           </>
+                        ) : (
+                           "Apply Selected Products"
+                        )}
                      </Button>
                   </div>
                )}
 
                {/* Products Grid */}
                <ProductGrid
-                  products={paginatedProducts}
+                  products={products}
                   selectedProducts={selectedProducts}
                   onSelect={handleProductSelect}
+                  loading={loading}
                />
 
                {/* Results Summary */}
-               <div className="mt-2 text-sm text-gray-600 text-center">
-                  Showing {paginatedProducts.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{" "}
-                  {Math.min(currentPage * itemsPerPage, filteredProducts.length)} of {filteredProducts.length} products
-               </div>
+               <div className="mt-4 flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                     Showing {products.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{" "}
+                     {Math.min(currentPage * itemsPerPage, totalProducts)} of {totalProducts} products
+                  </div>
 
-               {/* Pagination */}
-               {totalPages > 1 && (
-                  <div className="mt-6 flex justify-center">
+                  {/* Pagination */}
+                  {totalPages > 1 && (
                      <Pagination>
                         <PaginationContent>
-                           {/* Previous Button */}
                            <PaginationItem>
                               <button
                                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
@@ -581,7 +542,6 @@ export default function ApplyNewPage() {
                               </button>
                            </PaginationItem>
 
-                           {/* Page Numbers */}
                            {getPaginationItems().map((item, index) => (
                               <PaginationItem key={index}>
                                  {item === "ellipsis" ? (
@@ -602,7 +562,6 @@ export default function ApplyNewPage() {
                               </PaginationItem>
                            ))}
 
-                           {/* Next Button */}
                            <PaginationItem>
                               <button
                                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
@@ -615,44 +574,10 @@ export default function ApplyNewPage() {
                            </PaginationItem>
                         </PaginationContent>
                      </Pagination>
-                  </div>
-               )}
+                  )}
+               </div>
             </div>
          </div>
-      </div>
-   )
-}
-
-// Product Grid Component
-function ProductGrid({
-   products,
-   selectedProducts,
-   onSelect,
-}: {
-   products: ApplyProduct[]
-   selectedProducts: Set<string>
-   onSelect: (id: string, checked: boolean) => void
-}) {
-   if (products.length === 0) {
-      return (
-         <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg border">
-            <Package className="h-16 w-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-            <p className="text-sm text-gray-600">Try adjusting your category filters</p>
-         </div>
-      )
-   }
-
-   return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-         {products.map((product) => (
-            <ApplyProductCard
-               key={product.id}
-               product={product}
-               isSelected={selectedProducts.has(product.id)}
-               onSelect={onSelect}
-            />
-         ))}
       </div>
    )
 }

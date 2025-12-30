@@ -1,5 +1,4 @@
 import Image from "next/image"
-import { Users, Handshake, Heart, UserCheck } from "lucide-react"
 
 export default function AboutUsPage() {
   return (
