@@ -225,12 +225,15 @@ export default function ApplyVIPPage() {
 
    const currentVIP = vipLevels[activeTab]
 
+   // Get shop's current VIP level
+   const shopVIPLevel = shop?.shop_vip ? parseInt(shop.shop_vip) : 0
+
    // Apply products mutation
    const [applyProducts] = useMutation<ApplyProductsResponse>(MUTATION_SHOP_APPLY_PRODUCTS)
    const [applyAllVIPProducts] = useMutation<ApplyAllVIPProductsResponse>(MUTATION_SHOP_APPLY_ALL_VIP_PRODUCTS)
 
    // Fetch VIP products based on active tab
-   const { data, loading } = useQuery<IGetProductsResponse>(QUERY_GET_PRODUCTS, {
+   const { data, loading, refetch } = useQuery<IGetProductsResponse>(QUERY_GET_PRODUCTS, {
       variables: {
          page: currentPage,
          limit: itemsPerPage,
@@ -349,6 +352,7 @@ export default function ApplyVIPPage() {
          if (result.data?.createManyShopProducts?.success) {
             successMessage({ message: `Successfully applied ${selectedProducts.size} product${selectedProducts.size > 1 ? "s" : ""} for ${currentVIP.name}!` })
             setSelectedProducts(new Set())
+            refetch()
          } else {
             const error = result.data?.createManyShopProducts?.error
             errorMessage({ message: error?.message || "Failed to apply VIP products. Please try again." })
@@ -381,6 +385,7 @@ export default function ApplyVIPPage() {
          if (result.data?.createShopProductsWithVIPLevel?.success) {
             const total = result.data.createShopProductsWithVIPLevel.total
             successMessage({ message: `Successfully applied ${total} ${currentVIP.name} product${total > 1 ? "s" : ""} to your shop!` })
+            refetch()
          } else {
             const error = result.data?.createShopProductsWithVIPLevel?.error
             errorMessage({ message: error?.message || "Failed to apply all VIP products. Please try again." })
@@ -411,6 +416,9 @@ export default function ApplyVIPPage() {
                      >
                         <Crown className="h-4 w-4" />
                         VIP 1
+                        {shopVIPLevel === 1 && (
+                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">Current</Badge>
+                        )}
                      </TabsTrigger>
                      <TabsTrigger
                         value="VIP2"
@@ -418,6 +426,9 @@ export default function ApplyVIPPage() {
                      >
                         <Crown className="h-4 w-4" />
                         VIP 2
+                        {shopVIPLevel === 2 && (
+                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">Current</Badge>
+                        )}
                      </TabsTrigger>
                      <TabsTrigger
                         value="VIP3"
@@ -425,6 +436,9 @@ export default function ApplyVIPPage() {
                      >
                         <Crown className="h-4 w-4" />
                         VIP 3
+                        {shopVIPLevel === 3 && (
+                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">Current</Badge>
+                        )}
                      </TabsTrigger>
                   </TabsList>
 
@@ -436,9 +450,6 @@ export default function ApplyVIPPage() {
                         </div>
                         <div className="text-sm text-gray-600">
                            <span className="font-medium text-gray-900">{totalProducts}</span> products available
-                        </div>
-                        <div className="text-sm text-gray-500">
-                           (Min. {currentVIP.minProducts} products required)
                         </div>
                      </div>
 
@@ -466,15 +477,10 @@ export default function ApplyVIPPage() {
                            <span className="text-sm font-medium text-orange-800">
                               {selectedProducts.size} product{selectedProducts.size > 1 ? "s" : ""} selected
                            </span>
-                           {selectedProducts.size < currentVIP.minProducts && (
-                              <span className="text-sm text-orange-600">
-                                 (Need {currentVIP.minProducts - selectedProducts.size} more)
-                              </span>
-                           )}
                         </div>
                         <Button
                            onClick={handleApplyVIP}
-                           disabled={selectedProducts.size < currentVIP.minProducts || isApplying}
+                           disabled={isApplying}
                            className="bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50"
                         >
                            {isApplying ? (

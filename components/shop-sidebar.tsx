@@ -6,6 +6,8 @@ import {
    Award,
    Apple,
    MapPin,
+   Crown,
+   LogOut,
    ChevronUp,
    CreditCard,
    ChevronDown,
@@ -13,9 +15,14 @@ import {
    ShoppingCart,
 } from "lucide-react";
 import Link from "next/link";
+import Cookies from "js-cookie";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useQuery } from "@apollo/client/react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useShopStore } from "@/store/shop-store";
+import { QUERY_GET_SHOP_NOTIFICATIONS } from "@/app/api/shop/notification";
+import { QUERY_SHOP_CREDIT_TRANSACTIONS } from "@/app/api/shop/credit";
 
 const menuItems = [
    {
@@ -63,9 +70,9 @@ const menuItems = [
    },
    {
       id: "notification",
-      label: "Notification",
+      label: "Notifications",
       icon: Bell,
-      href: "/shop-dashboard/notification",
+      href: "/shop-dashboard/notifications",
    },
    {
       id: "vip_access",
@@ -87,10 +94,53 @@ const menuItems = [
    },
 ];
 
+// VIP level config
+const vipConfig: Record<string, { name: string; color: string; bgColor: string }> = {
+   "1": { name: "VIP 1", color: "text-amber-600", bgColor: "bg-amber-100" },
+   "2": { name: "VIP 2", color: "text-purple-600", bgColor: "bg-purple-100" },
+   "3": { name: "VIP 3", color: "text-orange-600", bgColor: "bg-orange-100" },
+};
+
 export function ShopDashboardSidebar() {
+   const router = useRouter();
    const pathname = usePathname();
    const searchParams = useSearchParams();
    const status = searchParams.get("status") || "all";
+   const { shop, clearShop } = useShopStore();
+
+   // Get VIP level info
+   const shopVIP = shop?.shop_vip || "0";
+   const vipInfo = vipConfig[shopVIP];
+
+   // Query unread notifications count
+   const { data: notificationData } = useQuery(QUERY_GET_SHOP_NOTIFICATIONS, {
+      variables: {
+         page: 1,
+         limit: 1,
+         where: {
+            shop_id: shop?.id,
+            is_read: false,
+         },
+      },
+      skip: !shop?.id,
+      fetchPolicy: "cache-and-network",
+   });
+
+   // Query pending transactions count
+   const { data: transactionData } = useQuery(QUERY_SHOP_CREDIT_TRANSACTIONS, {
+      variables: {
+         page: 1,
+         limit: 1,
+         where: {
+            status: "PENDING",
+         },
+      },
+      skip: !shop?.id,
+      fetchPolicy: "cache-and-network",
+   });
+
+   const unreadNotificationCount = notificationData?.shopGetNotifications?.total || 0;
+   const pendingTransactionCount = transactionData?.shopGetTransactionHistories?.total || 0;
 
    // Determine which menu item should be expanded based on current path
    const getInitialExpandedItem = () => {
@@ -102,8 +152,34 @@ export function ShopDashboardSidebar() {
 
    const [expandedItem, setExpandedItem] = useState<string | null>(getInitialExpandedItem);
 
+   // Handle logout
+   const handleLogout = () => {
+      // Clear shop store
+      clearShop();
+      // Remove auth token cookie
+      Cookies.remove("auth_token");
+      // Redirect to shop landing page
+      router.push("/shop-landing");
+   };
+
    return (
       <aside className="bg-background">
+         {/* VIP Level Badge */}
+         {vipInfo && (
+            <div className="px-4 pt-4">
+               <Link href="/shop-dashboard/vip-access">
+                  <div className={cn(
+                     "flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors hover:opacity-80",
+                     vipInfo.bgColor
+                  )}>
+                     <Crown className={cn("h-4 w-4", vipInfo.color)} />
+                     <span className={cn("text-sm font-semibold", vipInfo.color)}>
+                        {vipInfo.name}
+                     </span>
+                  </div>
+               </Link>
+            </div>
+         )}
          <nav className="space-y-1 p-4">
             {menuItems.map((item) => {
                const Icon = item.icon;
@@ -148,6 +224,18 @@ export function ShopDashboardSidebar() {
                               <Icon className="h-5 w-5" />
                               <span>{item.label}</span>
                            </div>
+                           {/* Badge for notifications */}
+                           {item.id === "notification" && unreadNotificationCount > 0 && (
+                              <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-white bg-red-500 rounded-full">
+                                 {unreadNotificationCount > 99 ? "99+" : unreadNotificationCount}
+                              </span>
+                           )}
+                           {/* Badge for pending transactions */}
+                           {item.id === "credit" && pendingTransactionCount > 0 && (
+                              <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold text-white bg-orange-500 rounded-full">
+                                 {pendingTransactionCount > 99 ? "99+" : pendingTransactionCount}
+                              </span>
+                           )}
                         </Link>
                      )}
 
@@ -190,6 +278,17 @@ export function ShopDashboardSidebar() {
                );
             })}
          </nav>
+
+         {/* Logout Button */}
+         <div className="px-4 pb-4">
+            <button
+               onClick={handleLogout}
+               className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+               <LogOut className="h-5 w-5" />
+               <span>Sign out</span>
+            </button>
+         </div>
       </aside>
    );
 }
