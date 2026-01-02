@@ -16,12 +16,7 @@ export function SiteFooter() {
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
-                  Temu – Shop Like a Billionaire
-                </a>
-              </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+                <a href="/affiliate-influencer" className="hover:text-white">
                   Affiliate & Influencer Program: Join to Earn
                 </a>
               </li>
@@ -30,20 +25,20 @@ export function SiteFooter() {
                   Contact us
                 </a>
               </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   Careers
-                </a>
+                </p>
               </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   Press
-                </a>
+                </p>
               </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   Temu's Tree Planting Program
-                </a>
+                </p>
               </li>
             </ul>
           </div>
@@ -53,29 +48,29 @@ export function SiteFooter() {
             <h3 className="font-semibold mb-4">Customer service</h3>
             <ul className="space-y-2 text-sm text-white/80">
               <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+                <a href="/return-refund-policy" className="hover:text-white">
                   Return and refund policy
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+                <a href="/intellectual-property-policy" className="hover:text-white">
                   Intellectual property policy
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+                <a href="/shop-info" className="hover:text-white">
                   Shipping info
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+                <a href="/recall-product-safety-alert" className="hover:text-white">
                   Your Recalls and Product Safety Alerts
                 </a>
               </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   Report suspicious activity
-                </a>
+                </p>
               </li>
             </ul>
           </div>
@@ -84,25 +79,25 @@ export function SiteFooter() {
           <div>
             <h3 className="font-semibold mb-4">Help</h3>
             <ul className="space-y-2 text-sm text-white/80">
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   Support center & FAQ
-                </a>
+                </p>
               </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   Temu purchase protection
-                </a>
+                </p>
               </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   How to order
-                </a>
+                </p>
               </li>
-              <li className="hover:text-white hover:underline">
-                <a href="#" className="hover:text-white">
+              <li className="hover:text-white">
+                <p className="hover:text-white">
                   How to track
-                </a>
+                </p>
               </li>
             </ul>
           </div>
@@ -199,11 +194,8 @@ export function SiteFooter() {
         <div className="pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-start flex-col justify-center gap-6">
-              {/* <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-orange-600 font-bold">
-                <span className="text-sm">Temu</span>
-              </div> */}
               <svg
-                className="iconmain-1nkfa w-15 h-15"
+                className="iconmain-1nkfa w-15 h-15 text-white"
                 aria-label="temu"
                 xmlns="http://www.w3.org/2000/svg"
                 version="1.1"
@@ -243,18 +235,22 @@ export function SiteFooter() {
 
           {/* Payment methods */}
           <div className="mt-8 border-t border-white/20 pt-8">
-            <div className="text-center text-sm text-white/60">
-              © 2022 – 2025 Temu Inc. ·{" "}
-              <a href="#" className="hover:text-white">
+            <div className="flex items-center justify-center text-sm text-white/60 gap-6">
+              <p>© 2022 – 2025 Temu Inc. </p>
+              <a href="#" className="hover:text-white underline">
                 Terms of use
-              </a>{" "}
-              ·{" "}
-              <a href="#" className="hover:text-white">
+              </a>
+              <a href="#" className="hover:text-white underline">
                 Privacy policy
-              </a>{" "}
-              ·{" "}
-              <a href="#" className="hover:text-white">
+              </a>
+              <a href="#" className="hover:text-white underline">
                 Consumer health data privacy policy
+              </a>
+              <a href="#" className="hover:text-white underline">
+                Your privacy choices
+              </a>
+              <a href="#" className="hover:text-white underline">
+                Ad Choices
               </a>
             </div>
           </div>
