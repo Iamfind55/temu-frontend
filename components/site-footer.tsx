@@ -6,7 +6,6 @@ export function SiteFooter() {
     <footer className="bg-[oklch(0.15_0_0)] text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          {/* Company info */}
           <div>
             <h3 className="font-semibold mb-4">Company info</h3>
             <ul className="space-y-3 text-sm text-white/80">
@@ -190,7 +189,6 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* Logo and social */}
         <div className="pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-start flex-col justify-center gap-6">
@@ -240,16 +238,16 @@ export function SiteFooter() {
               <a href="#" className="hover:text-white underline">
                 Terms of use
               </a>
-              <a href="#" className="hover:text-white underline">
+              <a href="/privacy-policy" className="hover:text-white underline">
                 Privacy policy
               </a>
-              <a href="#" className="hover:text-white underline">
+              <a href="/consumer-health-privacy-policy" className="hover:text-white underline">
                 Consumer health data privacy policy
               </a>
-              <a href="#" className="hover:text-white underline">
+              <a href="/privacy-choices" className="hover:text-white underline">
                 Your privacy choices
               </a>
-              <a href="#" className="hover:text-white underline">
+              <a href="/ad-choices" className="hover:text-white underline">
                 Ad Choices
               </a>
             </div>
