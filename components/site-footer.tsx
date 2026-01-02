@@ -235,7 +235,7 @@ export function SiteFooter() {
           <div className="mt-8 border-t border-white/20 pt-8">
             <div className="flex items-center justify-center text-sm text-white/60 gap-6">
               <p>© 2022 – 2025 Temu Inc. </p>
-              <a href="#" className="hover:text-white underline">
+              <a href="/terms-of-use" className="hover:text-white underline">
                 Terms of use
               </a>
               <a href="/privacy-policy" className="hover:text-white underline">
