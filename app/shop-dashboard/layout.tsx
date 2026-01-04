@@ -15,7 +15,7 @@ export default function AccountLayout({
 }) {
   return (
     <div className="w-full flex flex-col mb-4">
-      <ShopHeader className="border-b" />
+      <ShopHeader className="border-b bg-white text-black" />
       <div className="flex items-center justify-center my-2 sm:my-8">
         <div className="px-2 sm:container w-full">
           <div className="w-full flex items-start justify-center">
