@@ -3,30 +3,41 @@ import type { NextRequest } from "next/server"
 
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
-  const authToken = request.cookies.get("auth_token")?.value
 
-  // Define protected routes that require authentication
-  const isProtectedRoute = path.startsWith("/account") || path.startsWith("/customer")
+  // Get separate tokens for customer and shop
+  const customerAuthToken = request.cookies.get("auth_token")?.value
+  const shopAuthToken = request.cookies.get("shop_auth_token")?.value
 
-  // Define public auth routes (should redirect to account if already logged in)
-  const isAuthRoute =
+  // Define protected routes for customers
+  const isCustomerProtectedRoute = path.startsWith("/account") || path.startsWith("/customer")
+
+  // Define protected routes for shops
+  const isShopProtectedRoute = path.startsWith("/shop-dashboard")
+
+  // Define public customer auth routes (should redirect to account if already logged in)
+  const isCustomerAuthRoute =
     path.startsWith("/login") ||
     path.startsWith("/register") ||
     path.startsWith("/forgot-password") ||
     path.startsWith("/verify-otp") ||
     path.startsWith("/reset-password")
 
-  // If user is not authenticated and trying to access protected route
-  if (isProtectedRoute && !authToken) {
+  // If customer is not authenticated and trying to access customer protected route
+  if (isCustomerProtectedRoute && !customerAuthToken) {
     const loginUrl = new URL("/login", request.url)
     // Add redirect parameter to return to original page after login
     loginUrl.searchParams.set("redirect", path)
     return NextResponse.redirect(loginUrl)
   }
 
-  // If user is authenticated and trying to access auth routes, redirect to account
-  if (isAuthRoute && authToken) {
+  // If customer is authenticated and trying to access customer auth routes, redirect to account
+  if (isCustomerAuthRoute && customerAuthToken) {
     return NextResponse.redirect(new URL("/account/orders", request.url))
+  }
+
+  // If shop is not authenticated and trying to access shop dashboard
+  if (isShopProtectedRoute && !shopAuthToken) {
+    return NextResponse.redirect(new URL("/shop-landing", request.url))
   }
 
   return NextResponse.next()

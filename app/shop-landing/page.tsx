@@ -250,7 +250,7 @@ export default function ShopLandingPage() {
          if (result?.shopVerifyOTP?.success) {
             const token = result?.shopVerifyOTP?.data?.token
             if (token) {
-               Cookies.set("auth_token", token)
+               Cookies.set("shop_auth_token", token)
             }
             successMessage({ message: "Email verified successfully!" })
             setIsHeroVerificationOpen(false)

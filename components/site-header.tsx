@@ -44,6 +44,31 @@ export function SiteHeader({ className }: { className?: string }) {
   const { openCart, itemCount } = useCart()
   const [index, setIndex] = React.useState<number>(0);
   const [showMegaMenu, setShowMegaMenu] = React.useState<boolean>(false)
+  const [mounted, setMounted] = React.useState<boolean>(false)
+  const [hideOnScroll, setHideOnScroll] = React.useState<boolean>(false)
+  const lastScrollY = React.useRef<number>(0)
+
+  // Prevent hydration mismatch by only rendering client-specific values after mount
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Hide "Sell on Temu" section on mobile when scrolling down
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      // Hide when scrolling down, show when scrolling up
+      if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+        setHideOnScroll(true)
+      } else {
+        setHideOnScroll(false)
+      }
+      lastScrollY.current = currentScrollY
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   const handleLogout = () => {
     dispatch(signOut())
@@ -62,16 +87,16 @@ export function SiteHeader({ className }: { className?: string }) {
 
   return (
     <header className="sticky top-0 z-50 w-full">
-      <div className="hidden sm:block bg-[oklch(0.15_0_0)] text-white">
-        <div className="container mx-auto flex items-center justify-between px-4 py-2 text-sm">
-          <div className="flex items-center gap-2 space-x-2 text-green-300">
+      <div className="bg-[oklch(0.15_0_0)] text-white">
+        <div className={`container mx-auto flex items-center justify-between px-4 text-sm ${hideOnScroll ? "py-0" : "py-2"}`}>
+          <div className="hidden sm:flex items-center gap-2 space-x-2 text-green-300">
             <TruckIcon />
             <div className="flex items-start justify-center flex-col">
               <span className="text-bold text-lg font-semibold">Free shipping</span>
               <span className="text-xs font-bold">30-day no delivery refund</span>
             </div>
           </div>
-          <div className="hidden items-center gap-8 md:flex">
+          <div className="hidden items-center gap-8 sm:flex">
             <div className="overflow-hidden h-auto">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -91,12 +116,16 @@ export function SiteHeader({ className }: { className?: string }) {
               </AnimatePresence>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-yellow-100">
+          <div className="hidden sm:flex items-center gap-2 text-yellow-100">
             <Smartphone />
             <span className="font-bold text-lg">Get the Temu App</span>
           </div>
+          <div></div>
           <div
-            className="flex items-center gap-4 border border-white/50 px-2 py-1 rounded-md bg-cover bg-center bg-no-repeat hover:border-white/80 cursor-pointer"
+            className={cn(
+              "flex items-center gap-4 border border-white/50 px-2 py-1 rounded-md bg-cover bg-center bg-no-repeat hover:border-white/80 cursor-pointer transition-all duration-300",
+              hideOnScroll ? "sm:flex hidden" : "flex"
+            )}
             style={{
               backgroundImage:
                 "url('https://commimg.kwcdn.com/upload_commimg/support/4c86e9a0-1dee-4013-b53c-4b224cf595f8.png')",
@@ -191,7 +220,7 @@ export function SiteHeader({ className }: { className?: string }) {
           </div>
 
           <div className="flex items-center gap-0 sm:gap-4 space-x-2">
-            {customer?.id ? (
+            {mounted && customer?.id ? (
               <div className="group relative">
                 <Link href="/account/orders">
                   <Button variant="ghost" className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
@@ -252,7 +281,7 @@ export function SiteHeader({ className }: { className?: string }) {
               onClick={() => router.push("/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && (
+              {mounted && itemCount > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-white">
                   {itemCount > 9 ? "9+" : itemCount}
                 </span>

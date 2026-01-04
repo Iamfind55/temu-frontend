@@ -233,8 +233,8 @@ export function SiteFooter() {
 
           {/* Payment methods */}
           <div className="mt-8 border-t border-white/20 pt-8">
-            <div className="flex flex-col sm:flex-row items-center justify-center text-sm text-white/60 gap-2">
-              <div className="flex items-center justify-center">
+            <div className="flex flex-col sm:flex-row items-center justify-center text-sm text-white/60 gap-2 sm:gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <p>© 2022 – 2025 Temu Inc. </p>
                 <a href="/terms-of-use" className="hover:text-white underline">
                   Terms of use
@@ -243,7 +243,7 @@ export function SiteFooter() {
                   Privacy policy
                 </a>
               </div>
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center gap-4">
                 <a href="/consumer-health-privacy-policy" className="hover:text-white underline">
                   Consumer health data privacy policy
                 </a>

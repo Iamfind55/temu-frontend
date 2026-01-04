@@ -15,8 +15,8 @@ export const MUTATION_CREATE_ORDERS = gql`
 `;
 
 export const MUTATION_DELETE_ORDER = gql`
-  mutation DeleteOrder($id: String!) {
-    deleteOrder(id: $id) {
+  mutation DeleteOrder($deleteOrderId: ID!) {
+    deleteOrder(id: $deleteOrderId) {
       success
       message
       error {

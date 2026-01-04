@@ -156,8 +156,8 @@ export function ShopDashboardSidebar() {
    const handleLogout = () => {
       // Clear shop store
       clearShop();
-      // Remove auth token cookie
-      Cookies.remove("auth_token");
+      // Remove shop auth token cookie
+      Cookies.remove("shop_auth_token");
       // Redirect to shop landing page
       router.push("/shop-landing");
    };

@@ -122,7 +122,7 @@ export default function OrdersPage() {
   const handleDeleteOrder = async () => {
     try {
       const result: any = await deleteOrder({
-        variables: { id: deleteTargetId },
+        variables: { deleteOrderId: deleteTargetId },
       })
 
       if (result?.data?.deleteOrder?.success) {

@@ -12,6 +12,17 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { visit } from "graphql";
 
+// Helper function to get the appropriate auth token based on current route
+const getAuthToken = (): string => {
+  if (typeof window !== "undefined") {
+    const isShopRoute = window.location.pathname.startsWith("/shop-");
+    if (isShopRoute) {
+      return Cookies.get("shop_auth_token") || "";
+    }
+  }
+  return Cookies.get("auth_token") || "";
+};
+
 const createApolloClient = () => {
   // HTTP link for queries and mutations
   const httpLink = new HttpLink({
@@ -23,18 +34,18 @@ const createApolloClient = () => {
     createClient({
       url: "wss://temu.tiktokshop.online/graphql",
       connectionParams: () => ({
-        Authorization: Cookies.get("auth_token") || "",
+        Authorization: getAuthToken(),
       }),
     })
   );
 
   // Middleware for setting Authorization headers
   const authLink = setContext((_, { headers }) => {
-    const token = Cookies.get("auth_token");
+    const token = getAuthToken();
     return {
       headers: {
         ...headers,
-        Authorization: token ? token : "",
+        Authorization: token,
       },
     };
   });

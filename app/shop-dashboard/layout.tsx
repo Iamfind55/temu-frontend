@@ -1,9 +1,11 @@
 import type React from "react"
 
 // components:
-import { SiteHeader } from "@/components/site-header"
+// import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { ShopDashboardSidebar } from "@/components/shop-sidebar"
+import { ShopHeader } from "@/components/shop-header"
+import { ShopFooter } from "@/components/shop-footer"
 
 export default function AccountLayout({
   children,
@@ -11,9 +13,9 @@ export default function AccountLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="w-full flex flex-col py-6 mb-4">
-      <SiteHeader className="bg-white text-black border-b" />
-      <div className="flex items-center justify-center mt-4">
+    <div className="w-full flex flex-col mb-4">
+      <ShopHeader className="border-b" />
+      <div className="flex items-center justify-center my-8">
         <div className="px-2 sm:container w-full">
           <div className="w-full flex items-start justify-center">
             <div className="w-1/5 hidden sm:block">

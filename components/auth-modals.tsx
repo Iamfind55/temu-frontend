@@ -150,8 +150,8 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          if (response.data?.shopLogin?.success && response.data.shopLogin.data) {
             const { token, data } = response.data.shopLogin.data
 
-            // Save token to cookie
-            Cookies.set("auth_token", token)
+            // Save token to cookie (shop uses separate token key from customer)
+            Cookies.set("shop_auth_token", token)
 
             // Save shop data to store
             setShop(data)
@@ -365,10 +365,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopVerifyOTP?.success) {
-            // Save token to cookie for shop update mutation (Apollo client uses auth_token cookie)
+            // Save token to cookie for shop update mutation
             const token = result?.shopVerifyOTP?.data?.token
             if (token) {
-               Cookies.set("auth_token", token)
+               Cookies.set("shop_auth_token", token)
             }
             successMessage({ message: "Email verified successfully!" })
             onModalChange(null)
