@@ -4,6 +4,7 @@ import type React from "react"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { AccountSidebar } from "@/components/account-sidebar"
+import { AccountBottomNav } from "@/components/account-bottom-nav"
 
 export default function AccountLayout({
   children,
@@ -19,11 +20,14 @@ export default function AccountLayout({
             <div className="hidden sm:block">
               <AccountSidebar />
             </div>
-            <main className="w-full">{children}</main>
+            <main className="w-full pb-20 sm:pb-0">{children}</main>
           </div>
         </div>
       </div>
-      <SiteFooter />
+      <div className="hidden sm:block">
+        <SiteFooter />
+      </div>
+      <AccountBottomNav />
     </div>
   )
 }

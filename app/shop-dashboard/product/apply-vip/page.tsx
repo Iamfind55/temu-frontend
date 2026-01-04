@@ -485,7 +485,7 @@ export default function ApplyVIPPage() {
                         >
                            {isApplying ? (
                               <>
-                                 <Loader className="h-4 w-4 animate-spin mr-2" />
+                                 <Loader className="h-4 w-4 animate-spin " />
                                  Applying...
                               </>
                            ) : (
@@ -508,7 +508,7 @@ export default function ApplyVIPPage() {
                         >
                            {isApplyingAll ? (
                               <>
-                                 <Loader className="h-4 w-4 animate-spin mr-2" />
+                                 <Loader className="h-4 w-4 animate-spin " />
                                  Applying All...
                               </>
                            ) : (

@@ -511,7 +511,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         >
                            {loginLoading ? (
                               <>
-                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 <Loader className="h-5 w-5 animate-spin " />
                                  Signing in...
                               </>
                            ) : (
@@ -652,7 +652,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         >
                            {registerLoading ? (
                               <>
-                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 <Loader className="h-5 w-5 animate-spin " />
                                  Creating account...
                               </>
                            ) : (
@@ -729,7 +729,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         >
                            {forgotPasswordLoading ? (
                               <>
-                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 <Loader className="h-5 w-5 animate-spin " />
                                  Sending...
                               </>
                            ) : (
@@ -803,7 +803,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         >
                            {verifyLoading ? (
                               <>
-                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 <Loader className="h-5 w-5 animate-spin " />
                                  Verifying...
                               </>
                            ) : (
@@ -909,7 +909,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         >
                            {resetPasswordLoading ? (
                               <>
-                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 <Loader className="h-5 w-5 animate-spin " />
                                  Resetting...
                               </>
                            ) : (
@@ -983,7 +983,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         >
                            {verifyLoading ? (
                               <>
-                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 <Loader className="h-5 w-5 animate-spin " />
                                  Verifying...
                               </>
                            ) : (

@@ -408,7 +408,7 @@ export default function ShopLandingPage() {
                            >
                               {registerLoading ? (
                                  <>
-                                    <Loader className="h-5 w-5 animate-spin mr-2" />
+                                    <Loader className="h-5 w-5 animate-spin " />
                                     Creating account...
                                  </>
                               ) : (
@@ -643,7 +643,7 @@ export default function ShopLandingPage() {
                         >
                            {verifyLoading ? (
                               <>
-                                 <Loader className="h-5 w-5 animate-spin mr-2" />
+                                 <Loader className="h-5 w-5 animate-spin " />
                                  Verifying...
                               </>
                            ) : (

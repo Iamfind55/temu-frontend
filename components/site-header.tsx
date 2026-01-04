@@ -236,7 +236,7 @@ export function SiteHeader({ className }: { className?: string }) {
             ) : (
               <Link href="/login">
                 <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
-                  <User className="mr-0 sm:mr-2 h-8 sm:h-5 w-8 sm:w-5" />
+                  <User className="mr-0 sm: h-8 sm:h-5 w-8 sm:w-5" />
                   <div className="text-left text-xs">
                     <div>Sign in / Register</div>
                     <div className="font-bold">Order & Account</div>

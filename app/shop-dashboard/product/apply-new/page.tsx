@@ -502,7 +502,7 @@ export default function ApplyNewPage() {
                      >
                         {isApplying ? (
                            <>
-                              <Loader className="h-4 w-4 animate-spin mr-2" />
+                              <Loader className="h-4 w-4 animate-spin " />
                               Applying...
                            </>
                         ) : (

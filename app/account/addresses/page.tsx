@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useSelector } from "react-redux";
-import { MapPin, Plus, Save, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader } from "lucide-react"
+import { MapPin, Plus, Save, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader, Loader2 } from "lucide-react"
 
 import { useToast } from "@/lib/toast";
 import { useLazyQuery, useMutation } from "@apollo/client/react";
@@ -326,7 +326,7 @@ export default function AddressesPage() {
 
   return (
     <>
-      <div className="bg-white px-0 sm:px-8 py-6">
+      <div className="bg-white px-0 sm:px-8 py-2 sm:py-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold text-gray-900">Addresses</h1>
@@ -354,12 +354,12 @@ export default function AddressesPage() {
             <div
               key={row.id}
               className={`relative border rounded ${row.is_used && "bg-orange-100 border-orange-400"
-                } p-4 h-62 flex items-start justify-center flex-col gap-1 text-gray-400`}
+                } p-4 pr-10 flex flex-col gap-1 text-gray-400`}
             >
-              <div className="absolute top-2 right-2 menu-dropdown">
+              <div className="absolute top-3 right-3 menu-dropdown">
                 <button
                   onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
-                  className="p-1 hover:bg-orange-500 hover:text-white rounded-full cursor-pointer"
+                  className="p-1 bg-orange-500 text-white rounded-full cursor-pointer"
                 >
                   <MoreVertical size={18} />
                 </button>
@@ -397,7 +397,7 @@ export default function AddressesPage() {
                 )}
               </div>
               {/* Address Details */}
-              <p className="text-xs text-gray-500 flex items-start justify-start gap-1 mt-4">
+              <p className="text-xs text-gray-500 flex items-start justify-start gap-1">
                 Address:&nbsp;
                 <strong className="text-black font-bold">
                   {row.address}
@@ -460,7 +460,7 @@ export default function AddressesPage() {
               setEditingAddressId("");
               setIsModalOpen(true);
             }}>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className=" h-4 w-4" />
               Add Your First Address
             </Button>
           </div>
@@ -486,7 +486,7 @@ export default function AddressesPage() {
           setCityName("");
         }
       }}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="w-sm sm:w-4xl max-w-4xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-gray-700">
               {isUpdate ? "Edit Address" : "Create new address"}
@@ -635,7 +635,7 @@ export default function AddressesPage() {
                 className="bg-orange-500 hover:bg-orange-600"
                 disabled={isLoading}
               >
-                <Save size={14} />
+                {isLoading ? <Loader size={14} className="animate-spin" /> : <Save size={14} />}
                 {isLoading ? "Saving..." : "Save"}
               </Button>
             </div>
@@ -645,7 +645,7 @@ export default function AddressesPage() {
 
       {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="w-sm sm:w-md max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-gray-700">Delete Address</DialogTitle>
           </DialogHeader>
@@ -672,6 +672,7 @@ export default function AddressesPage() {
               onClick={handleDeleteAddress}
               disabled={isDeleting}
             >
+              {isLoading ? <Loader size={14} className="animate-spin" /> : ""}
               {isDeleting ? "Deleting..." : "Delete"}
             </Button>
           </div>

@@ -233,7 +233,7 @@ export default function ProfilePage() {
   return (
     <>
       <div className="mx-auto max-w-3xl space-y-6 mb-6">
-        <Card className="rounded-sm shadow-sm">
+        <Card className="rounded-sm">
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
             <CardDescription>Update your account details and personal information</CardDescription>
@@ -350,11 +350,11 @@ export default function ProfilePage() {
                   <div className="space-y-2">
                     <Label htmlFor="birthday">Birthday <span className="text-rose-500">*</span></Label>
                     <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                      <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 hidden sm:block" />
                       <Input
                         id="birthday"
                         type="date"
-                        className="pl-10"
+                        className="sm:pl-10"
                         value={formData.dob}
                         onChange={handleChange("dob")}
                         required
@@ -431,7 +431,7 @@ export default function ProfilePage() {
                   className="bg-orange-500 hover:bg-orange-600"
                   disabled={isLoading}
                 >
-                  {isLoading ? <Loader size={16} /> : <Save size={16} />}
+                  {isLoading ? <Loader size={16} className="animate-spin" /> : <Save size={16} />}
                   {isLoading ? "Saving..." : "Save Changes"}
                 </Button>
               </div>

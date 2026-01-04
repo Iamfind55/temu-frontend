@@ -633,7 +633,7 @@ export default function CartPage() {
                               </div>
                            </div>
                            <Button onClick={handleCreateAddress} disabled={isCreatingAddress} className="w-auto bg-orange-500 hover:bg-orange-600">
-                              <Plus className="mr-2" size={16} />
+                              <Plus className="" size={16} />
                               {isCreatingAddress ? "Creating..." : "Create Address"}
                            </Button>
                         </div>

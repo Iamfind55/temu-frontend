@@ -274,7 +274,7 @@ export default function CategoryPage() {
                   >
                     {loading ? (
                       <>
-                        <Loader className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader className=" h-4 w-4 animate-spin" />
                         Loading...
                       </>
                     ) : (

@@ -35,6 +35,8 @@ export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState<Order[]>([])
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [deleteTargetId, setDeleteTargetId] = useState<string>("")
   const limit = 10
 
   // Get orders query
@@ -111,19 +113,24 @@ export default function OrdersPage() {
     setIsDetailModalOpen(true)
   }
 
-  const handleDeleteOrder = async (orderId: string, e: React.MouseEvent) => {
+  const openDeleteModal = (orderId: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!confirm("Are you sure you want to delete this order?")) return
+    setDeleteTargetId(orderId)
+    setIsDeleteModalOpen(true)
+  }
 
+  const handleDeleteOrder = async () => {
     try {
       const result: any = await deleteOrder({
-        variables: { id: orderId },
+        variables: { id: deleteTargetId },
       })
 
       if (result?.data?.deleteOrder?.success) {
         successMessage({ message: "Order deleted successfully", duration: 3000 })
         // Remove order from local state
-        setAllOrders((prev) => prev.filter((order) => order.id !== orderId))
+        setAllOrders((prev) => prev.filter((order) => order.id !== deleteTargetId))
+        setIsDeleteModalOpen(false)
+        setDeleteTargetId("")
       } else {
         const errorMsg = result?.data?.deleteOrder?.error?.message || "Failed to delete order"
         errorMessage({ message: errorMsg, duration: 3000 })
@@ -201,15 +208,15 @@ export default function OrdersPage() {
                   {filteredOrders.map((order) => (
                     <div
                       key={order.id}
-                      className="bg-white border border-gray-200 rounded-xl p-2 shadow-sm"
+                      className="bg-white border border-gray-200 rounded-md p-2"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
-                          #{order.order_no.slice(-8)}
+                          #{order.order_no.slice(-8)} 111
                         </span>
                         <div className="flex items-center gap-2">
                           <Badge className={`text-xs ${getStatusBadgeStyle(order.order_status)}`}>
-                            {getStatusLabel(order.order_status)}
+                            {getStatusLabel(order.order_status)} {order.order_status}
                           </Badge>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -227,17 +234,19 @@ export default function OrdersPage() {
                                 onClick={(e) => handleViewDetails(order, e)}
                                 className="cursor-pointer"
                               >
-                                <Eye className="mr-2 h-4 w-4" />
+                                <Eye className=" h-4 w-4" />
                                 View Details
                               </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(e) => handleDeleteOrder(order.id, e)}
-                                className="cursor-pointer text-red-600 focus:text-red-600"
-                                disabled={deleteLoading}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
+                              {order.order_status === "NO_PICKUP" && (
+                                <DropdownMenuItem
+                                  onClick={(e) => openDeleteModal(order.id, e)}
+                                  className="cursor-pointer text-red-600 focus:text-red-600"
+                                  disabled={deleteLoading}
+                                >
+                                  <Trash2 className=" h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -264,7 +273,7 @@ export default function OrdersPage() {
                         className="w-full mt-3 text-orange-600 border-orange-200 hover:bg-orange-50"
                         onClick={(e) => handleViewDetails(order, e)}
                       >
-                        <Eye className="mr-2 h-4 w-4" />
+                        <Eye className=" h-4 w-4" />
                         View Details
                       </Button>
                     </div>
@@ -275,7 +284,7 @@ export default function OrdersPage() {
                   {filteredOrders.map((order, index: number) => (
                     <div
                       key={order.id}
-                      className="grid grid-cols-8 gap-4 py-4 text-sm border-b last:border-0 hover:bg-gray-50 transition-colors rounded-lg"
+                      className="grid grid-cols-8 gap-4 py-4 text-sm border-b last:border-0 hover:bg-gray-50 transition-colors rounded-sm"
                     >
                       <div className="text-center text-gray-600 flex items-center justify-center">
                         {index + 1}
@@ -323,17 +332,19 @@ export default function OrdersPage() {
                               onClick={(e) => handleViewDetails(order, e)}
                               className="cursor-pointer"
                             >
-                              <Eye className="mr-2 h-4 w-4" />
+                              <Eye className=" h-4 w-4" />
                               View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={(e) => handleDeleteOrder(order.id, e)}
-                              className="cursor-pointer text-red-600 focus:text-red-600"
-                              disabled={deleteLoading}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              {deleteLoading ? "Deleting..." : "Delete"}
-                            </DropdownMenuItem>
+                            {order.order_status === "NO_PICKUP" && (
+                              <DropdownMenuItem
+                                onClick={(e) => openDeleteModal(order.id, e)}
+                                className="cursor-pointer text-red-600 focus:text-red-600"
+                                disabled={deleteLoading}
+                              >
+                                <Trash2 className=" h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -392,7 +403,7 @@ export default function OrdersPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader className=" h-4 w-4 animate-spin" />
                       Loading...
                     </>
                   ) : (
@@ -522,6 +533,42 @@ export default function OrdersPage() {
               </Button>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="w-sm sm:w-md max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-gray-700">Delete Order</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-600">
+              Are you sure you want to delete this order? This action cannot be undone.
+            </p>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsDeleteModalOpen(false)
+                setDeleteTargetId("")
+              }}
+              disabled={deleteLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              className="bg-red-500 hover:bg-red-600"
+              onClick={handleDeleteOrder}
+              disabled={deleteLoading}
+            >
+              {deleteLoading ? <Loader className=" h-4 w-4 animate-spin" /> : null}
+              {deleteLoading ? "Deleting..." : "Delete"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

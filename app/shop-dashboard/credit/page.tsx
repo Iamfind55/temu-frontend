@@ -601,7 +601,7 @@ export default function ShopCreditPage() {
                   className="w-full"
                   onClick={() => document.getElementById('voucher-file')?.click()}
                 >
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Upload className="h-4 w-4 " />
                   {voucherFile ? voucherFile.name : 'Choose file'}
                 </Button>
               </div>

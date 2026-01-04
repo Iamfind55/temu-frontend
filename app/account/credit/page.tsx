@@ -152,7 +152,7 @@ export default function CreditPage() {
   return (
     <div className="flex flex-col h-full">
       <div className="sm:border-b bg-white">
-        <div className="flex items-center justify-between px-6 py-3">
+        <div className="flex items-center justify-between px-2 sm:px-6 py-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Link href="/" className="hover:text-primary">
               Home
@@ -172,7 +172,7 @@ export default function CreditPage() {
         </div>
       </div>
 
-      <div className="flex-1 bg-white p-6">
+      <div className="flex-1 bg-white p-2 sm:p-6">
         <div className="mx-auto max-w-5xl">
           <div className="mb-4 flex items-center justify-start gap-4">
             <h1 className="text-lg font-bold text-gray-900">Credit balance</h1>
@@ -211,77 +211,80 @@ export default function CreditPage() {
           <div className="mb-8">
             <h2 className="mb-4 text-md font-bold text-gray-900">Histories:</h2>
 
-            <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
-              <div className="text-center">ID</div>
-              <div>Voucher</div>
-              <div>Transaction</div>
-              <div>Amount</div>
-              <div>Coin Type</div>
-              <div>Status</div>
-              <div>Date</div>
-            </div>
-
             {transactionsLoading ? (
               <div className="py-12 text-center">
                 <Loader className="mx-auto mb-4 h-6 w-6 animate-spin text-orange-500" />
                 <p className="text-gray-600">Loading transactions...</p>
               </div>
             ) : transactions.length > 0 ? (
-              <div className="space-y-2">
-                {transactions.map((transaction, index: number) => (
-                  <div key={transaction.id} className="grid grid-cols-7 gap-4 py-3 text-sm border-b last:border-0">
-                    <div className="text-center text-gray-600">
-                      {index + 1}
-                    </div>
-                    <div>
-                      {transaction.payment_slip ? (
-                        <a
-                          href={transaction.payment_slip}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          View
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </div>
-                    <div>
-                      <span
-                        className={`inline-block px-2 py-1 text-xs rounded font-medium ${transaction.identifier?.toLowerCase() === "recharge"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {transaction.identifier || "N/A"}
-                      </span>
-                    </div>
-                    <div className="font-medium">
-                      ${transaction.amount.toFixed(2)}
-                    </div>
-                    <div>
-                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 rounded">
-                        {transaction.coin_type}
-                      </span>
-                    </div>
-                    <div>
-                      <span
-                        className={`inline-block px-2 py-1 text-xs rounded ${transaction.status === "APPROVED"
-                          ? "bg-green-100 text-green-800"
-                          : transaction.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {transaction.status}
-                      </span>
-                    </div>
-                    <div className="text-gray-600">
-                      {new Date(transaction.created_at).toLocaleDateString()}
-                    </div>
+              <div className="overflow-x-auto">
+                <div className="min-w-[600px]">
+                  <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
+                    <div className="text-center">ID</div>
+                    <div>Voucher</div>
+                    <div>Transaction</div>
+                    <div>Amount</div>
+                    <div>Coin Type</div>
+                    <div>Status</div>
+                    <div>Date</div>
                   </div>
-                ))}
+                  <div className="space-y-2">
+                    {transactions.map((transaction, index: number) => (
+                      <div key={transaction.id} className="grid grid-cols-7 gap-4 py-3 text-sm border-b last:border-0">
+                        <div className="text-center text-gray-600">
+                          {index + 1}
+                        </div>
+                        <div>
+                          {transaction.payment_slip ? (
+                            <a
+                              href={transaction.payment_slip}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline"
+                            >
+                              View
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </div>
+                        <div>
+                          <span
+                            className={`inline-block px-2 py-1 text-xs rounded font-medium whitespace-nowrap ${transaction.identifier?.toLowerCase() === "recharge"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                              }`}
+                          >
+                            {transaction.identifier || "N/A"}
+                          </span>
+                        </div>
+                        <div className="font-medium whitespace-nowrap">
+                          ${transaction.amount.toFixed(2)}
+                        </div>
+                        <div>
+                          <span className="inline-block px-2 py-1 text-xs bg-gray-100 rounded whitespace-nowrap">
+                            {transaction.coin_type}
+                          </span>
+                        </div>
+                        <div>
+                          <span
+                            className={`inline-block px-2 py-1 text-xs rounded whitespace-nowrap ${transaction.status === "APPROVED"
+                              ? "bg-green-100 text-green-800"
+                              : transaction.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                              }`}
+                          >
+                            {transaction.status}
+                          </span>
+                        </div>
+                        <div className="text-gray-600 whitespace-nowrap">
+                          {new Date(transaction.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             ) : (
               /* show only when transaction is empty */
@@ -453,7 +456,7 @@ export default function CreditPage() {
                   className="w-full"
                   onClick={() => document.getElementById('voucher-file')?.click()}
                 >
-                  <Upload className="h-4 w-4 mr-2" />
+                  <Upload className="h-4 w-4 " />
                   {voucherFile ? voucherFile.name : 'Choose file'}
                 </Button>
               </div>
