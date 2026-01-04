@@ -333,11 +333,11 @@ export default function AddressesPage() {
 
   return (
     <>
-      <div className="bg-white px-0 sm:px-8 py-6">
+      <div className="bg-white px-0 sm:px-8 py-2 sm:py-6 mb-4 sm:mb-0">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Addresses</h1>
-            <p className="hidden sm:block mt-1 text-sm text-gray-600">Manage your shipping and billing addresses</p>
+            <h1 className="text-md sm:text-lg font-bold text-gray-900">Addresses</h1>
+            <p className="mt-0 sm:mt-1 text-sm text-gray-600">Manage your shipping and billing addresses</p>
           </div>
           <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => {
             setIsUpdate(false);
@@ -356,23 +356,20 @@ export default function AddressesPage() {
           <p className="text-gray-600">Loading addresses...</p>
         </div>
       ) : addressesData?.getShopAddresses?.data?.length ?? 0 > 0 ?
-        <div className="w-full grid grid-cols-1 gap-4 lg:grid-cols-2 pb-16 px-0 sm:px-8">
+        <div className="w-full grid grid-cols-1 gap-2 sm:gap-4 lg:grid-cols-2 pb-16 px-0 sm:px-8">
           {addressesData?.getShopAddresses?.data?.map((row: any) => (
             <div
               key={row.id}
               className={`relative border rounded ${row.is_used && "bg-orange-100 border-orange-400"
-                } p-4 h-62 flex items-start justify-center flex-col gap-1 text-gray-400`}
+                } p-4 pr-10 flex flex-col gap-1 text-gray-400`}
             >
-              <div className="w-full absolute top-2 right-2 menu-dropdown px-6">
-                <div className="w-full flex items-center justify-between">
-                  <p className="text-gray-800 text-sm font-bold">Address details:</p>
-                  <button
-                    onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
-                    className="p-1 hover:bg-orange-500 hover:text-white rounded-full cursor-pointer"
-                  >
-                    <MoreVertical size={18} />
-                  </button>
-                </div>
+              <div className="absolute top-3 right-3 menu-dropdown">
+                <button
+                  onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}
+                  className="p-1 hover:bg-orange-500 hover:text-white rounded-full cursor-pointer"
+                >
+                  <MoreVertical size={18} />
+                </button>
                 {openMenuId === row.id && (
                   <div className="absolute right-0 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                     <button
@@ -407,7 +404,7 @@ export default function AddressesPage() {
                 )}
               </div>
               {/* Address Details */}
-              <p className="text-xs text-gray-500 flex items-start justify-start gap-1 mt-4">
+              <p className="text-xs text-gray-500 flex items-start justify-start gap-1">
                 Address:&nbsp;
                 <strong className="text-black font-bold">
                   {row.address}
@@ -498,7 +495,7 @@ export default function AddressesPage() {
           setCityName("");
         }
       }}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="w-sm sm:w-2xl max-w-4xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-gray-700">
               {isUpdate ? "Edit Address" : "Create new address"}
@@ -657,11 +654,11 @@ export default function AddressesPage() {
 
       {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="w-sm sm:w-xl max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-gray-700">Delete Address</DialogTitle>
           </DialogHeader>
-          <div className="py-4">
+          <div className="">
             <p className="text-gray-600">
               Are you sure you want to delete this address? This action cannot be undone.
             </p>

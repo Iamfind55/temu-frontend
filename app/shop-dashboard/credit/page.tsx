@@ -32,7 +32,7 @@ import {
 
 export default function ShopCreditPage() {
   // Deposit Modal State
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState("")
   const [cryptoType, setCryptoType] = useState("ERC20")
   const [transactionId, setTransactionId] = useState("")
   const [voucherFile, setVoucherFile] = useState<File | null>(null)
@@ -41,7 +41,7 @@ export default function ShopCreditPage() {
   const [copySuccess, setCopySuccess] = useState(false)
 
   // Withdraw Modal State
-  const [withdrawAmount, setWithdrawAmount] = useState(0)
+  const [withdrawAmount, setWithdrawAmount] = useState("")
   const [withdrawCryptoType, setWithdrawCryptoType] = useState("ERC20")
   const [withdrawAddress, setWithdrawAddress] = useState("")
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
@@ -148,7 +148,7 @@ export default function ShopCreditPage() {
         variables: {
           data: {
             coin_type: cryptoType,
-            amount_recharged: amount,
+            amount_recharged: Number(amount),
             account_number: transactionId,
             image: data.secure_url || "",
           },
@@ -157,7 +157,7 @@ export default function ShopCreditPage() {
 
       if (res?.data?.shopRechargeBalance.success) {
         // Reset form
-        setAmount(0)
+        setAmount("")
         setTransactionId("")
         setVoucherFile(null)
         setIsDepositModalOpen(false)
@@ -195,7 +195,7 @@ export default function ShopCreditPage() {
       return
     }
 
-    if (withdrawAmount <= 0) {
+    if (Number(withdrawAmount) <= 0) {
       errorMessage({
         message: "Please enter a valid amount",
         duration: 3000,
@@ -203,7 +203,7 @@ export default function ShopCreditPage() {
       return
     }
 
-    if (withdrawAmount > (wallet?.total_withdraw_able_balance || 0)) {
+    if (Number(withdrawAmount) > (wallet?.total_withdraw_able_balance || 0)) {
       errorMessage({
         message: "Insufficient withdrawable balance",
         duration: 3000,
@@ -218,14 +218,14 @@ export default function ShopCreditPage() {
         variables: {
           data: {
             coin_type: withdrawCryptoType,
-            amount_withdraw: withdrawAmount,
+            amount_withdraw: Number(withdrawAmount),
             account_number: withdrawAddress,
           },
         },
       })
 
       if (res?.data?.shopWithdrawBalance.success) {
-        setWithdrawAmount(0)
+        setWithdrawAmount("")
         setWithdrawAddress("")
         setIsWithdrawModalOpen(false)
 
@@ -255,8 +255,11 @@ export default function ShopCreditPage() {
   return (
     <div className="flex flex-col h-full">
       <div className="sm:border-b bg-white">
-        <div className="flex items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+        <div className="flex items-center justify-between px-2 sm:px-6 py-3">
+          <div className="block sm:hidden">
+            <h1 className="text-md font-bold text-gray-900">Shop Credit Balance</h1>
+          </div>
+          <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600">
             <Link href="/shop-dashboard" className="hover:text-primary">
               Dashboard
             </Link>
@@ -285,9 +288,9 @@ export default function ShopCreditPage() {
         </div>
       </div>
 
-      <div className="flex-1 bg-white p-6">
+      <div className="flex-1 bg-white p-2 sm:p-6">
         <div className="mx-auto max-w-5xl">
-          <div className="mb-4 flex items-center justify-start gap-4">
+          <div className="mb-4 hidden sm:flex items-center justify-start gap-4">
             <h1 className="text-lg font-bold text-gray-900">Shop Credit Balance</h1>
             <div className="flex items-center gap-2 text-sm text-green-600">
               <Lock className="h-4 w-4" />
@@ -295,7 +298,7 @@ export default function ShopCreditPage() {
             </div>
           </div>
 
-          <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-600 px-4 py-3 text-white">
+          <div className="mb-6 hidden sm:flex items-center gap-3 rounded-lg bg-green-600 px-4 py-3 text-white">
             <svg className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
@@ -306,24 +309,24 @@ export default function ShopCreditPage() {
             <span className="text-sm">Manage your shop wallet balance for receiving payments and withdrawals.</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-start gap-6">
-            <div className="mb-8">
-              <p className="mb-2 text-sm text-gray-600">Total Balance (USD):</p>
-              <p className="text-3xl font-bold text-gray-900">
+          <div className="flex flex-wrap items-center justify-start gap-4 sm:gap-8 mb-8 sm:mb-0">
+            <div className="mb-2 sm:mb-8">
+              <p className="mb-2 text-sm text-gray-600">Total Balance</p>
+              <p className="text-xl sm:text-3xl font-bold text-gray-900">
                 {walletLoading ? "..." : `$${(wallet?.total_balance || 0).toFixed(2)}`}
               </p>
             </div>
 
-            <div className="mb-8">
-              <p className="mb-2 text-sm text-gray-600">Pending (USD):</p>
-              <p className="text-3xl font-bold text-gray-900">
+            <div className="mb-2 sm:mb-8">
+              <p className="mb-2 text-sm text-gray-600">Pending</p>
+              <p className="text-xl sm:text-3xl font-bold text-gray-900">
                 {walletLoading ? "..." : `$${(wallet?.total_frozen_balance || 0).toFixed(2)}`}
               </p>
             </div>
 
-            <div className="mb-8">
-              <p className="mb-2 text-sm text-gray-600">Withdrawable (USD):</p>
-              <p className="text-3xl font-bold text-green-600">
+            <div className="mb-2 sm:mb-8">
+              <p className="mb-2 text-sm text-gray-600">Withdrawable</p>
+              <p className="text-xl sm:text-3xl font-bold text-green-600">
                 {walletLoading ? "..." : `$${(wallet?.total_withdraw_able_balance || 0).toFixed(2)}`}
               </p>
             </div>
@@ -331,7 +334,7 @@ export default function ShopCreditPage() {
 
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-md font-bold text-gray-900">Transaction History:</h2>
+              <h2 className="text-md font-bold text-gray-900"><span className="hidden sm:block">Transaction</span> History:</h2>
               <div className="flex items-center gap-2">
                 <Select value={filterIdentifier || "all"} onValueChange={(val) => { setFilterIdentifier(val === "all" ? "" : val); setCurrentPage(1); }}>
                   <SelectTrigger className="w-32 h-8 text-xs">
@@ -357,100 +360,104 @@ export default function ShopCreditPage() {
               </div>
             </div>
 
-            <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
-              <div className="text-center">ID</div>
-              <div>Voucher</div>
-              <div>Transaction</div>
-              <div>Amount</div>
-              <div>Coin Type</div>
-              <div>Status</div>
-              <div>Date</div>
-            </div>
-
-            {transactionsLoading ? (
-              <div className="py-12 text-center">
-                <Loader className="mx-auto mb-4 h-6 w-6 animate-spin text-orange-500" />
-                <p className="text-gray-600">Loading transactions...</p>
-              </div>
-            ) : transactions.length > 0 ? (
-              <div className="space-y-2">
-                {transactions.map((transaction, index: number) => (
-                  <div key={transaction.id} className="grid grid-cols-7 gap-4 py-3 text-sm border-b last:border-0">
-                    <div className="text-center text-gray-600">
-                      {(currentPage - 1) * pageLimit + index + 1}
-                    </div>
-                    <div>
-                      {transaction.payment_slip ? (
-                        <a
-                          href={transaction.payment_slip}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          View
-                        </a>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </div>
-                    <div>
-                      <span
-                        className={`inline-block px-2 py-1 text-xs rounded font-medium ${transaction.identifier?.toLowerCase() === "recharge"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {transaction.identifier || "N/A"}
-                      </span>
-                    </div>
-                    <div className="font-medium">
-                      ${transaction.amount.toFixed(2)}
-                    </div>
-                    <div>
-                      <span className="inline-block px-2 py-1 text-xs bg-gray-100 rounded">
-                        {transaction.coin_type}
-                      </span>
-                    </div>
-                    <div>
-                      <span
-                        className={`inline-block px-2 py-1 text-xs rounded ${transaction.status === "APPROVED"
-                          ? "bg-green-100 text-green-800"
-                          : transaction.status === "PENDING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                          }`}
-                      >
-                        {transaction.status}
-                      </span>
-                    </div>
-                    <div className="text-gray-600">
-                      {new Date(transaction.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12">
-                <div className="mb-6 text-gray-300">
-                  <svg className="h-32 w-32" viewBox="0 0 120 120" fill="none">
-                    <rect
-                      x="20"
-                      y="40"
-                      width="80"
-                      height="60"
-                      rx="4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeDasharray="4 4"
-                    />
-                    <path d="M40 40 L50 25 L70 25 L80 40" stroke="currentColor" strokeWidth="2" />
-                    <line x1="45" y1="55" x2="65" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                    <line x1="65" y1="55" x2="45" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+            <div className="overflow-x-auto">
+              <div className="min-w-[600px]">
+                <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
+                  <div className="text-center">ID</div>
+                  <div>Voucher</div>
+                  <div>Transaction</div>
+                  <div>Amount</div>
+                  <div>Coin Type</div>
+                  <div>Status</div>
+                  <div>Date</div>
                 </div>
-                <p className="text-gray-900">No transaction history yet</p>
+
+                {transactionsLoading ? (
+                  <div className="py-12 text-center">
+                    <Loader className="mx-auto mb-4 h-6 w-6 animate-spin text-orange-500" />
+                    <p className="text-gray-600">Loading transactions...</p>
+                  </div>
+                ) : transactions.length > 0 ? (
+                  <div className="space-y-2">
+                    {transactions.map((transaction, index: number) => (
+                      <div key={transaction.id} className="grid grid-cols-7 gap-4 py-3 text-sm border-b last:border-0">
+                        <div className="text-center text-gray-600">
+                          {(currentPage - 1) * pageLimit + index + 1}
+                        </div>
+                        <div>
+                          {transaction.payment_slip ? (
+                            <a
+                              href={transaction.payment_slip}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:underline"
+                            >
+                              View
+                            </a>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </div>
+                        <div>
+                          <span
+                            className={`inline-block px-2 py-1 text-xs rounded font-medium ${transaction.identifier?.toLowerCase() === "recharge"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                              }`}
+                          >
+                            {transaction.identifier || "N/A"}
+                          </span>
+                        </div>
+                        <div className="font-medium">
+                          ${transaction.amount.toFixed(2)}
+                        </div>
+                        <div>
+                          <span className="inline-block px-2 py-1 text-xs bg-gray-100 rounded">
+                            {transaction.coin_type}
+                          </span>
+                        </div>
+                        <div>
+                          <span
+                            className={`inline-block px-2 py-1 text-xs rounded ${transaction.status === "APPROVED"
+                              ? "bg-green-100 text-green-800"
+                              : transaction.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
+                              }`}
+                          >
+                            {transaction.status}
+                          </span>
+                        </div>
+                        <div className="text-gray-600">
+                          {new Date(transaction.created_at).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <div className="mb-6 text-gray-300">
+                      <svg className="h-32 w-32" viewBox="0 0 120 120" fill="none">
+                        <rect
+                          x="20"
+                          y="40"
+                          width="80"
+                          height="60"
+                          rx="4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeDasharray="4 4"
+                        />
+                        <path d="M40 40 L50 25 L70 25 L80 40" stroke="currentColor" strokeWidth="2" />
+                        <line x1="45" y1="55" x2="65" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        <line x1="65" y1="55" x2="45" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-900">No transaction history yet</p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             {/* Pagination */}
             {totalPages > 1 && (
@@ -513,18 +520,18 @@ export default function ShopCreditPage() {
 
       {/* Deposit Modal */}
       <Dialog open={isDepositModalOpen} onOpenChange={setIsDepositModalOpen}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="w-sm sm:w-xl max-w-xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">Top-Up Your Wallet Balance:</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
-            <div className="w-1/2 space-y-2">
+            <div className="w-full space-y-2">
               <Label htmlFor="crypto-type" className="text-sm font-medium">
                 Select type
               </Label>
               <Select value={cryptoType} onValueChange={setCryptoType}>
-                <SelectTrigger id="crypto-type">
+                <SelectTrigger id="crypto-type" className="w-full">
                   <SelectValue placeholder="Select cryptocurrency type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -544,7 +551,7 @@ export default function ShopCreditPage() {
                   type="button"
                   variant="outline"
                   size="icon"
-                  onClick={() => setAmount(Math.max(0, amount - 10))}
+                  onClick={() => setAmount(String(Math.max(0, Number(amount) - 10)))}
                   className="h-10 w-10"
                 >
                   <Minus className="h-4 w-4" />
@@ -553,15 +560,16 @@ export default function ShopCreditPage() {
                   id="amount"
                   type="number"
                   value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
+                  onChange={(e) => setAmount(e.target.value)}
                   className="text-center"
                   min="0"
+                  placeholder="Enter amount...."
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
-                  onClick={() => setAmount(amount + 10)}
+                  onClick={() => setAmount(String(Number(amount) + 10))}
                   className="h-10 w-10"
                 >
                   <Plus className="h-4 w-4" />
@@ -614,7 +622,7 @@ export default function ShopCreditPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Amount:</span>
-                  <span className="font-medium">${amount.toFixed(2)}</span>
+                  <span className="font-medium">${Number(amount || 0).toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -645,7 +653,7 @@ export default function ShopCreditPage() {
             {/* Deposit Button */}
             <Button
               onClick={handleDeposit}
-              disabled={!transactionId || amount <= 0 || !voucherFile || isDepositLoading}
+              disabled={!transactionId || Number(amount) <= 0 || !voucherFile || isDepositLoading}
               className="w-full bg-green-500 hover:bg-green-600 text-white"
             >
               {isDepositLoading ? <Loader className="h-5 w-5 animate-spin" /> : null}
@@ -657,7 +665,7 @@ export default function ShopCreditPage() {
 
       {/* Withdraw Modal */}
       <Dialog open={isWithdrawModalOpen} onOpenChange={setIsWithdrawModalOpen}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="w-sm sm:w-xl max-w-xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">Withdraw Your Balance:</DialogTitle>
           </DialogHeader>
@@ -672,12 +680,12 @@ export default function ShopCreditPage() {
             </div>
 
             {/* Select Type */}
-            <div className="w-1/2 space-y-2">
+            <div className="w-full space-y-2">
               <Label htmlFor="withdraw-crypto-type" className="text-sm font-medium">
                 Select type
               </Label>
               <Select value={withdrawCryptoType} onValueChange={setWithdrawCryptoType}>
-                <SelectTrigger id="withdraw-crypto-type">
+                <SelectTrigger id="withdraw-crypto-type" className="w-full">
                   <SelectValue placeholder="Select cryptocurrency type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -698,7 +706,7 @@ export default function ShopCreditPage() {
                   type="button"
                   variant="outline"
                   size="icon"
-                  onClick={() => setWithdrawAmount(Math.max(0, withdrawAmount - 10))}
+                  onClick={() => setWithdrawAmount(String(Math.max(0, Number(withdrawAmount) - 10)))}
                   className="h-10 w-10"
                 >
                   <Minus className="h-4 w-4" />
@@ -707,16 +715,17 @@ export default function ShopCreditPage() {
                   id="withdraw-amount"
                   type="number"
                   value={withdrawAmount}
-                  onChange={(e) => setWithdrawAmount(Number(e.target.value))}
+                  onChange={(e) => setWithdrawAmount(e.target.value)}
                   className="text-center"
                   min="0"
                   max={wallet?.total_withdraw_able_balance || 0}
+                  placeholder="Enter amount...."
                 />
                 <Button
                   type="button"
                   variant="outline"
                   size="icon"
-                  onClick={() => setWithdrawAmount(Math.min(withdrawAmount + 10, wallet?.total_withdraw_able_balance || 0))}
+                  onClick={() => setWithdrawAmount(String(Math.min(Number(withdrawAmount) + 10, wallet?.total_withdraw_able_balance || 0)))}
                   className="h-10 w-10"
                 >
                   <Plus className="h-4 w-4" />
@@ -727,7 +736,7 @@ export default function ShopCreditPage() {
                 variant="link"
                 size="sm"
                 className="text-orange-500 p-0 h-auto"
-                onClick={() => setWithdrawAmount(wallet?.total_withdraw_able_balance || 0)}
+                onClick={() => setWithdrawAmount(String(wallet?.total_withdraw_able_balance || 0))}
               >
                 Withdraw all
               </Button>
@@ -755,7 +764,7 @@ export default function ShopCreditPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Withdraw Amount:</span>
-                  <span className="font-medium">${withdrawAmount.toFixed(2)}</span>
+                  <span className="font-medium">${Number(withdrawAmount || 0).toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -765,14 +774,14 @@ export default function ShopCreditPage() {
 
                 <div className="flex justify-between pt-2 border-t">
                   <span className="text-gray-600">You will receive:</span>
-                  <span className="font-bold text-green-600">${withdrawAmount.toFixed(2)}</span>
+                  <span className="font-bold text-green-600">${Number(withdrawAmount || 0).toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
             <Button
               onClick={handleWithdraw}
-              disabled={!withdrawAddress || withdrawAmount <= 0 || isWithdrawLoading}
+              disabled={!withdrawAddress || Number(withdrawAmount) <= 0 || isWithdrawLoading}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white"
             >
               {isDepositLoading ? <Loader className="h-5 w-5 animate-spin" /> : null}

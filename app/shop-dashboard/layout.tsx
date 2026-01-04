@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer"
 import { ShopDashboardSidebar } from "@/components/shop-sidebar"
 import { ShopHeader } from "@/components/shop-header"
 import { ShopFooter } from "@/components/shop-footer"
+import { ShopBottomNav } from "@/components/shop-bottom-nav"
 
 export default function AccountLayout({
   children,
@@ -15,17 +16,20 @@ export default function AccountLayout({
   return (
     <div className="w-full flex flex-col mb-4">
       <ShopHeader className="border-b" />
-      <div className="flex items-center justify-center my-8">
+      <div className="flex items-center justify-center my-2 sm:my-8">
         <div className="px-2 sm:container w-full">
           <div className="w-full flex items-start justify-center">
             <div className="w-1/5 hidden sm:block">
               <ShopDashboardSidebar />
             </div>
-            <main className="w-full sm:w-4/5">{children}</main>
+            <main className="w-full sm:w-4/5 pb-20 sm:pb-0">{children}</main>
           </div>
         </div>
       </div>
-      <SiteFooter />
+      <div className="hidden sm:block">
+        <SiteFooter />
+      </div>
+      <ShopBottomNav />
     </div>
   )
 }

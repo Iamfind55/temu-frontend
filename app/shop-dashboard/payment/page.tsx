@@ -97,13 +97,13 @@ export default function PaymentMethodPage() {
       }
    };
    return (
-      <div className="w-full p-8 space-y-6">
-         <form onSubmit={handleSubmit} className="border space-y-6 p-4 rounded-sm">
+      <div className="w-full p-2 sm:p-8">
+         <form onSubmit={handleSubmit} className="border space-y-8 p-4 rounded-sm">
             <div className="space-y-2">
                <CardTitle>Payment setting</CardTitle>
                <CardDescription>Update your payment address for receive funds from Temushop</CardDescription>
             </div>
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-6 sm:space-y-8">
                <div className="space-y-2">
                   <Label htmlFor="wallet_address">Wallet address (USDT) <span className="text-rose-500">*</span></Label>
                   <Input

@@ -184,7 +184,7 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className="mx-auto space-y-6 mb-6 px-6">
+      <div className="mx-auto space-y-6 mb-6 px-1 sm:px-6">
         <Card className="rounded-sm">
           <CardHeader>
             <CardTitle>Personal Information</CardTitle>
@@ -192,12 +192,12 @@ export default function ProfilePage() {
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit}>
-              <div className="space-y-8">
+              <div className="space-y-4 sm:space-y-8">
                 <div className="flex items-center justify-between gap-6">
-                  <div className="w-1/2 flex items-center gap-6 mb-4">
-                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-orange-100 overflow-hidden">
+                  <div className="w-1/2 flex items-center gap-4 sm:gap-6 mb-4">
+                    <div className="flex h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-lg sm:rounded-full bg-orange-100 overflow-hidden border-2 border-orange-200 flex-shrink-0">
                       {formData.logo ? (
-                        <img src={formData.logo} alt="Profile" className="h-full w-full rounded-full object-cover" />
+                        <img src={formData.logo} alt="Profile" className="h-full w-full object-cover" />
                       ) : (
                         <User className="h-8 w-8 text-orange-600" />
                       )}
@@ -218,9 +218,9 @@ export default function ProfilePage() {
                         onClick={() => document.getElementById('profile-image')?.click()}
                         disabled={isLoading}
                       >
-                        Change Photo
+                        Change
                       </Button>
-                      <p className="mt-2 text-xs text-gray-500">
+                      <p className="hidden sm:block mt-2 text-xs text-gray-500">
                         {selectedLogo ? `Selected: ${selectedLogo.name}` : 'JPG, PNG or GIF. Max size 2MB'}
                       </p>
                     </div>

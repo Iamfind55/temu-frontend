@@ -172,7 +172,7 @@ function ProductGrid({
    }
 
    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm;gap-4">
          {products.map((product) => (
             <VIPProductCard
                key={product.id}
@@ -403,13 +403,13 @@ export default function ApplyVIPPage() {
             <div className="mx-auto max-w-7xl">
                {/* Page Header */}
                <div className="mb-4">
-                  <h1 className="text-lg font-bold text-gray-900">Apply VIP Products</h1>
-                  <p className="text-sm text-gray-600 mt-1">Select products to apply for VIP status</p>
+                  <h1 className="text-md sm:text-lg font-bold text-gray-900">Apply VIP Products</h1>
+                  <p className="text-sm text-gray-600 mt-0 sm:mt-1">Select products to apply for VIP status</p>
                </div>
 
                {/* Tabs */}
                <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-                  <TabsList className="mb-2 bg-white border flex gap-8 px-6">
+                  <TabsList className="mb-2 bg-white border flex gap-8 px-2 sm:px-6">
                      <TabsTrigger
                         value="VIP1"
                         className="data-[state=active]:bg-amber-500 data-[state=active]:text-white flex items-center gap-2"
@@ -442,9 +442,9 @@ export default function ApplyVIPPage() {
                      </TabsTrigger>
                   </TabsList>
 
-                  <div className="p-4 bg-white flex items-center justify-between">
+                  <div className="p-0 sm:p-4 bg-white flex items-center justify-between">
                      <div className="flex items-center gap-4">
-                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${currentVIP.color}`}>
+                        <div className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border ${currentVIP.color}`}>
                            <Crown className={`h-4 w-4 ${currentVIP.iconColor}`} />
                            <span className="font-semibold text-sm">{currentVIP.name}</span>
                         </div>
@@ -471,7 +471,7 @@ export default function ApplyVIPPage() {
                   </div>
 
                   {selectedProducts.size > 0 ? (
-                     <div className="mb-4 p-4 bg-orange-50 rounded-lg border border-orange-200 flex items-center justify-between">
+                     <div className="mb-4 p-2 sm:p-4 bg-orange-50 rounded-lg border border-orange-200 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                            <Check className="h-5 w-5 text-orange-500" />
                            <span className="text-sm font-medium text-orange-800">
@@ -494,7 +494,7 @@ export default function ApplyVIPPage() {
                         </Button>
                      </div>
                   ) : (
-                     <div className="mb-4 p-4 bg-orange-50 rounded-lg border border-orange-200 flex items-center justify-between">
+                     <div className="mb-4 p-2 sm:p-4 bg-orange-50 rounded-lg border border-orange-200 flex items-center justify-between">
                         <div className="flex items-center gap-2">
                            <Crown className={`h-5 w-5 ${currentVIP.iconColor}`} />
                            <span className="text-sm font-medium text-orange-800">

@@ -168,7 +168,7 @@ function ProductGrid({
    }
 
    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
          {products.map((product) => (
             <ApplyProductCard
                key={product.id}
@@ -388,17 +388,17 @@ export default function ApplyNewPage() {
 
    return (
       <div className="flex flex-col h-full">
-         <div className="flex-1 p-4 sm:p-6">
+         <div className="flex-1 p-2 sm:p-6">
             <div className="mx-auto max-w-7xl">
                <div className="mb-4">
-                  <h1 className="text-lg font-bold text-gray-900">Apply New Products</h1>
-                  <p className="text-sm text-gray-600 mt-1">Select products to apply for listing</p>
+                  <h1 className="text-md sm:text-lg font-bold text-gray-900">Apply New Products</h1>
+                  <p className="text-sm text-gray-600 mt-0 sm:mt-1">Select products to apply for listing</p>
                </div>
 
                {/* Category Filters */}
-               <div className="mb-4 p-4 bg-white rounded-lg">
+               <div className="mb-4 p-0 sm:p-4 bg-white rounded-lg">
                   <div className="flex flex-wrap gap-4 items-end">
-                     <div className="w-[200px]">
+                     <div className="w-[180px]">
                         <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
                         <Select value={selectedCategory} onValueChange={handleCategoryChange}>
                            <SelectTrigger className="w-full">
@@ -415,7 +415,7 @@ export default function ApplyNewPage() {
                         </Select>
                      </div>
 
-                     <div className="w-[200px]">
+                     <div className="w-[180px]">
                         <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category 1</label>
                         <Select
                            value={selectedSub1}
@@ -436,7 +436,7 @@ export default function ApplyNewPage() {
                         </Select>
                      </div>
 
-                     <div className="w-[200px]">
+                     <div className="w-[180px]">
                         <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category 2</label>
                         <Select
                            value={selectedSub2}
@@ -459,7 +459,7 @@ export default function ApplyNewPage() {
                   </div>
                </div>
 
-               <div className="py-2 px-4 bg-white flex items-center justify-between mb-4">
+               <div className="py-2 px-0 sm:px-4 bg-white flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
                      <h2 className="font-semibold text-gray-900">Products</h2>
                      <div className="flex items-center gap-3 text-sm">
@@ -521,8 +521,8 @@ export default function ApplyNewPage() {
                />
 
                {/* Results Summary */}
-               <div className="mt-4 flex items-center justify-between">
-                  <div className="text-sm text-gray-600">
+               <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+                  <div className="text-sm text-gray-600 mb-3 sm:mb-0">
                      Showing {products.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{" "}
                      {Math.min(currentPage * itemsPerPage, totalProducts)} of {totalProducts} products
                   </div>

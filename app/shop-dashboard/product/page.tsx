@@ -122,7 +122,7 @@ function ProductGrid({
    }
 
    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
          {products.map((product) => (
             <ShopProductCard key={product.id} product={product} onView={onView} />
          ))}
@@ -226,17 +226,17 @@ export default function ProductsPage() {
 
    return (
       <div className="flex flex-col h-full">
-         <div className="flex-1 p-4 sm:p-6">
+         <div className="flex-1 p-2 sm:p-6">
             <div className="mx-auto max-w-7xl space-y-4">
                <div className="flex items-center justify-between">
                   <div className="mb-4">
-                     <h1 className="text-lg font-bold text-gray-900">All on shelf products</h1>
-                     <p className="text-xs text-gray-600 mt-1">Manage your product listings</p>
+                     <h1 className="text-sm sm:text-lg font-bold text-gray-900">All on shelf products</h1>
+                     <p className="text-xs text-gray-600 mt-1">Manage your products</p>
                   </div>
 
-                  <div className="px-2 bg-white mb-4">
+                  <div className="px-0 sm:px-2 bg-white mb-4">
                      <div className="flex flex-wrap gap-2 items-end">
-                        <div className="flex-1 min-w-[200px]">
+                        <div className="flex-1 min-w-[150px]">
                            <label className="block text-xs font-medium text-gray-700 mb-1">Search</label>
                            <div className="relative">
                               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -245,7 +245,7 @@ export default function ProductsPage() {
                                  placeholder="Search by name..."
                                  value={searchQuery}
                                  onChange={(e) => setSearchQuery(e.target.value)}
-                                 className="pl-10"
+                                 className="text-sm pl-10"
                               />
                            </div>
                         </div>
@@ -253,7 +253,7 @@ export default function ProductsPage() {
                         <Button
                            variant="outline"
                            onClick={handleClearFilters}
-                           className="text-gray-600 hover:text-gray-900"
+                           className="hidden sm:block text-gray-600 hover:text-gray-900"
                         >
                            Clear
                         </Button>
@@ -264,13 +264,13 @@ export default function ProductsPage() {
                <div className="space-y-4">
                   <ProductGrid products={products} onView={handleViewProduct} loading={loading} />
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-center justify-between">
                      <div className="mt-4 text-sm text-gray-600 text-center">
                         Showing {products.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{" "}
                         {Math.min(currentPage * itemsPerPage, totalProducts)} of {totalProducts} products
                      </div>
                      {totalPages > 1 && (
-                        <div className="mt-6 flex justify-center">
+                        <div className="mt-3 sm:mt-6 flex justify-center">
                            <Pagination>
                               <PaginationContent>
                                  <PaginationItem>

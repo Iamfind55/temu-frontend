@@ -343,7 +343,7 @@ export default function NotificationsPage() {
 
    return (
       <div className="flex flex-col h-full">
-         <div className="flex-1 p-4 sm:p-6">
+         <div className="flex-1 p-2 sm:p-6">
             <div className="mx-auto max-w-4xl">
                {/* Page Header */}
                <div className="flex flex-col sm:flex-row items-center justify-between">
