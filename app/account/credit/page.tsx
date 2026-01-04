@@ -151,7 +151,7 @@ export default function CreditPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="border-b bg-white">
+      <div className="sm:border-b bg-white">
         <div className="flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Link href="/" className="hover:text-primary">

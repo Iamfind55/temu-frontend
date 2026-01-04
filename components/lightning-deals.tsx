@@ -42,12 +42,6 @@ export function LightningDeals() {
       }
    }
 
-   const formatSold = (sold: number) => {
-      if (sold >= 1000) {
-         return `${(sold / 1000).toFixed(1)}K+ sold`
-      }
-      return sold > 0 ? `${sold} sold` : ""
-   }
 
    if (loading) {
       return (
@@ -64,7 +58,7 @@ export function LightningDeals() {
    }
 
    return (
-      <div className="container mx-auto">
+      <div className="w-full overflow-hidden">
          <div className="bg-orange-500 py-4 mb-6 relative overflow-hidden">
             <div className="container mx-auto px-4">
                <div className="flex items-center justify-center gap-8">
@@ -86,12 +80,12 @@ export function LightningDeals() {
          </div>
 
          {/* Product carousel */}
-         <div className="container mx-auto relative">
+         <div className="container mx-auto px-4 relative">
             <Button
                variant="ghost"
                size="icon"
                onClick={() => scroll("left")}
-               className="absolute z-50 -left-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
+               className="hidden sm:flex absolute z-50 -left-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
             >
                <ChevronLeft className="h-12 w-12" />
             </Button>
@@ -148,7 +142,7 @@ export function LightningDeals() {
                variant="ghost"
                size="icon"
                onClick={() => scroll("right")}
-               className="absolute -right-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
+               className="hidden sm:flex absolute -right-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
             >
                <ChevronRight className="h-12 w-12" />
             </Button>

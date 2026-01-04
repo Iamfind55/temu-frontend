@@ -2,22 +2,22 @@
 
 import React from "react"
 import Link from "next/link"
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingCart, User, ChevronDown, TruckIcon, DollarSign, Undo2, Truck, Smartphone, ChevronRight, ThumbsUp, Star, Logs, MapPin, Wallet, Shield, FileText, LogOut, CreditCard } from "lucide-react"
 
+import { Separator } from "./ui/separator";
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { MegaMenu } from "@/components/mega-menu"
 import { LanguageSelector } from "@/components/language-selector"
 
-import { useCart } from "@/lib/cart-context"
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/app/redux/store";
-import { useDispatch } from "react-redux";
-import { signOut } from "@/app/redux/slice/customerAuthSlice";
-import { Separator } from "./ui/separator";
+import { useCart } from "@/lib/cart-context"
 import { maskEmail } from "@/utils/function";
+import { useAppSelector } from "@/app/redux/store";
+import { signOut } from "@/app/redux/slice/customerAuthSlice";
 
 const messages = [
   {
@@ -118,10 +118,7 @@ export function SiteHeader({ className }: { className?: string }) {
 
       <div className={cn("bg-red-950 text-white", className)}>
         <div className="container mx-auto flex items-center gap-4 px-4 py-3">
-          <Link href="/" className="flex items-center gap-2">
-            {/* <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-400  font-semibold">
-              <span className="text-xs">Temu</span>
-            </div> */}
+          <Link href="/" className="hidden sm:flex items-center gap-2">
             <svg
               className="iconmain-1nkfa w-15 h-15 text-white"
               aria-label="temu"
@@ -138,15 +135,16 @@ export function SiteHeader({ className }: { className?: string }) {
               ></path>
             </svg>
           </Link>
+          <h1 className="block sm:hidden text-orange-500 font-bold text-xl" onClick={() => router.push("/")}>TEMU</h1>
 
-          <Link href="/landing/best-selling" className="hidden sm:block">
+          <Link href="/best-selling" className="hidden sm:block">
             <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-semibold hover:text-white">
               <ThumbsUp />
               Best-Selling Items
             </Button>
           </Link>
 
-          <Link href="/landing/5-star-rated" className="hidden sm:block">
+          <Link href="/5-star-rated" className="hidden sm:block">
             <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full  font-semibold hover:text-white">
               <Star />
               5-Star Rated
@@ -166,9 +164,7 @@ export function SiteHeader({ className }: { className?: string }) {
                 Categories
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
-              <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
-                <Logs className="h-6 sm:h-4 w-6 sm:w-4" />
-              </button>
+              <Logs className="block sm:hidden h-6 sm:h-4 w-6 sm:w-4 hover:text-white cursor-pointer" />
             </div>
 
             {showMegaMenu && (
@@ -184,17 +180,17 @@ export function SiteHeader({ className }: { className?: string }) {
             <Input
               type="search"
               placeholder="Search Temu"
-              className="h-11 w-full rounded-full border bg-white pr-12 text-foreground placeholder:text-muted-foreground"
+              className="h-8 sm:h-11 w-full rounded-full border bg-white pr-12 text-foreground placeholder:text-muted-foreground"
             />
             <Button
               size="icon"
-              className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-[oklch(0.15_0_0)] hover:bg-[oklch(0.2_0_0)]"
+              className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-[oklch(0.15_0_0)] hover:bg-[oklch(0.2_0_0)] h-6 w-6 sm:h-9 sm:w-9"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </div>
 
-          <div className="flex items-center gap-0 sm:gap-4">
+          <div className="flex items-center gap-0 sm:gap-4 space-x-2">
             {customer?.id ? (
               <div className="group relative">
                 <Link href="/account/orders">
@@ -205,9 +201,7 @@ export function SiteHeader({ className }: { className?: string }) {
                       <div className="font-semibold">Orders & Account</div>
                     </div>
                   </Button>
-                  <button className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer">
-                    <User className="h-6 sm:h-4 w-6 sm:w-4" />
-                  </button>
+                  <User className="flex sm:hidden h-5 sm:h-4 w-5 sm:w-4 hover:text-white" />
                 </Link>
 
                 <div className="absolute right-0 top-full hidden w-48 rounded-lg bg-white py-2 shadow-lg group-hover:block">
@@ -255,7 +249,7 @@ export function SiteHeader({ className }: { className?: string }) {
               variant="ghost"
               size="icon"
               className="relative hidden sm:flex hover:bg-red-700 cursor-pointer rounded-full font-bold hover:text-white"
-              onClick={() => router.push("/landing/cart")}
+              onClick={() => router.push("/cart")}
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -264,12 +258,7 @@ export function SiteHeader({ className }: { className?: string }) {
                 </span>
               )}
             </Button>
-            <button
-              onClick={() => router.push("/landing/cart")}
-              className="flex sm:hidden items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer"
-            >
-              <ShoppingCart className="h-6 sm:h-4 w-6 sm:w-4" />
-            </button>
+            <ShoppingCart className="block sm:hidden h-5 sm:h-4 w-5 sm:w-4" onClick={() => router.push("/cart")} />
           </div>
         </div>
       </div>

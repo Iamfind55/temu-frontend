@@ -2,29 +2,29 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Trash2, Info, ChevronRight, ShieldCheck, LockKeyhole, Check, Truck, BaggageClaim, ShoppingCart, MapPin, Plus, Wallet, X, CheckCircle2 } from "lucide-react"
-import { useLazyQuery, useQuery, useMutation } from "@apollo/client/react"
+import { useToast } from "@/lib/toast"
 import { useSelector } from "react-redux"
+import { useRouter } from "next/navigation"
+import { useLazyQuery, useQuery, useMutation } from "@apollo/client/react"
+import { Trash2, Info, ChevronRight, ShieldCheck, LockKeyhole, Check, Truck, BaggageClaim, ShoppingCart, MapPin, Plus, Wallet, X, CheckCircle2 } from "lucide-react"
 
 // components:
 import { useCart } from "@/lib/cart-context"
 import { products } from "@/lib/product-data"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ProductCard } from "@/components/product-card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/lib/toast"
 
 // APIs and Interfaces
-import { QUERY_CUSTOMER_ADDRESS, QUERY_COUNTRIES, QUERY_STATES, QUERY_CITIES, MUTATION_CREATE_CUSTOMER_ADDRESS } from "@/app/api/address"
-import { QUERY_GET_CUSTOMER_CREDIT_BALANCE } from "@/app/api/credit"
 import { MUTATION_CREATE_ORDERS } from "@/app/api/order"
+import { QUERY_GET_CUSTOMER_CREDIT_BALANCE } from "@/app/api/credit"
 import { GetCustomerAddressesResponse, GetCountryResponse, GetStateResponse, GetCityResponse } from "@/app/interface/address"
+import { QUERY_CUSTOMER_ADDRESS, QUERY_COUNTRIES, QUERY_STATES, QUERY_CITIES, MUTATION_CREATE_CUSTOMER_ADDRESS } from "@/app/api/address"
 
 export default function CartPage() {
    const router = useRouter()
@@ -100,6 +100,13 @@ export default function CartPage() {
          errorMessage({ message: "Please select items to checkout", duration: 3000 })
          return
       }
+
+      // Check if user is authenticated
+      if (!customer?.id) {
+         router.push("/login?redirect=/cart")
+         return
+      }
+
       setIsCheckoutModalOpen(true)
       setCheckoutStep(1)
       getAddresses({ variables: { where: { status: "ACTIVE", customer_id: customer?.id } } })
@@ -212,7 +219,7 @@ export default function CartPage() {
    }
 
    return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background mt-4">
          <div className="hidden sm:block container mx-auto px-4 py-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                <Link href="/" className="hover:text-foreground">
@@ -347,7 +354,7 @@ export default function CartPage() {
                                        <select
                                           value={item.quantity}
                                           onChange={(e) => updateQuantity(item.id, Number.parseInt(e.target.value))}
-                                          className="border rounded px-3 py-1.5 text-sm"
+                                          className="w-full border rounded px-3 py-1.5 text-sm"
                                        >
                                           Qty
                                           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
@@ -508,7 +515,7 @@ export default function CartPage() {
          <Dialog open={isCheckoutModalOpen} onOpenChange={setIsCheckoutModalOpen}>
             <DialogContent className="sm:!max-w-[50vw] max-h-[90vh] overflow-y-auto space-y-6">
                <DialogHeader className="mb-6">
-                  <DialogTitle className="text-md">
+                  <DialogTitle className="text-sm">
                      {checkoutStep === 1 && "Step 1: Delivery Address"}
                      {checkoutStep === 2 && "Step 2: Payment"}
                      {checkoutStep === 3 && "Order Successful!"}
@@ -538,7 +545,7 @@ export default function CartPage() {
                      {addresses.length > 0 ? (
                         <div className="space-y-4">
                            <h3 className="font-semibold text-lg">Select Delivery Address</h3>
-                           <div className="grid gap-3 max-h-70 overflow-y-auto">
+                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-70 overflow-y-auto">
                               {addresses.map((addr: any) => (
                                  <div
                                     key={addr.id}
@@ -575,22 +582,22 @@ export default function CartPage() {
                         <div className="space-y-4">
                            <h3 className="font-semibold text-lg">Create Delivery Address</h3>
                            <div className="grid grid-cols-2 gap-4">
-                              <div>
-                                 <Label>Email *</Label>
+                              <div className="space-y-1.5">
+                                 <Label>Email <span className="text-rose-500">*</span></Label>
                                  <Input value={email} onChange={(e) => setEmail(e.target.value)} required />
                               </div>
-                              <div>
-                                 <Label>Phone Number *</Label>
+                              <div className="space-y-1.5">
+                                 <Label>Phone Number <span className="text-rose-500">*</span></Label>
                                  <Input value={telephone} onChange={(e) => setTelephone(e.target.value)} required />
                               </div>
-                              <div className="col-span-2">
-                                 <Label>Address *</Label>
+                              <div className="space-y-1.5 col-span-2">
+                                 <Label>Address <span className="text-rose-500">*</span></Label>
                                  <Input value={address} onChange={(e) => setAddress(e.target.value)} required />
                               </div>
-                              <div>
-                                 <Label>Country *</Label>
+                              <div className="space-y-1.5">
+                                 <Label>Country <span className="text-rose-500">*</span></Label>
                                  <Select value={countryId} onValueChange={(val) => { setCountryId(val); getStates({ variables: { countryId: val } }) }}>
-                                    <SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger>
+                                    <SelectTrigger className="w-full"><SelectValue placeholder="Select country" /></SelectTrigger>
                                     <SelectContent>
                                        {countries.map((c) => (
                                           <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
@@ -598,10 +605,10 @@ export default function CartPage() {
                                     </SelectContent>
                                  </Select>
                               </div>
-                              <div>
+                              <div className="space-y-1.5">
                                  <Label>State</Label>
                                  <Select value={stateId} onValueChange={(val) => { setStateId(val); getCities({ variables: { countryId, stateId: val } }) }}>
-                                    <SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger>
+                                    <SelectTrigger className="w-full"><SelectValue placeholder="Select state" /></SelectTrigger>
                                     <SelectContent>
                                        {states.map((s) => (
                                           <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
@@ -609,10 +616,10 @@ export default function CartPage() {
                                     </SelectContent>
                                  </Select>
                               </div>
-                              <div>
-                                 <Label>City *</Label>
+                              <div className="space-y-1.5">
+                                 <Label>City <span className="text-rose-500">*</span></Label>
                                  <Select value={cityId} onValueChange={setCityId}>
-                                    <SelectTrigger><SelectValue placeholder="Select city" /></SelectTrigger>
+                                    <SelectTrigger className="w-full"><SelectValue placeholder="Select city" /></SelectTrigger>
                                     <SelectContent>
                                        {cities.map((c) => (
                                           <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
@@ -620,12 +627,12 @@ export default function CartPage() {
                                     </SelectContent>
                                  </Select>
                               </div>
-                              <div>
-                                 <Label>Postal Code *</Label>
+                              <div className="space-y-1.5">
+                                 <Label>Postal Code <span className="text-rose-500">*</span></Label>
                                  <Input value={postalCode} onChange={(e) => setPostalCode(e.target.value)} required />
                               </div>
                            </div>
-                           <Button onClick={handleCreateAddress} disabled={isCreatingAddress} className="w-full bg-orange-500 hover:bg-orange-600">
+                           <Button onClick={handleCreateAddress} disabled={isCreatingAddress} className="w-auto bg-orange-500 hover:bg-orange-600">
                               <Plus className="mr-2" size={16} />
                               {isCreatingAddress ? "Creating..." : "Create Address"}
                            </Button>

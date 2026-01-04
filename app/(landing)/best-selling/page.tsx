@@ -2,15 +2,19 @@
 
 import { useState, useEffect } from "react"
 import { useQuery } from "@apollo/client/react"
-import { ChevronDown, Loader } from "lucide-react"
-import { ProductCard } from "@/components/product-card"
 import type { Product } from "@/lib/product-data"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { QUERY_GET_BEST_SELLING_PRODUCTS } from "@/app/api/product"
-import { IGetBestSellingProductsResponse, IBestSellingProduct } from "@/app/interface/product"
+import { ChevronDown, Loader } from "lucide-react"
+
+// Api:
 import { QUERY_GET_ALL_MAIN_CATEGORIES } from "@/app/api/category"
+import { QUERY_GET_BEST_SELLING_PRODUCTS } from "@/app/api/product"
 import { IGetMainCategoriesResponse } from "@/app/interface/category"
+import { IGetBestSellingProductsResponse, IBestSellingProduct } from "@/app/interface/product"
+
+// Components:
+import { Button } from "@/components/ui/button"
+import { ProductCard } from "@/components/product-card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type TimePeriod = 30 | 14 | 7 | null
 
@@ -244,7 +248,7 @@ export default function BestSellingPage() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 mt-10">
               {allProducts.map((product, index) => (
                 <ProductCard key={product.id + index} product={product} bestSellingRank={index + 1} />
               ))}
@@ -256,11 +260,11 @@ export default function BestSellingPage() {
                   size="lg"
                   onClick={handleLoadMore}
                   disabled={loading}
-                  className="text-md font-bold rounded-full bg-orange-400 hover:bg-orange-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="text-sm rounded-full bg-orange-400 hover:bg-orange-500 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
-                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader className="h-4 w-4 animate-spin" />
                       Loading...
                     </>
                   ) : (

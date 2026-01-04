@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { useQuery } from "@apollo/client/react"
-import { ChevronDown, Loader } from "lucide-react"
-import { ProductCard } from "@/components/product-card"
 import type { Product } from "@/lib/product-data"
+import { ChevronDown, Loader } from "lucide-react"
+
+// components
 import { Button } from "@/components/ui/button"
 import { QUERY_GET_PRODUCTS } from "@/app/api/product"
+import { ProductCard } from "@/components/product-card"
 import { IGetProductsResponse, IProduct } from "@/app/interface/product"
 
 export default function FiveStarRatedPage() {
@@ -116,7 +118,7 @@ export default function FiveStarRatedPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6 space-y-4">
+      <div className="container mx-auto px-4 py-6 space-y-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">5-Star Rated Products</h1>
           <p className="text-sm text-muted-foreground">
@@ -126,7 +128,7 @@ export default function FiveStarRatedPage() {
 
         {loading && allProducts.length === 0 ? (
           <div className="flex items-center justify-center py-20 gap-2">
-            <Loader className="h-6 w-6 animate-spin text-orange-400" /> Loading...
+            <Loader className="h-4 w-4 animate-spin text-orange-400" /> Loading...
           </div>
         ) : allProducts.length === 0 ? (
           <div className="py-20 text-center">
@@ -150,7 +152,7 @@ export default function FiveStarRatedPage() {
                 >
                   {loading ? (
                     <>
-                      <Loader className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader className="h-4 w-4 animate-spin" />
                       Loading...
                     </>
                   ) : (

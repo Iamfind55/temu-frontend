@@ -191,7 +191,7 @@ export function SiteFooter() {
 
         <div className="pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-start flex-col justify-center gap-6">
+            <div className="w-full sm:w-auto flex items-start flex-col justify-center gap-6">
               <svg
                 className="iconmain-1nkfa w-15 h-15 text-white"
                 aria-label="temu"
@@ -233,20 +233,24 @@ export function SiteFooter() {
 
           {/* Payment methods */}
           <div className="mt-8 border-t border-white/20 pt-8">
-            <div className="flex items-center justify-center text-sm text-white/60 gap-6">
-              <p>© 2022 – 2025 Temu Inc. </p>
-              <a href="/terms-of-use" className="hover:text-white underline">
-                Terms of use
-              </a>
-              <a href="/privacy-policy" className="hover:text-white underline">
-                Privacy policy
-              </a>
-              <a href="/consumer-health-privacy-policy" className="hover:text-white underline">
-                Consumer health data privacy policy
-              </a>
-              <a href="/privacy-choices" className="hover:text-white underline">
-                Your privacy choices
-              </a>
+            <div className="flex flex-col sm:flex-row items-center justify-center text-sm text-white/60 gap-2">
+              <div className="flex items-center justify-center">
+                <p>© 2022 – 2025 Temu Inc. </p>
+                <a href="/terms-of-use" className="hover:text-white underline">
+                  Terms of use
+                </a>
+                <a href="/privacy-policy" className="hover:text-white underline">
+                  Privacy policy
+                </a>
+              </div>
+              <div className="flex items-center justify-center">
+                <a href="/consumer-health-privacy-policy" className="hover:text-white underline">
+                  Consumer health data privacy policy
+                </a>
+                <a href="/privacy-choices" className="hover:text-white underline">
+                  Your privacy choices
+                </a>
+              </div>
               <a href="/ad-choices" className="hover:text-white underline">
                 Ad Choices
               </a>

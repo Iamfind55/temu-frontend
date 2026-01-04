@@ -1,8 +1,8 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { Globe } from "lucide-react"
 import { useState } from "react"
+import { Globe } from "lucide-react"
 
 const languages = [
   { code: "en", name: "English", flag: "🇺🇸" },
@@ -20,10 +20,11 @@ export function LanguageSelector({ className }: { className?: string }) {
 
   return (
     <div className="relative" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
-      <button className={cn("flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer hover:text-white", className)}>
+      <button className={cn("hidden sm:flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer hover:text-white", className)}>
         <Globe className="h-6 sm:h-4 w-6 sm:w-4" />
-        <span className="hidden sm:block text-sm font-medium">{currentLanguage?.name}</span>
+        <span className="text-sm font-medium">{currentLanguage?.name}</span>
       </button>
+      <Globe className="block sm:hidden h-5 w-5" />
       {
         isOpen && (
           <div className="absolute right-0 top-full mt-0 w-72 rounded-lg bg-white shadow-xl">
