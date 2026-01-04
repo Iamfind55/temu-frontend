@@ -40,6 +40,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/shop-landing", request.url))
   }
 
+  // If shop is authenticated and on home page, redirect to shop dashboard
+  if (path === "/" && shopAuthToken) {
+    return NextResponse.redirect(new URL("/shop-dashboard", request.url))
+  }
+
   return NextResponse.next()
 }
 

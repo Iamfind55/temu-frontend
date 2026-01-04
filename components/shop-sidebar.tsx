@@ -158,8 +158,8 @@ export function ShopDashboardSidebar() {
       clearShop();
       // Remove shop auth token cookie
       Cookies.remove("shop_auth_token");
-      // Redirect to shop landing page
-      router.push("/shop-landing");
+      // Redirect to shop landing page (use window.location to trigger middleware)
+      window.location.href = "/shop-landing";
    };
 
    return (

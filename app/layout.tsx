@@ -8,6 +8,7 @@ import { CartDrawer } from "@/components/cart-drawer"
 import { ToastContainer } from "react-toastify"
 import { ApolloWrapper } from "@/lib/apollo-provider"
 import { ReduxProvider } from "@/lib/redux-provider"
+import { PWAInstallPrompt } from "@/components/pwa-install-prompt"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +23,27 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Temu - Shop Like a Billionaire",
   description: "Discover amazing deals on millions of products",
-  generator: 'v0.app'
+  generator: 'v0.app',
+  manifest: '/manifest.json',
+  themeColor: '#f97316',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Temu',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'Temu',
+    title: 'Temu - Shop Like a Billionaire',
+    description: 'Discover amazing deals on millions of products',
+  },
+  icons: {
+    icon: '/logo/icon.png',
+    apple: '/logo/icon.png',
+  },
 }
 
 export default function RootLayout({
@@ -39,6 +60,7 @@ export default function RootLayout({
               <CartProvider>
                 {children}
                 <CartDrawer />
+                <PWAInstallPrompt />
               </CartProvider>
             </AuthProvider>
 

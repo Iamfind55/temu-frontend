@@ -24,7 +24,7 @@ export function ShopHeader({ className }: { className?: string }) {
          <header className="sticky top-0 z-50 w-full">
             <div className={cn("bg-black text-white", className)}>
                <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-1 sm:py-3">
-                  <Link href="/shop-landing" className="w-40 h-auto flex items-center p-0 cursor-pointer">
+                  <Link href="/" className="w-40 h-auto flex items-center p-0 cursor-pointer">
                      <svg
                         className="iconmain-1nkfa w-15 h-15 text-white"
                         aria-label="temu"

@@ -105,7 +105,8 @@ export function ShopBottomNav() {
    const handleLogout = () => {
       clearShop()
       Cookies.remove("shop_auth_token")
-      router.push("/shop-landing")
+      // Use window.location to trigger middleware check
+      window.location.href = "/shop-landing"
    }
 
    const navItems = [
