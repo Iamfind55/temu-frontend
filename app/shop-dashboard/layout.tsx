@@ -7,6 +7,7 @@ import { ShopDashboardSidebar } from "@/components/shop-sidebar"
 import { ShopHeader } from "@/components/shop-header"
 import { ShopFooter } from "@/components/shop-footer"
 import { ShopBottomNav } from "@/components/shop-bottom-nav"
+import { ShopLiveChat } from "@/components/shop-live-chat"
 
 export default function AccountLayout({
   children,
@@ -30,6 +31,7 @@ export default function AccountLayout({
         <SiteFooter />
       </div>
       <ShopBottomNav />
+      <ShopLiveChat />
     </div>
   )
 }
