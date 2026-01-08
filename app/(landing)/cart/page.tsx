@@ -234,7 +234,7 @@ export default function CartPage() {
             </div>
          </div>
 
-         <div className="container mx-auto px-4 pb-12">
+         <div className="container mx-auto px-4 pb-36 sm:pb-12">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                <div className="lg:col-span-2 space-y-2">
                   <div className="p-2 bg-green-50 border-green-200 rounded-md">
@@ -511,6 +511,31 @@ export default function CartPage() {
                </div>
             </div>
          </div>
+
+         {/* Mobile Fixed Checkout Bar */}
+         {selectedItems.length > 0 && (
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 sm:hidden z-40">
+               <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                     <Checkbox
+                        checked={selectedItems.length === items.length && items.length > 0}
+                        onCheckedChange={toggleSelectAll}
+                     />
+                     <span className="text-sm">{t('selectAll')}</span>
+                  </div>
+                  <div className="text-right">
+                     <p className="text-xs text-muted-foreground">{t('total')}</p>
+                     <p className="text-lg font-bold text-orange-600">${selectedSubtotal.toFixed(2)}</p>
+                  </div>
+               </div>
+               <Button
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-6"
+                  onClick={handleCheckoutClick}
+               >
+                  {t('checkout')} ({selectedItems.length})
+               </Button>
+            </div>
+         )}
 
          {/* Checkout Modal */}
          <Dialog open={isCheckoutModalOpen} onOpenChange={setIsCheckoutModalOpen}>

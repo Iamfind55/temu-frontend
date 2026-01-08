@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useQuery, useMutation } from "@apollo/client/react"
+import { useTranslation } from "react-i18next"
 import { Star, Package, ChevronLeft, ChevronRight, Crown, Check, Loader } from "lucide-react"
 
 // Components
@@ -54,10 +55,12 @@ function VIPProductCard({
    product,
    isSelected,
    onSelect,
+   t,
 }: {
    product: IProduct
    isSelected: boolean
    onSelect: (id: string, checked: boolean) => void
+   t: (key: string) => string
 }) {
    const isOnShelf = product.shopProductStatus === "ON_SHELF"
 
@@ -108,11 +111,11 @@ function VIPProductCard({
                <span className="text-xs text-muted-foreground ml-1">({product.total_comment.toLocaleString()})</span>
             </div>
 
-            <div className="text-xs text-muted-foreground">{product.sell_count}+ sold</div>
+            <div className="text-xs text-muted-foreground">{product.sell_count}+ {t("sold")}</div>
 
             {product.brandData && (
                <div className="inline-block w-auto text-xs border font-bold text-black py-0.5 px-1 rounded bg-gray-200">
-                  Brand: {product.brandData.name}
+                  {t("brand")}: {product.brandData.name}
                </div>
             )}
 
@@ -125,7 +128,7 @@ function VIPProductCard({
             <div className="flex items-center justify-between pt-2">
                {isOnShelf ? (
                   <Badge className="bg-green-100 text-green-800">
-                     Already on shelf
+                     {t("alreadyOnShelf")}
                   </Badge>
                ) : (
                   product.discount > 0 && (
@@ -146,17 +149,19 @@ function ProductGrid({
    selectedProducts,
    onSelect,
    loading,
+   t,
 }: {
    products: IProduct[]
    selectedProducts: Set<string>
    onSelect: (id: string, checked: boolean) => void
    loading?: boolean
+   t: (key: string) => string
 }) {
    if (loading) {
       return (
          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg">
             <Loader className="h-8 w-8 text-orange-500 animate-spin mb-4" />
-            <p className="text-sm text-gray-600">Loading VIP products...</p>
+            <p className="text-sm text-gray-600">{t("loadingVipProducts")}</p>
          </div>
       )
    }
@@ -165,8 +170,8 @@ function ProductGrid({
       return (
          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg border">
             <Package className="h-16 w-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No VIP products found</h3>
-            <p className="text-sm text-gray-600">No products available for this VIP level</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t("noVipProductsFound")}</h3>
+            <p className="text-sm text-gray-600">{t("noProductsForVipLevel")}</p>
          </div>
       )
    }
@@ -179,6 +184,7 @@ function ProductGrid({
                product={product}
                isSelected={selectedProducts.has(product.id)}
                onSelect={onSelect}
+               t={t}
             />
          ))}
       </div>
@@ -192,7 +198,7 @@ const vipLevels = {
       value: 1,
       color: "bg-amber-100 text-amber-800 border-amber-300",
       iconColor: "text-amber-500",
-      description: "Basic VIP benefits with standard promotion",
+      descriptionKey: "basicVipBenefits",
       minProducts: 5,
    },
    VIP2: {
@@ -200,7 +206,7 @@ const vipLevels = {
       value: 2,
       color: "bg-purple-100 text-purple-800 border-purple-300",
       iconColor: "text-purple-500",
-      description: "Enhanced visibility and priority listing",
+      descriptionKey: "enhancedVipBenefits",
       minProducts: 10,
    },
    VIP3: {
@@ -208,12 +214,13 @@ const vipLevels = {
       value: 3,
       color: "bg-orange-100 text-orange-800 border-orange-300",
       iconColor: "text-orange-500",
-      description: "Premium placement and exclusive features",
+      descriptionKey: "premiumVipBenefits",
       minProducts: 20,
    },
 }
 
 export default function ApplyVIPPage() {
+   const { t } = useTranslation("shop-dashboard")
    const { shop } = useShopStore()
    const { successMessage, errorMessage } = useToast()
    const [activeTab, setActiveTab] = useState<"VIP1" | "VIP2" | "VIP3">("VIP1")
@@ -323,12 +330,12 @@ export default function ApplyVIPPage() {
    // Handle apply VIP (selected products)
    const handleApplyVIP = async () => {
       if (!shop?.id) {
-         errorMessage({ message: "Shop not found. Please try again." })
+         errorMessage({ message: t("shopNotFound") })
          return
       }
 
       if (selectedProducts.size === 0) {
-         errorMessage({ message: "Please select at least one product." })
+         errorMessage({ message: t("pleaseSelectProduct") })
          return
       }
 
@@ -350,15 +357,15 @@ export default function ApplyVIPPage() {
          })
 
          if (result.data?.createManyShopProducts?.success) {
-            successMessage({ message: `Successfully applied ${selectedProducts.size} product${selectedProducts.size > 1 ? "s" : ""} for ${currentVIP.name}!` })
+            successMessage({ message: t("successfullyAppliedVip", { count: selectedProducts.size, level: currentVIP.name }) })
             setSelectedProducts(new Set())
             refetch()
          } else {
             const error = result.data?.createManyShopProducts?.error
-            errorMessage({ message: error?.message || "Failed to apply VIP products. Please try again." })
+            errorMessage({ message: error?.message || t("failedToApplyVip") })
          }
       } catch (error: any) {
-         errorMessage({ message: error?.message || "An error occurred while applying VIP products." })
+         errorMessage({ message: error?.message || t("errorApplyingVip") })
       } finally {
          setIsApplying(false)
       }
@@ -367,7 +374,7 @@ export default function ApplyVIPPage() {
    // Handle apply all VIP products
    const handleApplyAllVIP = async () => {
       if (!shop?.id) {
-         errorMessage({ message: "Shop not found. Please try again." })
+         errorMessage({ message: t("shopNotFound") })
          return
       }
 
@@ -384,14 +391,14 @@ export default function ApplyVIPPage() {
 
          if (result.data?.createShopProductsWithVIPLevel?.success) {
             const total = result.data.createShopProductsWithVIPLevel.total
-            successMessage({ message: `Successfully applied ${total} ${currentVIP.name} product${total > 1 ? "s" : ""} to your shop!` })
+            successMessage({ message: t("successfullyAppliedAllVip", { count: total, level: currentVIP.name }) })
             refetch()
          } else {
             const error = result.data?.createShopProductsWithVIPLevel?.error
-            errorMessage({ message: error?.message || "Failed to apply all VIP products. Please try again." })
+            errorMessage({ message: error?.message || t("failedToApplyAllVip") })
          }
       } catch (error: any) {
-         errorMessage({ message: error?.message || "An error occurred while applying all VIP products." })
+         errorMessage({ message: error?.message || t("errorApplyingVip") })
       } finally {
          setIsApplyingAll(false)
       }
@@ -403,8 +410,8 @@ export default function ApplyVIPPage() {
             <div className="mx-auto max-w-7xl">
                {/* Page Header */}
                <div className="mb-4">
-                  <h1 className="text-md sm:text-lg font-bold text-gray-900">Apply VIP Products</h1>
-                  <p className="text-sm text-gray-600 mt-0 sm:mt-1">Select products to apply for VIP status</p>
+                  <h1 className="text-md sm:text-lg font-bold text-gray-900">{t("applyVipProducts")}</h1>
+                  <p className="text-sm text-gray-600 mt-0 sm:mt-1">{t("selectProductsForVip")}</p>
                </div>
 
                {/* Tabs */}
@@ -417,7 +424,7 @@ export default function ApplyVIPPage() {
                         <Crown className="h-4 w-4" />
                         VIP 1
                         {shopVIPLevel === 1 && (
-                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">Current</Badge>
+                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">{t("current")}</Badge>
                         )}
                      </TabsTrigger>
                      <TabsTrigger
@@ -427,7 +434,7 @@ export default function ApplyVIPPage() {
                         <Crown className="h-4 w-4" />
                         VIP 2
                         {shopVIPLevel === 2 && (
-                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">Current</Badge>
+                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">{t("current")}</Badge>
                         )}
                      </TabsTrigger>
                      <TabsTrigger
@@ -437,7 +444,7 @@ export default function ApplyVIPPage() {
                         <Crown className="h-4 w-4" />
                         VIP 3
                         {shopVIPLevel === 3 && (
-                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">Current</Badge>
+                           <Badge className="ml-1 bg-green-500 text-white text-[10px] px-1.5 py-0">{t("current")}</Badge>
                         )}
                      </TabsTrigger>
                   </TabsList>
@@ -449,7 +456,7 @@ export default function ApplyVIPPage() {
                            <span className="font-semibold text-sm">{currentVIP.name}</span>
                         </div>
                         <div className="text-sm text-gray-600">
-                           <span className="font-medium text-gray-900">{totalProducts}</span> products available
+                           <span className="font-medium text-gray-900">{totalProducts}</span> {t("productsAvailable")}
                         </div>
                      </div>
 
@@ -465,7 +472,7 @@ export default function ApplyVIPPage() {
                            htmlFor="select-all"
                            className="text-sm font-medium text-gray-700 cursor-pointer select-none"
                         >
-                           Select all ({selectableProducts.length} available)
+                           {t("selectAll")} ({selectableProducts.length} {t("available")})
                         </label>
                      </div>
                   </div>
@@ -475,7 +482,7 @@ export default function ApplyVIPPage() {
                         <div className="flex items-center gap-2">
                            <Check className="h-5 w-5 text-orange-500" />
                            <span className="text-sm font-medium text-orange-800">
-                              {selectedProducts.size} product{selectedProducts.size > 1 ? "s" : ""} selected
+                              {t("productsSelected", { count: selectedProducts.size })}
                            </span>
                         </div>
                         <Button
@@ -486,10 +493,10 @@ export default function ApplyVIPPage() {
                            {isApplying ? (
                               <>
                                  <Loader className="h-4 w-4 animate-spin " />
-                                 Applying...
+                                 {t("applying")}
                               </>
                            ) : (
-                              `Apply for ${currentVIP.name}`
+                              t("applyFor", { level: currentVIP.name })
                            )}
                         </Button>
                      </div>
@@ -498,7 +505,7 @@ export default function ApplyVIPPage() {
                         <div className="flex items-center gap-2">
                            <Crown className={`h-5 w-5 ${currentVIP.iconColor}`} />
                            <span className="text-sm font-medium text-orange-800">
-                              Apply all {currentVIP.name} products to your shop
+                              {t("applyAllToShop", { level: currentVIP.name })}
                            </span>
                         </div>
                         <Button
@@ -509,10 +516,10 @@ export default function ApplyVIPPage() {
                            {isApplyingAll ? (
                               <>
                                  <Loader className="h-4 w-4 animate-spin " />
-                                 Applying All...
+                                 {t("applyingAll")}
                               </>
                            ) : (
-                              `Apply All ${currentVIP.name}`
+                              t("applyAll", { level: currentVIP.name })
                            )}
                         </Button>
                      </div>
@@ -524,14 +531,14 @@ export default function ApplyVIPPage() {
                      selectedProducts={selectedProducts}
                      onSelect={handleProductSelect}
                      loading={loading}
+                     t={t}
                   />
                </Tabs>
 
                {/* Results Summary */}
                <div className="mt-4 flex items-center justify-between">
                   <div className="text-sm text-gray-600">
-                     Showing {products.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{" "}
-                     {Math.min(currentPage * itemsPerPage, totalProducts)} of {totalProducts} products
+                     {t("showingProducts", { start: products.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0, end: Math.min(currentPage * itemsPerPage, totalProducts), total: totalProducts })}
                   </div>
 
                   {/* Pagination */}
@@ -545,7 +552,7 @@ export default function ApplyVIPPage() {
                                  className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                  <ChevronLeft className="h-4 w-4" />
-                                 <span className="hidden sm:inline">Previous</span>
+                                 <span className="hidden sm:inline">{t("previous")}</span>
                               </button>
                            </PaginationItem>
 
@@ -575,7 +582,7 @@ export default function ApplyVIPPage() {
                                  disabled={currentPage === totalPages}
                                  className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                 <span className="hidden sm:inline">Next</span>
+                                 <span className="hidden sm:inline">{t("next")}</span>
                                  <ChevronRight className="h-4 w-4" />
                               </button>
                            </PaginationItem>

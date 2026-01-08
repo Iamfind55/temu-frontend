@@ -19,10 +19,38 @@ export const getStatusBadgeStyle = (status: string) => {
   }
 };
 
+export const getStatusLabelKey = (status: string) => {
+  switch (status) {
+    case "ACTIVE":
+      return "statusActive";
+    case "NO_PICKUP":
+      return "statusNoPickup";
+    case "PROCESSING":
+      return "statusProcessing";
+    case "PACKING":
+      return "statusPacking";
+    case "SHIPPING":
+      return "statusShipping";
+    case "SUCCESS":
+      return "statusCompleted";
+    case "CANCELLED":
+      return "statusCancelled";
+    case "FAILED":
+      return "statusFailed";
+    default:
+      return status;
+  }
+};
+
+// Keep for backwards compatibility
 export const getStatusLabel = (status: string) => {
   switch (status) {
     case "ACTIVE":
       return "Active";
+    case "NO_PICKUP":
+      return "No Pickup";
+    case "PROCESSING":
+      return "Processing";
     case "PACKING":
       return "Packing";
     case "SHIPPING":

@@ -112,7 +112,10 @@ export function CartDrawer() {
                 <span className="text-lg font-bold text-primary">${subtotal.toFixed(2)}</span>
               </div>
               <Button
-                onClick={() => router.push("/cart")}
+                onClick={() => {
+                  closeCart()
+                  router.push("/cart")
+                }}
                 className="cursor-pointer w-full bg-orange-500 hover:bg-orange-600 text-md font-semibold"
                 size="lg"
               >

@@ -272,13 +272,13 @@ export function SiteHeader({ className }: { className?: string }) {
               </div>
             ) : (
               <Link href="/login">
-                <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
-                  <User className="mr-0 sm: h-8 sm:h-5 w-8 sm:w-5" />
+                <div className="flex items-center justify-center cursor-pointer rounded-full font-bold hover:text-white p-0 gap-2">
+                  <User className="mr-0 h-5 w-5" />
                   <div className="hidden sm:block text-left text-xs">
                     <div>{t('signInRegister')}</div>
                     <div className="font-bold">{t('orderAndAccount')}</div>
                   </div>
-                </Button>
+                </div>
               </Link>
             )}
             <LanguageSelector className={className ? "text-black hover:text-white" : ""} />
@@ -295,7 +295,14 @@ export function SiteHeader({ className }: { className?: string }) {
                 </span>
               )}
             </Button>
-            <ShoppingCart className="block sm:hidden h-5 sm:h-4 w-5 sm:w-4" onClick={() => router.push("/cart")} />
+            <div className="relative block sm:hidden cursor-pointer" onClick={() => router.push("/cart")}>
+              <ShoppingCart className="h-5 w-5" />
+              {mounted && itemCount > 0 && (
+                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs font-bold text-white">
+                  {itemCount > 9 ? "9+" : itemCount}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

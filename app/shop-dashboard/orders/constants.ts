@@ -2,38 +2,38 @@ import { Package, Truck, CheckCircle, Loader, X } from "lucide-react";
 
 export const orderTabs = [
   {
-    label: "No Pickup",
+    labelKey: "noPickup",
     value: "no_pickup",
     icon: Package,
     statusFilter: "NO_PICKUP",
   },
-  { label: "All orders", value: "all", icon: Package, statusFilter: null },
+  { labelKey: "allOrders", value: "all", icon: Package, statusFilter: null },
   {
-    label: "Processing",
+    labelKey: "processing",
     value: "processing",
     icon: Loader,
     statusFilter: "PROCESSING",
   },
   {
-    label: "Packing",
+    labelKey: "packing",
     value: "packing",
     icon: Package,
     statusFilter: "PACKING",
   },
   {
-    label: "Shipping",
+    labelKey: "shipping",
     value: "shipping",
     icon: Truck,
     statusFilter: "SHIPPING",
   },
   {
-    label: "Completed",
+    labelKey: "completed",
     value: "completed",
     icon: CheckCircle,
     statusFilter: "SUCCESS",
   },
   {
-    label: "Cancelled",
+    labelKey: "cancelled",
     value: "cancelled",
     icon: X,
     statusFilter: "CANCELLED",

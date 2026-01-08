@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { useQuery, useMutation } from "@apollo/client/react"
+import { useTranslation } from "react-i18next"
 import { Star, Package, ChevronLeft, ChevronRight, Check, Loader } from "lucide-react"
 
 // Components
@@ -50,10 +51,12 @@ function ApplyProductCard({
    product,
    isSelected,
    onSelect,
+   t,
 }: {
    product: IProduct
    isSelected: boolean
    onSelect: (id: string, checked: boolean) => void
+   t: (key: string) => string
 }) {
    const isOnShelf = product.shopProductStatus === "ON_SHELF"
 
@@ -104,11 +107,11 @@ function ApplyProductCard({
                <span className="text-xs text-muted-foreground ml-1">({product.total_comment.toLocaleString()})</span>
             </div>
 
-            <div className="text-xs text-muted-foreground">{product.sell_count}+ sold</div>
+            <div className="text-xs text-muted-foreground">{product.sell_count}+ {t("sold")}</div>
 
             {product.brandData && (
                <div className="inline-block w-auto text-xs border font-bold text-black py-0.5 px-1 rounded bg-gray-200">
-                  Brand: {product.brandData.name}
+                  {t("brand")}: {product.brandData.name}
                </div>
             )}
 
@@ -121,7 +124,7 @@ function ApplyProductCard({
             <div className="flex items-center justify-between pt-2">
                {isOnShelf ? (
                   <Badge className="bg-green-100 text-green-800">
-                     Already on shelf
+                     {t("alreadyOnShelf")}
                   </Badge>
                ) : (
                   product.discount > 0 && (
@@ -142,17 +145,19 @@ function ProductGrid({
    selectedProducts,
    onSelect,
    loading,
+   t,
 }: {
    products: IProduct[]
    selectedProducts: Set<string>
    onSelect: (id: string, checked: boolean) => void
    loading?: boolean
+   t: (key: string) => string
 }) {
    if (loading) {
       return (
          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg">
             <Loader className="h-8 w-8 text-orange-500 animate-spin mb-4" />
-            <p className="text-sm text-gray-600">Loading products...</p>
+            <p className="text-sm text-gray-600">{t("loadingProducts")}</p>
          </div>
       )
    }
@@ -161,8 +166,8 @@ function ProductGrid({
       return (
          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg border">
             <Package className="h-16 w-16 text-gray-300 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-            <p className="text-sm text-gray-600">Try adjusting your category filters</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t("noProductsFound")}</h3>
+            <p className="text-sm text-gray-600">{t("tryAdjustingFilters")}</p>
          </div>
       )
    }
@@ -175,6 +180,7 @@ function ProductGrid({
                product={product}
                isSelected={selectedProducts.has(product.id)}
                onSelect={onSelect}
+               t={t}
             />
          ))}
       </div>
@@ -182,6 +188,7 @@ function ProductGrid({
 }
 
 export default function ApplyNewPage() {
+   const { t } = useTranslation("shop-dashboard")
    const { shop } = useShopStore()
    const { successMessage, errorMessage } = useToast()
    const [selectedCategory, setSelectedCategory] = useState<string>("all")
@@ -345,12 +352,12 @@ export default function ApplyNewPage() {
    // Handle apply
    const handleApply = async () => {
       if (!shop?.id) {
-         errorMessage({ message: "Shop not found. Please try again." })
+         errorMessage({ message: t("shopNotFound") })
          return
       }
 
       if (selectedProducts.size === 0) {
-         errorMessage({ message: "Please select at least one product." })
+         errorMessage({ message: t("pleaseSelectProduct") })
          return
       }
 
@@ -372,15 +379,15 @@ export default function ApplyNewPage() {
          })
 
          if (result.data?.createManyShopProducts?.success) {
-            successMessage({ message: `Successfully applied ${selectedProducts.size} product${selectedProducts.size > 1 ? "s" : ""}!` })
+            successMessage({ message: t("successfullyAppliedProducts", { count: selectedProducts.size }) })
             setSelectedProducts(new Set())
             refetch()
          } else {
             const error = result.data?.createManyShopProducts?.error
-            errorMessage({ message: error?.message || "Failed to apply products. Please try again." })
+            errorMessage({ message: error?.message || t("failedToApplyProducts") })
          }
       } catch (error: any) {
-         errorMessage({ message: error?.message || "An error occurred while applying products." })
+         errorMessage({ message: error?.message || t("errorApplyingProducts") })
       } finally {
          setIsApplying(false)
       }
@@ -391,21 +398,21 @@ export default function ApplyNewPage() {
          <div className="flex-1 p-2 sm:p-6">
             <div className="mx-auto max-w-7xl">
                <div className="mb-4">
-                  <h1 className="text-md sm:text-lg font-bold text-gray-900">Apply New Products</h1>
-                  <p className="text-sm text-gray-600 mt-0 sm:mt-1">Select products to apply for listing</p>
+                  <h1 className="text-md sm:text-lg font-bold text-gray-900">{t("applyNewProducts")}</h1>
+                  <p className="text-sm text-gray-600 mt-0 sm:mt-1">{t("selectProductsForListing")}</p>
                </div>
 
                {/* Category Filters */}
                <div className="mb-4 p-0 sm:p-4 bg-white rounded-lg">
                   <div className="flex flex-wrap gap-4 items-end">
                      <div className="w-[180px]">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Category</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">{t("category")}</label>
                         <Select value={selectedCategory} onValueChange={handleCategoryChange}>
                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="All Categories" />
+                              <SelectValue placeholder={t("allCategories")} />
                            </SelectTrigger>
                            <SelectContent>
-                              <SelectItem value="all">All Categories</SelectItem>
+                              <SelectItem value="all">{t("allCategories")}</SelectItem>
                               {categories.map((cat) => (
                                  <SelectItem key={cat.id} value={cat.id}>
                                     {cat.name}
@@ -416,17 +423,17 @@ export default function ApplyNewPage() {
                      </div>
 
                      <div className="w-[180px]">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category 1</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">{t("subCategory1")}</label>
                         <Select
                            value={selectedSub1}
                            onValueChange={handleSub1Change}
                            disabled={selectedCategory === "all"}
                         >
                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="All Sub Categories" />
+                              <SelectValue placeholder={t("allSubCategories")} />
                            </SelectTrigger>
                            <SelectContent>
-                              <SelectItem value="all">All Sub Categories</SelectItem>
+                              <SelectItem value="all">{t("allSubCategories")}</SelectItem>
                               {sub1Options.map((sub) => (
                                  <SelectItem key={sub.id} value={sub.id}>
                                     {sub.name}
@@ -437,17 +444,17 @@ export default function ApplyNewPage() {
                      </div>
 
                      <div className="w-[180px]">
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Sub Category 2</label>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">{t("subCategory2")}</label>
                         <Select
                            value={selectedSub2}
                            onValueChange={handleSub2Change}
                            disabled={selectedSub1 === "all"}
                         >
                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="All Sub Categories" />
+                              <SelectValue placeholder={t("allSubCategories")} />
                            </SelectTrigger>
                            <SelectContent>
-                              <SelectItem value="all">All Sub Categories</SelectItem>
+                              <SelectItem value="all">{t("allSubCategories")}</SelectItem>
                               {sub2Options.map((sub) => (
                                  <SelectItem key={sub.id} value={sub.id}>
                                     {sub.name}
@@ -461,10 +468,10 @@ export default function ApplyNewPage() {
 
                <div className="py-2 px-0 sm:px-4 bg-white flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                     <h2 className="font-semibold text-gray-900">Products</h2>
+                     <h2 className="font-semibold text-gray-900">{t("products")}</h2>
                      <div className="flex items-center gap-3 text-sm">
                         <span className="text-gray-600">
-                           <span className="font-medium text-gray-900">{totalProducts}</span> total
+                           <span className="font-medium text-gray-900">{totalProducts}</span> {t("total")}
                         </span>
                      </div>
                   </div>
@@ -481,7 +488,7 @@ export default function ApplyNewPage() {
                         htmlFor="select-all"
                         className="text-sm font-medium text-gray-700 cursor-pointer select-none"
                      >
-                        Select all ({selectableProducts.length} available)
+                        {t("selectAll")} ({selectableProducts.length} {t("available")})
                      </label>
                   </div>
                </div>
@@ -492,7 +499,7 @@ export default function ApplyNewPage() {
                      <div className="flex items-center gap-2">
                         <Check className="h-5 w-5 text-orange-500" />
                         <span className="text-sm font-medium text-orange-800">
-                           {selectedProducts.size} product{selectedProducts.size > 1 ? "s" : ""} selected
+                           {t("productsSelected", { count: selectedProducts.size })}
                         </span>
                      </div>
                      <Button
@@ -503,10 +510,10 @@ export default function ApplyNewPage() {
                         {isApplying ? (
                            <>
                               <Loader className="h-4 w-4 animate-spin " />
-                              Applying...
+                              {t("applying")}
                            </>
                         ) : (
-                           "Apply Selected Products"
+                           t("applySelectedProducts")
                         )}
                      </Button>
                   </div>
@@ -518,13 +525,13 @@ export default function ApplyNewPage() {
                   selectedProducts={selectedProducts}
                   onSelect={handleProductSelect}
                   loading={loading}
+                  t={t}
                />
 
                {/* Results Summary */}
                <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
                   <div className="text-sm text-gray-600 mb-3 sm:mb-0">
-                     Showing {products.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0} -{" "}
-                     {Math.min(currentPage * itemsPerPage, totalProducts)} of {totalProducts} products
+                     {t("showingProducts", { start: products.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0, end: Math.min(currentPage * itemsPerPage, totalProducts), total: totalProducts })}
                   </div>
 
                   {/* Pagination */}
@@ -538,7 +545,7 @@ export default function ApplyNewPage() {
                                  className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                  <ChevronLeft className="h-4 w-4" />
-                                 <span className="hidden sm:inline">Previous</span>
+                                 <span className="hidden sm:inline">{t("previous")}</span>
                               </button>
                            </PaginationItem>
 
@@ -568,7 +575,7 @@ export default function ApplyNewPage() {
                                  disabled={currentPage === totalPages}
                                  className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                 <span className="hidden sm:inline">Next</span>
+                                 <span className="hidden sm:inline">{t("next")}</span>
                                  <ChevronRight className="h-4 w-4" />
                               </button>
                            </PaginationItem>

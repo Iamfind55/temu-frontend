@@ -20,10 +20,10 @@ export function LanguageSelector({ className }: { className?: string }) {
   return (
     <div className="relative" onMouseEnter={() => setIsOpen(true)} onMouseLeave={() => setIsOpen(false)}>
       <button className={cn("hidden sm:flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-red-700 cursor-pointer hover:text-white", className)}>
-        <Globe className="h-6 sm:h-4 w-6 sm:w-4" />
+        <Globe className="h-4 w-4" />
         <span className="text-sm font-medium">{languageNames[currentLanguage] || languageNames.en}</span>
       </button>
-      <Globe className="block sm:hidden h-5 w-5" />
+      <span className="block sm:hidden text-lg cursor-pointer">{languageFlags[currentLanguage] || languageFlags.en}</span>
       {
         isOpen && (
           <div className="absolute right-0 top-full mt-0 w-72 rounded-lg bg-white shadow-xl z-50">

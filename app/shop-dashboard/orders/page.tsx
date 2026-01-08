@@ -24,7 +24,7 @@ import { QUERY_SHOP_ORDERS, QUERY_SHOP_ORDER_DETAILS, MUTATION_SHOP_CONFIRM_ORDE
 
 // Types
 import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsResponse, ShopConfirmOrderResponse, ShopCancelOrderResponse } from "@/types/shopOrder"
-import { formatDate, formatDateTime, getStatusBadgeStyle, getStatusLabel } from "./functions"
+import { formatDate, formatDateTime, getStatusBadgeStyle, getStatusLabelKey } from "./functions"
 
 export default function ShopOrdersPage() {
   const { t } = useTranslation('shop-dashboard')
@@ -335,8 +335,8 @@ export default function ShopOrdersPage() {
                     ) : (
                       tab.value !== "all" && <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     )}
-                    <span className="hidden sm:inline">{tab.label}</span>
-                    <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                    <span className="hidden sm:inline">{t(tab.labelKey)}</span>
+                    <span className="sm:hidden">{t(tab.labelKey).split(' ')[0]}</span>
                   </button>
                 ))}
               </div>
@@ -378,7 +378,7 @@ export default function ShopOrdersPage() {
                         </span>
                         <div className="flex items-center gap-2">
                           <Badge className={`text-xs ${getStatusBadgeStyle(order.order_status)}`}>
-                            {getStatusLabel(order.order_status)}
+                            {t(getStatusLabelKey(order.order_status))}
                           </Badge>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -479,7 +479,7 @@ export default function ShopOrdersPage() {
                       </div>
                       <div className="flex items-center">
                         <Badge className={`text-xs ${getStatusBadgeStyle(order.order_status)}`}>
-                          {getStatusLabel(order.order_status)}
+                          {t(getStatusLabelKey(order.order_status))}
                         </Badge>
                       </div>
                       <div className="flex items-center text-gray-600 text-xs">
