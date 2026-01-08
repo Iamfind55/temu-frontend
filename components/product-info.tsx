@@ -4,6 +4,7 @@ import { Separator } from "./ui/separator"
 import { useState, useEffect } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { SkeletonImage } from "@/components/ui/skeleton-image"
 import type { Product } from "@/lib/product-data"
 import { Star, Check, Clock, Zap, Plus, RotateCcw, ChevronRight, Factory, Truck, ShieldCheck } from "lucide-react"
 import { useCart } from "@/lib/cart-context"
@@ -138,9 +139,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
                     }`}
                 >
                   <div className="aspect-square rounded overflow-hidden mb-1">
-                    <img
+                    <SkeletonImage
                       src={variant.image || "/placeholder.svg"}
                       alt={variant.name}
+                      containerClassName="w-full h-full"
                       className="w-full h-full object-cover"
                     />
                   </div>

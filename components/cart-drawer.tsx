@@ -1,9 +1,9 @@
 "use client"
 
-import Image from "next/image"
 import { useCart } from "@/lib/cart-context"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { SkeletonNextImage } from "@/components/ui/skeleton-image"
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react"
 
 export function CartDrawer() {
@@ -43,7 +43,13 @@ export function CartDrawer() {
                 {items.map((item) => (
                   <div key={`${item.id}-${item.color}`} className="flex gap-4 rounded-lg border p-4">
                     <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
-                      <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                      <SkeletonNextImage
+                        src={item.image || "/placeholder.svg"}
+                        alt={item.name}
+                        fill
+                        containerClassName="absolute inset-0"
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex flex-1 flex-col">
                       <div className="flex justify-between">

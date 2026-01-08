@@ -1,12 +1,12 @@
 "use client"
 
 import { useRef } from "react"
-import Image from "next/image"
 import { useQuery } from "@apollo/client/react"
 import { ChevronLeft, ChevronRight, Zap, Loader, Star } from "lucide-react"
 
 // components:
 import { Button } from "@/components/ui/button"
+import { SkeletonNextImage } from "@/components/ui/skeleton-image"
 import { QUERY_GET_LINGHTNING_PRODUCTS } from "@/app/api/product"
 import { IGetLightningProductsResponse } from "@/app/interface/product"
 
@@ -85,7 +85,7 @@ export function LightningDeals() {
                variant="ghost"
                size="icon"
                onClick={() => scroll("left")}
-               className="hidden sm:flex absolute z-50 -left-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
+               className="hidden sm:flex absolute z-10 -left-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
             >
                <ChevronLeft className="h-12 w-12" />
             </Button>
@@ -103,7 +103,13 @@ export function LightningDeals() {
                   return (
                      <div key={product.id + index} className="flex-shrink-0 w-[280px] bg-white overflow-hidden group">
                         <div className="relative aspect-square bg-gray-100">
-                           <Image src={productImage} alt={product.name} fill className="object-cover" />
+                           <SkeletonNextImage
+                              src={productImage}
+                              alt={product.name}
+                              fill
+                              containerClassName="absolute inset-0"
+                              className="object-cover"
+                           />
                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
                         </div>
 
@@ -142,7 +148,7 @@ export function LightningDeals() {
                variant="ghost"
                size="icon"
                onClick={() => scroll("right")}
-               className="hidden sm:flex absolute -right-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
+               className="hidden sm:flex absolute z-10 -right-5 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-white shadow-lg hover:bg-gray-50 border border-gray-200"
             >
                <ChevronRight className="h-12 w-12" />
             </Button>

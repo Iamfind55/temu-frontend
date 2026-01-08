@@ -3,6 +3,7 @@
 import { useState } from "react"
 import EmptyPage from "./ui/empty"
 import { Button } from "@/components/ui/button"
+import { SkeletonImage } from "@/components/ui/skeleton-image"
 import { ChevronLeft, ChevronRight, MessageSquareText, ShieldCheck, Star } from "lucide-react"
 
 interface ProductGalleryProps {
@@ -26,7 +27,12 @@ export function ProductGallery({ images, title, rating = 0, reviewCount = 0 }: P
   return (
     <div className="space-y-0 sm:space-y-4">
       <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
-        <img src={images[selectedImage] || "/placeholder.svg"} alt={title} className="w-full h-full object-contain" />
+        <SkeletonImage
+          src={images[selectedImage] || "/placeholder.svg"}
+          alt={title}
+          containerClassName="w-full h-full"
+          className="w-full h-full object-contain"
+        />
         <Button
           variant="ghost"
           size="icon"
@@ -53,9 +59,10 @@ export function ProductGallery({ images, title, rating = 0, reviewCount = 0 }: P
             className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${selectedImage === index ? "border-orange-500" : "border hover:border-muted-foreground"
               }`}
           >
-            <img
+            <SkeletonImage
               src={image || "/placeholder.svg"}
               alt={`${title} view ${index + 1}`}
+              containerClassName="w-full h-full"
               className="w-full h-full object-cover"
             />
           </button>

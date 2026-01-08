@@ -6,8 +6,6 @@ import { useQuery } from "@apollo/client/react"
 import { ChevronRight, Loader } from "lucide-react"
 
 // Components:
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
 import { ProductInfo } from "@/components/product-info"
 import { ProductGallery } from "@/components/product-gallery"
 import { RelatedProducts } from "@/components/related-products"
@@ -75,7 +73,6 @@ export default function ProductPage() {
   if (loading) {
     return (
       <div className="min-h-screen">
-        <SiteHeader />
         <main className="bg-background">
           <div className="container mx-auto px-4 py-20">
             <div className="flex items-center justify-center gap-2">
@@ -83,7 +80,6 @@ export default function ProductPage() {
             </div>
           </div>
         </main>
-        <SiteFooter />
       </div>
     )
   }
@@ -91,7 +87,6 @@ export default function ProductPage() {
   if (error || !product) {
     return (
       <div className="min-h-screen">
-        <SiteHeader />
         <main className="bg-background">
           <div className="container mx-auto px-4 py-20">
             <div className="text-center">
@@ -108,7 +103,6 @@ export default function ProductPage() {
             </div>
           </div>
         </main>
-        <SiteFooter />
       </div>
     )
   }

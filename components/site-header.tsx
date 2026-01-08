@@ -57,10 +57,15 @@ export function SiteHeader({ className }: { className?: string }) {
   React.useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
-      // Hide when scrolling down, show when scrolling up
-      if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+      const scrollDelta = currentScrollY - lastScrollY.current
+
+      // Only toggle state if scroll delta is significant (prevents flickering)
+      if (Math.abs(scrollDelta) < 10) return
+
+      // Hide when scrolling down past threshold, show when scrolling up
+      if (scrollDelta > 0 && currentScrollY > 100) {
         setHideOnScroll(true)
-      } else {
+      } else if (scrollDelta < 0) {
         setHideOnScroll(false)
       }
       lastScrollY.current = currentScrollY
@@ -88,7 +93,7 @@ export function SiteHeader({ className }: { className?: string }) {
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="bg-[oklch(0.15_0_0)] text-white">
-        <div className={`container mx-auto flex items-center justify-between px-4 text-sm ${hideOnScroll ? "py-0" : "py-2"}`}>
+        <div className={`container mx-auto flex items-center justify-between px-4 text-sm ${hideOnScroll ? "py-2" : "py-2"}`}>
           <div className="hidden sm:flex items-center gap-2 space-x-2 text-green-300">
             <TruckIcon />
             <div className="flex items-start justify-center flex-col">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { X, Download, Smartphone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,13 +15,31 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>
 }
 
+// Track if prompt was already shown in this session (persists across page navigations)
+const SESSION_KEY = "pwa-prompt-shown-session"
+
+function hasShownThisSession(): boolean {
+  if (typeof window === "undefined") return true
+  return sessionStorage.getItem(SESSION_KEY) === "true"
+}
+
+function markShownThisSession(): void {
+  if (typeof window === "undefined") return
+  sessionStorage.setItem(SESSION_KEY, "true")
+}
+
 export function PWAInstallPrompt() {
   const [isOpen, setIsOpen] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isIOS, setIsIOS] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
+  const hasInitialized = useRef(false)
 
   useEffect(() => {
+    // Prevent running multiple times due to React strict mode or re-renders
+    if (hasInitialized.current) return
+    hasInitialized.current = true
+
     // Check if already installed (standalone mode)
     const isInStandaloneMode = window.matchMedia("(display-mode: standalone)").matches
       || (window.navigator as any).standalone === true
@@ -31,7 +49,12 @@ export function PWAInstallPrompt() {
     const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     setIsIOS(isIOSDevice)
 
-    // Check if prompt was dismissed before
+    // Check if already shown this session
+    if (hasShownThisSession()) {
+      return
+    }
+
+    // Check if prompt was dismissed before (user clicked "Later")
     const dismissedAt = localStorage.getItem("pwa-prompt-dismissed")
     if (dismissedAt) {
       const dismissedDate = new Date(dismissedAt)
@@ -54,9 +77,10 @@ export function PWAInstallPrompt() {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e as BeforeInstallPromptEvent)
-      // Show prompt after a short delay
+      // Show prompt after a short delay (only if not already shown)
       setTimeout(() => {
-        if (!isInStandaloneMode) {
+        if (!isInStandaloneMode && !hasShownThisSession()) {
+          markShownThisSession()
           setIsOpen(true)
         }
       }, 2000)
@@ -65,8 +89,9 @@ export function PWAInstallPrompt() {
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
 
     // For iOS, show prompt after delay since there's no beforeinstallprompt event
-    if (isIOSDevice && !isInStandaloneMode) {
+    if (isIOSDevice && !isInStandaloneMode && !hasShownThisSession()) {
       setTimeout(() => {
+        markShownThisSession()
         setIsOpen(true)
       }, 2000)
     }

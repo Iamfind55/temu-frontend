@@ -1,12 +1,12 @@
 "use client"
 
 import Link from "next/link"
-import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import { useQuery } from "@apollo/client/react"
 import { ChevronDown, Loader, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { SkeletonNextImage } from "@/components/ui/skeleton-image"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import type { Product } from "@/lib/product-data"
@@ -222,10 +222,12 @@ export default function CategoryPage() {
                       className="group flex flex-col items-center text-center transition-transform hover:scale-105"
                     >
                       <div className="relative mb-2 h-20 w-20 overflow-hidden rounded-full border-2 border-gray-200 transition-all group-hover:border-primary">
-                        <Image
+                        <SkeletonNextImage
                           src={imageUrl}
                           alt={childCategory.name}
                           fill
+                          containerClassName="absolute inset-0 rounded-full"
+                          skeletonClassName="rounded-full"
                           className="object-cover"
                         />
                       </div>

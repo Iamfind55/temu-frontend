@@ -7,6 +7,7 @@ import type { Product } from "@/lib/product-data"
 import Link from "next/link"
 import { useState } from "react"
 import { QuickAddModal } from "./quick-add-modal"
+import { SkeletonImage } from "@/components/ui/skeleton-image"
 
 interface ProductCardProps {
   product: Product
@@ -28,9 +29,10 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
       <Link href={`/product/${product.id}`}>
         <div className="group cursor-pointer overflow-hidden shadow-md rounded-md hover:shadow-lg transition-all duration-300 relative p-0">
           <div className="aspect-square bg-background overflow-hidden relative">
-            <img
+            <SkeletonImage
               src={product.images[0] || "/placeholder.svg"}
               alt={product.title}
+              containerClassName="h-full w-full"
               className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300 rounded-md"
             />
 

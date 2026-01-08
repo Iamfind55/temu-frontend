@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ProductCard } from "@/components/product-card"
+import { SkeletonImage } from "@/components/ui/skeleton-image"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -297,9 +298,10 @@ export default function CartPage() {
                                     checked={selectedItems.includes(item.id)}
                                     onCheckedChange={() => toggleSelectItem(item.id)}
                                  />
-                                 <img
+                                 <SkeletonImage
                                     src={item.image || "/placeholder.svg"}
                                     alt={item.name}
+                                    containerClassName="h-24 w-24"
                                     className="h-24 w-24 object-cover rounded"
                                  />
                                  <div className="flex-1 border-b pb-4">
@@ -720,7 +722,12 @@ export default function CartPage() {
                            <div className="border rounded-lg p-4 space-y-3 max-h-64 overflow-y-auto">
                               {items.filter((item) => selectedItems.includes(item.id)).map((item) => (
                                  <div key={item.id} className="flex gap-3 pb-3 border-b last:border-0">
-                                    <img src={item.image || "/placeholder.svg"} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                                    <SkeletonImage
+                                       src={item.image || "/placeholder.svg"}
+                                       alt={item.name}
+                                       containerClassName="w-16 h-16"
+                                       className="w-16 h-16 object-cover rounded"
+                                    />
                                     <div className="flex-1">
                                        <p className="text-sm font-medium line-clamp-2">{item.name}</p>
                                        <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
