@@ -197,7 +197,7 @@ export default function CategoryPage() {
                   <span className="text-foreground font-medium">{breadcrumb.name}</span>
                 ) : (
                   <Link
-                    href={`/landing/category/${breadcrumb.id}`}
+                    href={`/category/${breadcrumb.id}`}
                     className="text-muted-foreground hover:text-foreground hover:underline"
                   >
                     {breadcrumb.name}
@@ -218,7 +218,7 @@ export default function CategoryPage() {
                   return (
                     <Link
                       key={childCategory.id}
-                      href={`/landing/category/${childCategory.id}`}
+                      href={`/category/${childCategory.id}`}
                       className="group flex flex-col items-center text-center transition-transform hover:scale-105"
                     >
                       <div className="relative mb-2 h-20 w-20 overflow-hidden rounded-full border-2 border-gray-200 transition-all group-hover:border-primary">

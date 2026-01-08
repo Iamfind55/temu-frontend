@@ -154,7 +154,7 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
               Add to cart!
             </Button>
             <button
-              onClick={() => router.push(`/landing/product/${product.id}`)}
+              onClick={() => router.push(`/product/${product.id}`)}
               className="text-sm text-primary hover:underline cursor-pointer"
             >
               All details ›

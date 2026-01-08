@@ -87,7 +87,7 @@ export function MegaMenu() {
                         return (
                           <Link
                             key={subSubCategory.id}
-                            href={`/landing/category/${subSubCategory.id}`}
+                            href={`/category/${subSubCategory.id}`}
                             className="group flex flex-col items-center text-center transition-transform hover:scale-105"
                           >
                             <div className="relative mb-3 h-20 w-20 overflow-hidden rounded-full border-2 border-gray-200 transition-all group-hover:border-primary">

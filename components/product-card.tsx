@@ -25,7 +25,7 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
 
   return (
     <>
-      <Link href={`/landing/product/${product.id}`}>
+      <Link href={`/product/${product.id}`}>
         <div className="group cursor-pointer overflow-hidden shadow-md rounded-md hover:shadow-lg transition-all duration-300 relative p-0">
           <div className="aspect-square bg-background overflow-hidden relative">
             <img
