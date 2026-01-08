@@ -96,3 +96,26 @@ export const QUERY_GET_CHAT_MESSAGES = gql`
     }
   }
 `;
+
+export const MESSAGE_SUBSCRIPTION = gql`
+  subscription SendMessage($conversationId: ID!) {
+    sendMessage(conversationId: $conversationId) {
+      id
+      conversation_id
+      sender_id
+      reply_to_id
+      replyTo {
+        id
+        attachment
+        text
+      }
+      text
+      sender_type
+      attachment
+      is_read
+      is_deleted
+      created_at
+      type
+    }
+  }
+`;

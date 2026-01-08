@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { cn } from "@/lib/utils"
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client/react"
+import { useQuery, useMutation, useLazyQuery, useSubscription } from "@apollo/client/react"
 import { MessageCircle, X, Send, Smile, ArrowLeft, Loader2, Image as ImageIcon, Loader, Check, CheckCheck } from "lucide-react"
 import { useShopStore } from "@/store/shop-store"
 import { uploadToCloudinary } from "@/lib/cloudinary-upload"
@@ -12,6 +12,7 @@ import {
    MUTATION_CREATE_CONVERSATION,
    MUTATION_SEND_MESSAGES,
    MUTATION_MARK_MESSAGES_READ,
+   MESSAGE_SUBSCRIPTION,
 } from "@/app/api/shop/chat"
 
 interface ChatMessage {
@@ -108,6 +109,8 @@ export function ShopLiveChat() {
    const messagesEndRef = useRef<HTMLDivElement>(null)
    const fileInputRef = useRef<HTMLInputElement>(null)
    const inputRef = useRef<HTMLInputElement>(null)
+   const isMarkingReadRef = useRef(false)
+   const prevMessageCountRef = useRef(0)
 
    // Query conversation
    const { data: conversationData, loading: conversationLoading, refetch: refetchConversation } = useQuery<ConversationResponse>(
@@ -128,6 +131,38 @@ export function ShopLiveChat() {
    const [createConversation] = useMutation<CreateConversationResponse>(MUTATION_CREATE_CONVERSATION)
    const [sendMessage] = useMutation<SendMessageResponse>(MUTATION_SEND_MESSAGES)
    const [markMessagesRead] = useMutation(MUTATION_MARK_MESSAGES_READ)
+
+   // State to store subscription messages
+   const [subscriptionMessages, setSubscriptionMessages] = useState<ChatMessage[]>([])
+
+   // Subscription for real-time messages
+   const { data: subscriptionData } = useSubscription<{ sendMessage: ChatMessage }>(
+      MESSAGE_SUBSCRIPTION,
+      {
+         variables: { conversationId: conversationId },
+         skip: !conversationId || !isOpen,
+      }
+   )
+
+   // Handle new message from subscription
+   useEffect(() => {
+      if (subscriptionData?.sendMessage) {
+         const newMessage = subscriptionData.sendMessage
+         // Check if message already exists to avoid duplicates
+         setSubscriptionMessages((prev) => {
+            const exists = prev.some((msg) => msg.id === newMessage.id)
+            if (exists) return prev
+            return [...prev, newMessage]
+         })
+      }
+   }, [subscriptionData])
+
+   // Reset subscription messages when conversation changes or chat closes
+   useEffect(() => {
+      if (!isOpen) {
+         setSubscriptionMessages([])
+      }
+   }, [isOpen])
 
    // Set conversation ID when data is fetched
    useEffect(() => {
@@ -150,29 +185,45 @@ export function ShopLiveChat() {
       }
    }, [conversationId, fetchMessages])
 
-   // Scroll to bottom when messages change
+   // Scroll to bottom when new messages arrive
    useEffect(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-   }, [messagesData?.getMessages?.data])
+      const queryMsgs = messagesData?.getMessages?.data || []
+      const totalCount = queryMsgs.length + subscriptionMessages.length
+
+      // Only scroll if message count increased (new message arrived)
+      if (totalCount > prevMessageCountRef.current) {
+         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+      }
+      prevMessageCountRef.current = totalCount
+   }, [messagesData?.getMessages?.data, subscriptionMessages])
 
    // Mark messages as read when chat is open and there are unread ADMIN messages
    useEffect(() => {
-      const messages = messagesData?.getMessages?.data || []
-      const hasUnreadAdminMessages = messages.some(
+      // Skip if already marking or chat is closed or no conversation
+      if (!isOpen || !conversationId || isMarkingReadRef.current) return
+
+      const queryMsgs = messagesData?.getMessages?.data || []
+      const allMessages = [...queryMsgs, ...subscriptionMessages]
+      const hasUnreadAdminMessages = allMessages.some(
          (msg) => msg.sender_type === "ADMIN" && !msg.is_read
       )
 
-      if (isOpen && conversationId && hasUnreadAdminMessages) {
+      if (hasUnreadAdminMessages) {
+         isMarkingReadRef.current = true
          markMessagesRead({
             variables: { conversationId: conversationId },
-         }).then(() => {
-            // Refetch messages to update read status
-            if (refetchMessages) {
-               refetchMessages()
-            }
          })
+            .then(() => {
+               // Small delay before allowing next mark read call
+               setTimeout(() => {
+                  isMarkingReadRef.current = false
+               }, 1000)
+            })
+            .catch(() => {
+               isMarkingReadRef.current = false
+            })
       }
-   }, [isOpen, conversationId, messagesData?.getMessages?.data, markMessagesRead, refetchMessages])
+   }, [isOpen, conversationId, messagesData?.getMessages?.data, subscriptionMessages, markMessagesRead])
 
    // Handle image selection
    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -298,7 +349,25 @@ export function ShopLiveChat() {
       return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
    }
 
-   const messages = messagesData?.getMessages?.data || []
+   // Combine query messages with subscription messages (avoid duplicates) - memoized for performance
+   const messages = useMemo(() => {
+      const queryMessages = messagesData?.getMessages?.data || []
+      const combinedMessages = [...queryMessages]
+
+      // Add subscription messages that don't exist in query messages
+      subscriptionMessages.forEach((subMsg) => {
+         const exists = combinedMessages.some((msg) => msg.id === subMsg.id)
+         if (!exists) {
+            combinedMessages.push(subMsg)
+         }
+      })
+
+      // Sort by created_at
+      return combinedMessages.sort(
+         (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      )
+   }, [messagesData?.getMessages?.data, subscriptionMessages])
+
    const isLoading = conversationLoading || messagesLoading
 
    return (
