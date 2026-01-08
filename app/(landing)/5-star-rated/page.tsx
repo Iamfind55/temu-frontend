@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useQuery } from "@apollo/client/react"
 import type { Product } from "@/lib/product-data"
 import { ChevronDown, Loader } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 // components
 import { Button } from "@/components/ui/button"
@@ -12,6 +13,8 @@ import { ProductCard } from "@/components/product-card"
 import { IGetProductsResponse, IProduct } from "@/app/interface/product"
 
 export default function FiveStarRatedPage() {
+  const { t } = useTranslation('landing')
+  const { t: tCommon } = useTranslation('common')
   const [page, setPage] = useState(1)
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const limit = 40
@@ -109,7 +112,7 @@ export default function FiveStarRatedPage() {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-red-600">
-            Error loading products. Please try again later.
+            {tCommon('error')}
           </div>
         </div>
       </div>
@@ -120,7 +123,7 @@ export default function FiveStarRatedPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 space-y-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold">5-Star Rated Products</h1>
+          <h1 className="text-2xl font-bold">{t('fiveStarRatedProducts')}</h1>
           <p className="text-sm text-muted-foreground">
             {totalProducts} products available
           </p>
@@ -128,11 +131,11 @@ export default function FiveStarRatedPage() {
 
         {loading && allProducts.length === 0 ? (
           <div className="flex items-center justify-center py-20 gap-2">
-            <Loader className="h-4 w-4 animate-spin text-orange-400" /> Loading...
+            <Loader className="h-4 w-4 animate-spin text-orange-400" /> {tCommon('loading')}
           </div>
         ) : allProducts.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="text-lg text-muted-foreground">No 5-star rated products found.</p>
+            <p className="text-lg text-muted-foreground">{t('noFiveStarProducts')}</p>
           </div>
         ) : (
           <>
@@ -153,11 +156,11 @@ export default function FiveStarRatedPage() {
                   {loading ? (
                     <>
                       <Loader className="h-4 w-4 animate-spin" />
-                      Loading...
+                      {tCommon('loading')}
                     </>
                   ) : (
                     <>
-                      <span>Load More</span>
+                      <span>{tCommon('loadMore')}</span>
                       <ChevronDown />
                     </>
                   )}
@@ -167,7 +170,7 @@ export default function FiveStarRatedPage() {
 
             {!hasMore && allProducts.length > 0 && (
               <div className="text-center text-sm text-muted-foreground pt-6">
-                You've reached the end of the products
+                {tCommon('noResults')}
               </div>
             )}
           </>

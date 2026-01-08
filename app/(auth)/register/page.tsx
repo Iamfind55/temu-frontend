@@ -10,6 +10,7 @@ import { Lock, ChevronLeft, Loader } from "lucide-react"
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 import { SiteFooter } from "@/components/site-footer"
 
 import { MUTATION_CUSTOMER_REGISTER_EMAIL } from "@/app/api/auth"
@@ -18,6 +19,7 @@ import { IRegisterEmailResponse } from "@/app/interface/customer"
 export default function RegisterPage() {
   const router = useRouter()
   const { successMessage, errorMessage } = useToast()
+  const { t } = useTranslation('customer-auth')
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [customerRegister] = useMutation<IRegisterEmailResponse>(MUTATION_CUSTOMER_REGISTER_EMAIL)
@@ -26,14 +28,14 @@ export default function RegisterPage() {
     e.preventDefault()
 
     if (!email) {
-      errorMessage({ message: "Email is required!", duration: 2000 })
+      errorMessage({ message: t('emailRequired'), duration: 2000 })
       return
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      errorMessage({ message: "Please enter a valid email address", duration: 2000 })
+      errorMessage({ message: t('invalidEmailAddress'), duration: 2000 })
       return
     }
 
@@ -50,7 +52,7 @@ export default function RegisterPage() {
 
       if (data?.customerRegister?.success) {
         successMessage({
-          message: "Verification code sent! Check your email.",
+          message: t('verificationCodeSent'),
           duration: 3000
         })
 
@@ -59,13 +61,13 @@ export default function RegisterPage() {
         }, 1500)
       } else {
         errorMessage({
-          message: data?.customerRegister?.error?.message || "Failed to send verification code",
+          message: data?.customerRegister?.error?.message || t('failedToSendVerificationCode'),
           duration: 3000
         })
       }
     } catch (error) {
       errorMessage({
-        message: "An unexpected error occurred. Please try again.",
+        message: t('unexpectedError'),
         duration: 3000
       })
     } finally {
@@ -96,7 +98,7 @@ export default function RegisterPage() {
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
-            <span>All data will be encrypted</span>
+            <span>{t('allDataEncrypted')}</span>
           </div>
         </div>
       </div>
@@ -108,20 +110,20 @@ export default function RegisterPage() {
             className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to Sign In
+            {t('backToSignIn')}
           </Link>
 
           <div className="mb-8 text-center">
-            <h1 className="mb-3 text-2xl font-bold">Create your account</h1>
+            <h1 className="mb-3 text-2xl font-bold">{t('createYourAccount')}</h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email address to get started. We'll send you a verification code.
+              {t('createAccountDesc')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-medium">
-                Email address <span className="text-rose-500">*</span>
+                {t('emailAddress')} <span className="text-rose-500">*</span>
               </label>
               <Input
                 id="email"
@@ -130,7 +132,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-12"
-                placeholder="Enter your email address"
+                placeholder={t('enterYourEmailAddress')}
                 disabled={isLoading}
                 required
               />
@@ -144,29 +146,29 @@ export default function RegisterPage() {
               {isLoading ? (
                 <>
                   <Loader className=" h-4 w-4 animate-spin" />
-                  Sending...
+                  {t('sending')}
                 </>
               ) : (
-                "Continue"
+                t('continue')
               )}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
+              {t('alreadyHaveAccount')}{" "}
               <Link href="/login" className="text-orange-500 font-bold hover:text-orange-600">
-                Sign in
+                {t('signIn')}
               </Link>
             </div>
           </form>
 
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            By continuing, you agree to our{" "}
+            {t('byContinuing')}{" "}
             <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
-              Terms of Use
+              {t('termsOfUse')}
             </Link>{" "}
-            and{" "}
+            {t('and')}{" "}
             <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
-              Privacy Policy
+              {t('privacyPolicy')}
             </Link>
             .
           </div>

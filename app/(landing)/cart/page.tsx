@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useToast } from "@/lib/toast"
 import { useSelector } from "react-redux"
 import { useRouter } from "next/navigation"
+import { useTranslation } from "react-i18next"
 import { useLazyQuery, useQuery, useMutation } from "@apollo/client/react"
 import { Trash2, Info, ChevronRight, ShieldCheck, LockKeyhole, Check, Truck, BaggageClaim, ShoppingCart, MapPin, Plus, Wallet, X, CheckCircle2 } from "lucide-react"
 
@@ -28,6 +29,8 @@ import { GetCustomerAddressesResponse, GetCountryResponse, GetStateResponse, Get
 import { QUERY_CUSTOMER_ADDRESS, QUERY_COUNTRIES, QUERY_STATES, QUERY_CITIES, MUTATION_CREATE_CUSTOMER_ADDRESS } from "@/app/api/address"
 
 export default function CartPage() {
+   const { t } = useTranslation('cart')
+   const { t: tCommon } = useTranslation('common')
    const router = useRouter()
    const { items, removeItem, updateQuantity, subtotal, clearCart } = useCart()
    const { successMessage, errorMessage } = useToast()
@@ -98,7 +101,7 @@ export default function CartPage() {
    // Handlers
    const handleCheckoutClick = () => {
       if (selectedItems.length === 0) {
-         errorMessage({ message: "Please select items to checkout", duration: 3000 })
+         errorMessage({ message: t('selectItemsToCheckout'), duration: 3000 })
          return
       }
 
@@ -116,7 +119,7 @@ export default function CartPage() {
 
    const handleCreateAddress = async () => {
       if (!email || !address || !telephone || !postalCode || !countryId || !cityId) {
-         errorMessage({ message: "Please fill all required fields", duration: 3000 })
+         errorMessage({ message: t('fillRequiredFields'), duration: 3000 })
          return
       }
 
@@ -129,7 +132,7 @@ export default function CartPage() {
          })
 
          if (res?.data?.createCustomerAddress?.success) {
-            successMessage({ message: "Address created successfully!", duration: 3000 })
+            successMessage({ message: t('addressCreated'), duration: 3000 })
             await refetchAddresses()
             setEmail("")
             setAddress("")
@@ -140,7 +143,7 @@ export default function CartPage() {
             setCityId("")
          }
       } catch (error) {
-         errorMessage({ message: "An error occurred", duration: 3000 })
+         errorMessage({ message: t('errorOccurred'), duration: 3000 })
       } finally {
          setIsCreatingAddress(false)
       }
@@ -148,11 +151,11 @@ export default function CartPage() {
 
    const handleProceedToPayment = () => {
       if (!selectedAddressId && addresses.length > 0) {
-         errorMessage({ message: "Please select a delivery address", duration: 3000 })
+         errorMessage({ message: t('selectDeliveryAddress'), duration: 3000 })
          return
       }
       if (addresses.length === 0) {
-         errorMessage({ message: "Please create an address first", duration: 3000 })
+         errorMessage({ message: t('createAddressFirst'), duration: 3000 })
          return
       }
       setCheckoutStep(2)
@@ -160,7 +163,7 @@ export default function CartPage() {
 
    const handlePayment = async () => {
       if (walletBalance < selectedSubtotal) {
-         errorMessage({ message: "Insufficient balance. Please top up your wallet.", duration: 3000 })
+         errorMessage({ message: t('insufficientBalance'), duration: 3000 })
          return
       }
 
@@ -200,14 +203,14 @@ export default function CartPage() {
             // Clear cart only on successful order creation
             clearCart()
             setCheckoutStep(3)
-            successMessage({ message: "Payment successful!", duration: 3000 })
+            successMessage({ message: t('paymentSuccessful'), duration: 3000 })
          } else {
-            const errorMsg = res?.data?.createOrder?.error?.message || "Failed to create order"
+            const errorMsg = res?.data?.createOrder?.error?.message || t('failedToCreateOrder')
             errorMessage({ message: errorMsg, duration: 3000 })
          }
       } catch (error) {
          console.error("Order creation error:", error)
-         errorMessage({ message: "An error occurred while processing your order", duration: 3000 })
+         errorMessage({ message: t('orderProcessingError'), duration: 3000 })
       } finally {
          setIsProcessingPayment(false)
       }
@@ -224,10 +227,10 @@ export default function CartPage() {
          <div className="hidden sm:block container mx-auto px-4 py-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                <Link href="/" className="hover:text-foreground">
-                  Home
+                  {tCommon('home')}
                </Link>
                <ChevronRight className="h-4 w-4" />
-               <span className="text-foreground">Cart</span>
+               <span className="text-foreground">{t('cart')}</span>
             </div>
          </div>
 
@@ -241,7 +244,7 @@ export default function CartPage() {
                               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                            </svg>
                            <span className="font-medium text-green-800">
-                              Free shipping on all items in your cart
+                              {t('freeShippingOnAllItems')}
                            </span>
                         </div>
                      </div>
@@ -254,7 +257,7 @@ export default function CartPage() {
                            <path d="M6 13H4a2 2 0 00-2 2v4a2 2 0 002 2h2" strokeWidth="2" />
                         </svg>
                         <span className="text-sm text-green-800">
-                           No import charges for all local warehouse items and no extra charges upon delivery
+                           {t('noImportCharges')}
                         </span>
                      </div>
                   </div>
@@ -265,7 +268,7 @@ export default function CartPage() {
                            checked={selectedItems.length === items.length && items.length > 0}
                            onCheckedChange={toggleSelectAll}
                         />
-                        <span className="font-medium">Select all ({items.length})</span>
+                        <span className="font-medium">{t('selectAll')} ({items.length})</span>
                      </div>
                   </div>
 
@@ -276,19 +279,19 @@ export default function CartPage() {
                         <div className="flex items-center gap-2">
                            <ShoppingCart size={36} className="text-gray-300" />
                            <div className="text-start">
-                              <h4 className="text-black font-bold">Your shopping cart is empty</h4>
-                              <p className="text-sm text-gray-500">Add your favorite items in it.</p>
+                              <h4 className="text-black font-bold">{t('emptyCartTitle')}</h4>
+                              <p className="text-sm text-gray-500">{t('emptyCartDesc')}</p>
                            </div>
                         </div>
                         <Link href="/">
-                           <Button className="mt-4 bg-orange-500 hover:bg-orange-600 px-8 rounded-full">See trending items</Button>
+                           <Button className="mt-4 bg-orange-500 hover:bg-orange-600 px-8 rounded-full">{t('seeTrendingItems')}</Button>
                         </Link>
                      </div>
                   ) : (
                      <div className="space-y-4 mt-4">
                         <div className="flex items-center gap-2 text-md font-medium text-green-700 font-bold">
                            <Check size={22} className="text-green-700" />
-                           Free shipping from ShopHub
+                           {t('freeShippingFromShopHub')}
                         </div>
 
                         {items.map((item) => (
@@ -374,7 +377,7 @@ export default function CartPage() {
                   )}
 
                   <div className="mt-8">
-                     <h2 className="text-lg font-bold mb-4">Items you may want to add</h2>
+                     <h2 className="text-lg font-bold mb-4">{t('itemsYouMayWant')}</h2>
                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                         {recommendedProducts.map((product, index) => (
                            <ProductCard key={product.id + index} product={product} />
@@ -386,23 +389,23 @@ export default function CartPage() {
                <div className="hidden sm:block lg:col-span-1">
                   <div className="sticky top-4">
                      <div className="space-y-2">
-                        <h2 className="text-lg font-bold">Order Summary</h2>
+                        <h2 className="text-lg font-bold">{t('orderSummary')}</h2>
                         <div className="space-y-2 text-sm">
                            <div className="flex justify-between">
-                              <span>Item(s) total:</span>
+                              <span>{t('itemsTotal')}:</span>
                               <span className="line-through ">${selectedOriginalTotal.toFixed(2)}</span>
                            </div>
                            <div className="flex justify-between">
-                              <span>Item(s) discount:</span>
+                              <span>{t('itemsDiscount')}:</span>
                               <span className="text-destructive font-medium">-${discount.toFixed(2)}</span>
                            </div>
                            <hr />
                            <div className="flex justify-between">
-                              <span className="text-md font-bold text-green-600">Shipping:</span>
-                              <span className="text-xl text-green-600 font-bold">FREE</span>
+                              <span className="text-md font-bold text-green-600">{t('shipping')}:</span>
+                              <span className="text-xl text-green-600 font-bold">{t('free')}</span>
                            </div>
                            <div className="pt-2 flex justify-between text-base">
-                              <span className="font-bold text-sm">Estimated total</span>
+                              <span className="font-bold text-sm">{t('estimatedTotal')}</span>
                               <span className="text-xl font-bold text-green-600">${selectedSubtotal.toFixed(2)}</span>
                            </div>
                         </div>
@@ -410,15 +413,13 @@ export default function CartPage() {
                         <div className="border border-green-500 rounded-md p-2 text-sm">
                            <div className="flex items-start gap-2">
                               <div className="text-green-600 font-bold">
-                                 <span className="font-bold">Your order is covered by our Price Match Guarantee.</span> Proceed
-                                 to checkout now!
+                                 <span className="font-bold">{t('priceMatchGuarantee')}</span> {t('proceedToCheckoutNow')}
                               </div>
                            </div>
                         </div>
 
                         <div className="text-xs text-muted-foreground">
-                           Please refer to your final actual payment amount. Taxes and delivery fees are calculated on the next
-                           page.
+                           {t('referToFinalPayment')}
                         </div>
 
                         <hr />
@@ -428,41 +429,39 @@ export default function CartPage() {
                            size="sm"
                            onClick={handleCheckoutClick}
                         >
-                           Checkout ({selectedItems.length})
+                           {t('checkout')} ({selectedItems.length})
                         </Button>
 
                         <div className="text-xs text-muted-foreground flex items-start gap-2">
                            <Info className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                           <span>Item availability and pricing are not guaranteed until payment is final.</span>
+                           <span>{t('itemAvailabilityNote')}</span>
                         </div>
 
                         <div className="rounded-lg space-y-4">
                            <div className="flex items-start gap-2 text-sm">
                               <LockKeyhole size={24} className="fill-green-800 text-white" />
                               <span className="text-sm text-foreground">
-                                 You will not be charged until you review this order on the next page
+                                 {t('notChargedUntilReview')}
                               </span>
                            </div>
 
                            <div className="flex flex-col items-start">
                               <div className="flex items-center justify-start font-medium text-foreground gap-2">
                                  <ShieldCheck size={22} className="fill-green-800 text-white" />
-                                 <span>Safe Payment Options</span>
+                                 <span>{t('safePaymentOptions')}</span>
                               </div>
                               <div className="text-sm text-muted-foreground mt-1">
-                                 ShopHub is committed to protecting your payment information. We follow PCI DSS standards, use
-                                 strong encryption, and perform regular reviews of its system to protect your privacy.
+                                 {t('paymentProtectionDesc')}
                               </div>
                            </div>
 
                            <div className="flex flex-col items-start">
                               <div className="flex items-center justify-start font-medium text-foreground gap-2">
                                  <BaggageClaim size={22} className="fill-green-800 text-white" />
-                                 <span>Temu Purchase Protection</span>
+                                 <span>{t('purchaseProtection')}</span>
                               </div>
                               <div className="text-sm text-muted-foreground mt-1">
-                                 Shop confidently on Temu knowing that if something goes wrong, we've always got your back.
-                                 See program terms
+                                 {t('purchaseProtectionDesc')}
                               </div>
                            </div>
 
@@ -471,27 +470,27 @@ export default function CartPage() {
                                  <div className="rounded-lg space-y-2">
                                     <div className="flex items-center justify-start font-medium text-foreground gap-2">
                                        <Truck size={22} className="fill-green-800 text-white" />
-                                       <span>Delivery guarantee</span>
+                                       <span>{t('deliveryGuarantee')}</span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-3 space-y-1 text-sm text-muted-foreground">
                                        <div>
                                           <div className="flex items-center gap-2">
                                              <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                                             <span>$5.00 Credit for delay</span>
+                                             <span>{t('creditForDelay')}</span>
                                           </div>
                                           <div className="flex items-center gap-2">
                                              <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                                             <span>15-day no update refund</span>
+                                             <span>{t('noUpdateRefund')}</span>
                                           </div>
                                        </div>
                                        <div>
                                           <div className="flex items-center gap-2">
                                              <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                                             <span>Return if item damaged</span>
+                                             <span>{t('returnIfDamaged')}</span>
                                           </div>
                                           <div className="flex items-center gap-2">
                                              <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                                             <span>30-day no delivery refund</span>
+                                             <span>{t('noDeliveryRefund')}</span>
                                           </div>
                                        </div>
                                     </div>
@@ -503,7 +502,7 @@ export default function CartPage() {
                               <div className="flex items-center justify-center w-6 h-6 bg-green-700 text-white rounded font-bold">
                                  <span className="text-[7px]">Plant</span>
                               </div>
-                              <span className="text-black">Temu's Tree Planting Program</span>
+                              <span className="text-black">{t('treePlantingProgram')}</span>
                               <ChevronRight className="h-5 w-5 ml-auto group-hover:translate-x-1 transition-transform" />
                            </button>
                         </div>
@@ -518,9 +517,9 @@ export default function CartPage() {
             <DialogContent className="sm:!max-w-[50vw] max-h-[90vh] overflow-y-auto space-y-6">
                <DialogHeader className="mb-6">
                   <DialogTitle className="text-sm">
-                     {checkoutStep === 1 && "Step 1: Delivery Address"}
-                     {checkoutStep === 2 && "Step 2: Payment"}
-                     {checkoutStep === 3 && "Order Successful!"}
+                     {checkoutStep === 1 && t('step1DeliveryAddress')}
+                     {checkoutStep === 2 && t('step2Payment')}
+                     {checkoutStep === 3 && t('orderSuccessful')}
                   </DialogTitle>
                </DialogHeader>
 
@@ -530,23 +529,23 @@ export default function CartPage() {
                      <div className="flex items-center justify-center gap-4 mb-6">
                         <div className="flex items-center gap-2">
                            <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">1</div>
-                           <span className="text-sm font-medium">Address</span>
+                           <span className="text-sm font-medium">{t('address')}</span>
                         </div>
                         <div className="w-12 h-0.5 bg-gray-300"></div>
                         <div className="flex items-center gap-2">
                            <div className="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">2</div>
-                           <span className="text-sm text-gray-500">Payment</span>
+                           <span className="text-sm text-gray-500">{t('payment')}</span>
                         </div>
                         <div className="w-12 h-0.5 bg-gray-300"></div>
                         <div className="flex items-center gap-2">
                            <div className="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">3</div>
-                           <span className="text-sm text-gray-500">Complete</span>
+                           <span className="text-sm text-gray-500">{t('complete')}</span>
                         </div>
                      </div>
 
                      {addresses.length > 0 ? (
                         <div className="space-y-4">
-                           <h3 className="font-semibold text-lg">Select Delivery Address</h3>
+                           <h3 className="font-semibold text-lg">{t('selectDeliveryAddressTitle')}</h3>
                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-70 overflow-y-auto">
                               {addresses.map((addr: any) => (
                                  <div
@@ -563,14 +562,14 @@ export default function CartPage() {
                                              <MapPin size={16} className="text-orange-500" />
                                              <span className="font-medium">{addr.address}</span>
                                              {addr.is_default && (
-                                                <Badge className="bg-green-500 text-white text-xs">Default</Badge>
+                                                <Badge className="bg-green-500 text-white text-xs">{t('default')}</Badge>
                                              )}
                                           </div>
                                           <p className="text-sm text-gray-600">
                                              {addr.city?.city}, {addr.state?.state} {addr.postal_code}
                                           </p>
                                           <p className="text-sm text-gray-600">{addr.country?.country}</p>
-                                          <p className="text-sm text-gray-600">Phone: {addr.phone_number}</p>
+                                          <p className="text-sm text-gray-600">{t('phone')}: {addr.phone_number}</p>
                                        </div>
                                        {selectedAddressId === addr.id && (
                                           <CheckCircle2 className="text-orange-500" size={24} />
@@ -582,24 +581,24 @@ export default function CartPage() {
                         </div>
                      ) : (
                         <div className="space-y-4">
-                           <h3 className="font-semibold text-lg">Create Delivery Address</h3>
+                           <h3 className="font-semibold text-lg">{t('createDeliveryAddress')}</h3>
                            <div className="grid grid-cols-2 gap-4">
                               <div className="space-y-1.5">
-                                 <Label>Email <span className="text-rose-500">*</span></Label>
+                                 <Label>{t('email')} <span className="text-rose-500">*</span></Label>
                                  <Input value={email} onChange={(e) => setEmail(e.target.value)} required />
                               </div>
                               <div className="space-y-1.5">
-                                 <Label>Phone Number <span className="text-rose-500">*</span></Label>
+                                 <Label>{t('phoneNumber')} <span className="text-rose-500">*</span></Label>
                                  <Input value={telephone} onChange={(e) => setTelephone(e.target.value)} required />
                               </div>
                               <div className="space-y-1.5 col-span-2">
-                                 <Label>Address <span className="text-rose-500">*</span></Label>
+                                 <Label>{t('address')} <span className="text-rose-500">*</span></Label>
                                  <Input value={address} onChange={(e) => setAddress(e.target.value)} required />
                               </div>
                               <div className="space-y-1.5">
-                                 <Label>Country <span className="text-rose-500">*</span></Label>
+                                 <Label>{t('country')} <span className="text-rose-500">*</span></Label>
                                  <Select value={countryId} onValueChange={(val) => { setCountryId(val); getStates({ variables: { countryId: val } }) }}>
-                                    <SelectTrigger className="w-full"><SelectValue placeholder="Select country" /></SelectTrigger>
+                                    <SelectTrigger className="w-full"><SelectValue placeholder={t('selectCountry')} /></SelectTrigger>
                                     <SelectContent>
                                        {countries.map((c) => (
                                           <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
@@ -608,9 +607,9 @@ export default function CartPage() {
                                  </Select>
                               </div>
                               <div className="space-y-1.5">
-                                 <Label>State</Label>
+                                 <Label>{t('state')}</Label>
                                  <Select value={stateId} onValueChange={(val) => { setStateId(val); getCities({ variables: { countryId, stateId: val } }) }}>
-                                    <SelectTrigger className="w-full"><SelectValue placeholder="Select state" /></SelectTrigger>
+                                    <SelectTrigger className="w-full"><SelectValue placeholder={t('selectState')} /></SelectTrigger>
                                     <SelectContent>
                                        {states.map((s) => (
                                           <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
@@ -619,9 +618,9 @@ export default function CartPage() {
                                  </Select>
                               </div>
                               <div className="space-y-1.5">
-                                 <Label>City <span className="text-rose-500">*</span></Label>
+                                 <Label>{t('city')} <span className="text-rose-500">*</span></Label>
                                  <Select value={cityId} onValueChange={setCityId}>
-                                    <SelectTrigger className="w-full"><SelectValue placeholder="Select city" /></SelectTrigger>
+                                    <SelectTrigger className="w-full"><SelectValue placeholder={t('selectCity')} /></SelectTrigger>
                                     <SelectContent>
                                        {cities.map((c) => (
                                           <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
@@ -630,13 +629,13 @@ export default function CartPage() {
                                  </Select>
                               </div>
                               <div className="space-y-1.5">
-                                 <Label>Postal Code <span className="text-rose-500">*</span></Label>
+                                 <Label>{t('postalCode')} <span className="text-rose-500">*</span></Label>
                                  <Input value={postalCode} onChange={(e) => setPostalCode(e.target.value)} required />
                               </div>
                            </div>
                            <Button onClick={handleCreateAddress} disabled={isCreatingAddress} className="w-auto bg-orange-500 hover:bg-orange-600">
                               <Plus className="" size={16} />
-                              {isCreatingAddress ? "Creating..." : "Create Address"}
+                              {isCreatingAddress ? t('creating') : t('createAddress')}
                            </Button>
                         </div>
                      )}
@@ -646,14 +645,14 @@ export default function CartPage() {
                         <div className="flex items-center gap-3">
                            <Truck className="text-orange-600" size={24} />
                            <div>
-                              <h4 className="font-semibold text-orange-900">Door-to-Door Delivery</h4>
-                              <p className="text-sm text-orange-700">Free shipping • Estimated delivery: 3-5 business days</p>
+                              <h4 className="font-semibold text-orange-900">{t('doorToDoorDelivery')}</h4>
+                              <p className="text-sm text-orange-700">{t('freeShippingEstimatedDelivery')}</p>
                            </div>
                         </div>
                      </div>
 
                      <Button onClick={handleProceedToPayment} className="w-full bg-orange-500 hover:bg-orange-600 py-6">
-                        Proceed to Payment
+                        {t('proceedToPayment')}
                      </Button>
                   </div>
                )}
@@ -666,28 +665,28 @@ export default function CartPage() {
                            <div className="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center">
                               <Check size={16} />
                            </div>
-                           <span className="text-sm font-medium">Address</span>
+                           <span className="text-sm font-medium">{t('address')}</span>
                         </div>
                         <div className="w-12 h-0.5 bg-orange-500"></div>
                         <div className="flex items-center gap-2">
                            <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">2</div>
-                           <span className="text-sm font-medium">Payment</span>
+                           <span className="text-sm font-medium">{t('payment')}</span>
                         </div>
                         <div className="w-12 h-0.5 bg-gray-300"></div>
                         <div className="flex items-center gap-2">
                            <div className="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-bold">3</div>
-                           <span className="text-sm text-gray-500">Complete</span>
+                           <span className="text-sm text-gray-500">{t('complete')}</span>
                         </div>
                      </div>
 
                      <div className="grid md:grid-cols-2 gap-6">
                         {/* Left: Wallet Info */}
                         <div className="space-y-4">
-                           <h3 className="text-md">Wallet Balance</h3>
+                           <h3 className="text-md">{t('walletBalance')}</h3>
                            <div className="p-6 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg text-white">
                               <div className="flex items-center gap-2 mb-2">
                                  <Wallet size={20} />
-                                 <span className="text-sm opacity-90">Available Balance</span>
+                                 <span className="text-sm opacity-90">{t('availableBalance')}</span>
                               </div>
                               <p className="text-xl font-bold">${walletBalance.toFixed(2)}</p>
                            </div>
@@ -695,7 +694,7 @@ export default function CartPage() {
                            {walletBalance < selectedSubtotal && (
                               <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                                  <p className="text-sm text-red-600 font-medium">
-                                    Insufficient balance. Please top up your wallet.
+                                    {t('insufficientBalance')}
                                  </p>
                               </div>
                            )}
@@ -703,14 +702,14 @@ export default function CartPage() {
                            <div className="flex gap-2">
                               <Button variant="outline" className="flex-1 border border-orange-500" onClick={() => router.push("/account/credit")}>
                                  <Plus size={16} />
-                                 Top-up
+                                 {t('topUp')}
                               </Button>
                               <Button
                                  className="flex-1 bg-green-600 hover:bg-green-700"
                                  onClick={handlePayment}
                                  disabled={isProcessingPayment || walletBalance < selectedSubtotal}
                               >
-                                 {isProcessingPayment ? "Processing..." : "Pay Now"}
+                                 {isProcessingPayment ? t('processing') : t('payNow')}
                               </Button>
                            </div>
 
@@ -718,7 +717,7 @@ export default function CartPage() {
 
                         {/* Right: Order Summary */}
                         <div className="space-y-4">
-                           <h3 className="text-md">Order Summary</h3>
+                           <h3 className="text-md">{t('orderSummary')}</h3>
                            <div className="border rounded-lg p-4 space-y-3 max-h-64 overflow-y-auto">
                               {items.filter((item) => selectedItems.includes(item.id)).map((item) => (
                                  <div key={item.id} className="flex gap-3 pb-3 border-b last:border-0">
@@ -730,7 +729,7 @@ export default function CartPage() {
                                     />
                                     <div className="flex-1">
                                        <p className="text-sm font-medium line-clamp-2">{item.name}</p>
-                                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+                                       <p className="text-xs text-gray-500">{t('qty')}: {item.quantity}</p>
                                        <p className="text-sm font-bold text-orange-600">${item.price.toFixed(2)}</p>
                                     </div>
                                  </div>
@@ -739,15 +738,15 @@ export default function CartPage() {
 
                            <div className="border-t pt-3 space-y-2">
                               <div className="flex justify-between text-sm">
-                                 <span>Subtotal:</span>
+                                 <span>{t('subtotal')}:</span>
                                  <span>${selectedSubtotal.toFixed(2)}</span>
                               </div>
                               <div className="flex justify-between text-sm">
-                                 <span>Shipping:</span>
-                                 <span className="text-green-600 font-medium">FREE</span>
+                                 <span>{t('shipping')}:</span>
+                                 <span className="text-green-600 font-medium">{t('free')}</span>
                               </div>
                               <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                                 <span>Total:</span>
+                                 <span>{t('total')}:</span>
                                  <span className="text-orange-600">${selectedSubtotal.toFixed(2)}</span>
                               </div>
                            </div>
@@ -762,12 +761,12 @@ export default function CartPage() {
                         <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
                            <CheckCircle2 className="text-green-600" size={48} />
                         </div>
-                        <h2 className="text-lg font-bold text-green-700">Order Placed Successfully!</h2>
+                        <h2 className="text-lg font-bold text-green-700">{t('orderPlacedSuccessfully')}</h2>
                         <p className="text-sm text-gray-600 max-w-md">
-                           Your order has been confirmed and will be delivered to your address within 3-5 business days.
+                           {t('orderConfirmedDesc')}
                         </p>
                         <Button onClick={handleCompleteCheckout} className="w-full max-w-md bg-orange-500 hover:bg-orange-600 py-4 text-sm mt-6">
-                           View My Orders
+                           {t('viewMyOrders')}
                         </Button>
                      </div>
                   </div>

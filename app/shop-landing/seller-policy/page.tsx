@@ -1,10 +1,16 @@
+"use client"
+
+import { useTranslation } from "react-i18next"
+
 export default function SellerPrivacyPolicyPage() {
+   const { t } = useTranslation('shop-landing')
+
    return (
       <div className="min-h-screen">
          <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
             <div className="text-sm sm:text-md font-normal sm:font-medium bg-white rounded-lg p-3 sm:p-10">
                <div className="mb-8 pb-2 border-b-2 border-gray-300 text-center">
-                  <h1 className="text-xl sm:text-3xl font-bold text-black">Temu | Seller Privacy Policy</h1>
+                  <h1 className="text-xl sm:text-3xl font-bold text-black">{t('sellerPrivacyPolicyTitle')}</h1>
                </div>
 
                <div className="mb-6">
@@ -207,7 +213,7 @@ export default function SellerPrivacyPolicyPage() {
                {/* Footer */}
                <div className="mt-10 pt-6 border-t border-gray-200">
                   <p className="text-sm text-gray-500 text-center">
-                     &copy; 2025 WhaleCo Inc.
+                     &copy; 2025 {t('copyright')}
                   </p>
                </div>
             </div>

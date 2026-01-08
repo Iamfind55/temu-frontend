@@ -1,42 +1,47 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export function SiteFooter() {
+  const { t } = useTranslation('footer')
+
   return (
     <footer className="bg-[oklch(0.15_0_0)] text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <h3 className="font-semibold mb-4">Company info</h3>
+            <h3 className="font-semibold mb-4">{t('companyInfo')}</h3>
             <ul className="space-y-3 text-sm text-white/80">
               <li className="hover:text-white hover:underline">
                 <a href="/about-us" className="hover:text-white">
-                  About Temu
+                  {t('aboutTemu')}
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="/affiliate-influencer" className="hover:text-white">
-                  Affiliate & Influencer Program: Join to Earn
+                  {t('affiliateProgram')}
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="/contact-us" className="hover:text-white">
-                  Contact us
+                  {t('contactUs')}
                 </a>
               </li>
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  Careers
+                  {t('careers')}
                 </p>
               </li>
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  Press
+                  {t('press')}
                 </p>
               </li>
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  Temu's Tree Planting Program
+                  {t('treePlantingProgram')}
                 </p>
               </li>
             </ul>
@@ -44,31 +49,31 @@ export function SiteFooter() {
 
           {/* Customer service */}
           <div>
-            <h3 className="font-semibold mb-4">Customer service</h3>
+            <h3 className="font-semibold mb-4">{t('customerService')}</h3>
             <ul className="space-y-2 text-sm text-white/80">
               <li className="hover:text-white hover:underline">
                 <a href="/return-refund-policy" className="hover:text-white">
-                  Return and refund policy
+                  {t('returnRefundPolicy')}
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="/intellectual-property-policy" className="hover:text-white">
-                  Intellectual property policy
+                  {t('intellectualPropertyPolicy')}
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="/shop-info" className="hover:text-white">
-                  Shipping info
+                  {t('shippingInfo')}
                 </a>
               </li>
               <li className="hover:text-white hover:underline">
                 <a href="/recall-product-safety-alert" className="hover:text-white">
-                  Your Recalls and Product Safety Alerts
+                  {t('recallsAlerts')}
                 </a>
               </li>
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  Report suspicious activity
+                  {t('reportSuspicious')}
                 </p>
               </li>
             </ul>
@@ -76,26 +81,26 @@ export function SiteFooter() {
 
           {/* Help */}
           <div>
-            <h3 className="font-semibold mb-4">Help</h3>
+            <h3 className="font-semibold mb-4">{t('help')}</h3>
             <ul className="space-y-2 text-sm text-white/80">
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  Support center & FAQ
+                  {t('supportCenter')}
                 </p>
               </li>
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  Temu purchase protection
+                  {t('purchaseProtection')}
                 </p>
               </li>
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  How to order
+                  {t('howToOrder')}
                 </p>
               </li>
               <li className="hover:text-white">
                 <p className="hover:text-white">
-                  How to track
+                  {t('howToTrack')}
                 </p>
               </li>
             </ul>
@@ -111,61 +116,61 @@ export function SiteFooter() {
               }}
             >
               <div>
-                <h3 className="font-semibold mb-2">Start Selling to Millions of Buyers on Temu</h3>
+                <h3 className="font-semibold mb-2">{t('startSelling')}</h3>
                 <Button
                   size="sm"
                   className="text-xs font-bold rounded-full bg-orange-400"
                 >
-                  <span>Start a Selling Account</span>
+                  <span>{t('startSellingAccount')}</span>
                 </Button>
               </div>
             </div>
 
             <div className="space-y-2">
-              <h3 className="font-semibold">Download the Temu</h3>
+              <h3 className="font-semibold">{t('downloadApp')}</h3>
 
               <ul className="space-y-2 text-sm text-white/80 mb-4">
                 <li className="flex items-center gap-2">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Price-drop alerts
+                  {t('priceDropAlerts')}
                 </li>
                 <li className="flex items-center gap-2">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Track orders any time
+                  {t('trackOrders')}
                 </li>
                 <li className="flex items-center gap-2">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Faster & more secure checkout
+                  {t('fasterCheckout')}
                 </li>
                 <li className="flex items-center gap-2">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Low stock items alerts
+                  {t('lowStockAlerts')}
                 </li>
                 <li className="flex items-center gap-2">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Exclusive offers
+                  {t('exclusiveOffers')}
                 </li>
                 <li className="flex items-center gap-2">
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Coupons & offers alerts
+                  {t('couponsAlerts')}
                 </li>
               </ul>
             </div>
 
             <div className="flex flex-col items-start justify-start">
-              <h4 className="font-semibold mb-3 text-center">Connect with Temu</h4>
+              <h4 className="font-semibold mb-3 text-center">{t('connectWithTemu')}</h4>
               <div className="flex gap-4">
                 <a href="#" className="hover:text-primary transition-colors">
                   <Instagram className="h-6 w-6" />
@@ -208,7 +213,7 @@ export function SiteFooter() {
                 ></path>
               </svg>
               <div className="flex flex-wrap items-start justify-center gap-4 flex-col">
-                <span className="text-sm text-white font-bold">Security certification</span>
+                <span className="text-sm text-white font-bold">{t('securityCertification')}</span>
                 <div className="flex flex-wrap gap-3">
                   {["Visa", "Mastercard", "Amex", "Discover"].map((method) => (
                     <div key={method} className="bg-white rounded px-3 py-1 text-xs font-semibold text-foreground">
@@ -220,7 +225,7 @@ export function SiteFooter() {
             </div>
 
             <div className="flex flex-wrap items-start justify-center gap-4 flex-col">
-              <span className="text-sm text-white font-bold">We accept</span>
+              <span className="text-sm text-white font-bold">{t('weAccept')}</span>
               <div className="flex flex-wrap gap-3">
                 {["Visa", "Mastercard", "Amex", "Discover", "PayPal", "Apple Pay", "Google Pay"].map((method) => (
                   <div key={method} className="bg-white rounded px-3 py-1 text-xs font-semibold text-foreground">
@@ -235,24 +240,24 @@ export function SiteFooter() {
           <div className="mt-8 border-t border-white/20 pt-8">
             <div className="flex flex-col sm:flex-row items-center justify-center text-sm text-white/60 gap-2 sm:gap-4">
               <div className="flex items-center justify-center gap-4">
-                <p>© 2022 – 2025 Temu Inc. </p>
+                <p>© {t('copyright')}</p>
                 <a href="/terms-of-use" className="hover:text-white underline">
-                  Terms of use
+                  {t('termsOfUse')}
                 </a>
                 <a href="/privacy-policy" className="hover:text-white underline">
-                  Privacy policy
+                  {t('privacyPolicy')}
                 </a>
               </div>
               <div className="flex items-center justify-center gap-4">
                 <a href="/consumer-health-privacy-policy" className="hover:text-white underline">
-                  Consumer health data privacy policy
+                  {t('healthPrivacyPolicy')}
                 </a>
                 <a href="/privacy-choices" className="hover:text-white underline">
-                  Your privacy choices
+                  {t('yourPrivacyChoices')}
                 </a>
               </div>
               <a href="/ad-choices" className="hover:text-white underline">
-                Ad Choices
+                {t('adChoices')}
               </a>
             </div>
           </div>

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import { useQuery } from "@apollo/client/react"
+import { useTranslation } from "react-i18next"
 import { ChevronDown, Loader, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SkeletonNextImage } from "@/components/ui/skeleton-image"
@@ -16,6 +17,8 @@ import { IGetProductsResponse, IProduct } from "@/app/interface/product"
 import { IGetChildCategoriesResponse, IGetCategoryResponse, IParentData } from "@/app/interface/category"
 
 export default function CategoryPage() {
+  const { t } = useTranslation('landing')
+  const { t: tCommon } = useTranslation('common')
   const params = useParams()
   const categoryId = params.id as string
 
@@ -172,7 +175,7 @@ export default function CategoryPage() {
         <section className="py-12 bg-background min-h-screen">
           <div className="container mx-auto px-4">
             <div className="text-center text-red-600">
-              Error loading products. Please try again later.
+              {tCommon('error')}
             </div>
           </div>
         </section>
@@ -188,7 +191,7 @@ export default function CategoryPage() {
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm flex-wrap">
             <Link href="/" className="text-muted-foreground hover:text-foreground">
-              Home
+              {tCommon('home')}
             </Link>
             {breadcrumbs.map((breadcrumb, index) => (
               <div key={breadcrumb.id} className="flex items-center gap-2">
@@ -210,7 +213,7 @@ export default function CategoryPage() {
           {/* Child Categories Section */}
           {childCategories.length > 0 && (
             <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-              <h2 className="text-lg font-semibold mb-4">Shop by Category</h2>
+              <h2 className="text-lg font-semibold mb-4">{t('shopByCategory')}</h2>
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-4">
                 {childCategories.map((childCategory) => {
                   const imageUrl = childCategory.image || childCategory.oring_image_url || "/placeholder.svg"
@@ -243,9 +246,9 @@ export default function CategoryPage() {
 
           {/* Category Header */}
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-2">{currentCategory?.name || "Category Products"}</h1>
+            <h1 className="text-3xl font-bold mb-2">{currentCategory?.name || t('categoryProducts')}</h1>
             <p className="text-muted-foreground">
-              {totalProducts} products available
+              {totalProducts} {t('productsAvailable')}
             </p>
           </div>
 
@@ -256,7 +259,7 @@ export default function CategoryPage() {
             </div>
           ) : allProducts.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-muted-foreground">No products found in this category.</p>
+              <p className="text-muted-foreground">{tCommon('noResults')}</p>
             </div>
           ) : (
             <>
@@ -277,11 +280,11 @@ export default function CategoryPage() {
                     {loading ? (
                       <>
                         <Loader className=" h-4 w-4 animate-spin" />
-                        Loading...
+                        {tCommon('loading')}
                       </>
                     ) : (
                       <>
-                        <span>Load More</span>
+                        <span>{tCommon('loadMore')}</span>
                         <ChevronDown />
                       </>
                     )}
@@ -291,7 +294,7 @@ export default function CategoryPage() {
 
               {!hasMore && allProducts.length > 0 && (
                 <div className="text-center text-sm text-muted-foreground">
-                  You've reached the end of the products
+                  {tCommon('noResults')}
                 </div>
               )}
             </>

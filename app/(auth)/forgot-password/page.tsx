@@ -10,6 +10,7 @@ import { Lock, ChevronLeft, Loader } from "lucide-react"
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 import { SiteFooter } from "@/components/site-footer"
 
 import { MUTATION_CUSTOMER_FORGOT_PASSWORD } from "@/app/api/auth"
@@ -20,13 +21,14 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { successMessage, errorMessage } = useToast()
+  const { t } = useTranslation('customer-auth')
   const [forgotPassword] = useMutation<IForgotPasswordResponse>(MUTATION_CUSTOMER_FORGOT_PASSWORD)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!email) {
-      errorMessage({ message: "Email is required!", duration: 2000 })
+      errorMessage({ message: t('emailRequired'), duration: 2000 })
       return
     }
 
@@ -39,7 +41,7 @@ export default function ForgotPasswordPage() {
 
       if (data?.customerForgotPassword?.success) {
         successMessage({
-          message: "Reset code sent! Check your email.",
+          message: t('resetCodeSent'),
           duration: 3000
         })
 
@@ -48,13 +50,13 @@ export default function ForgotPasswordPage() {
         }, 1500)
       } else {
         errorMessage({
-          message: data?.customerForgotPassword?.error?.message || "Failed to send reset code",
+          message: data?.customerForgotPassword?.error?.message || t('failedToSendResetCode'),
           duration: 3000
         })
       }
     } catch (error) {
       errorMessage({
-        message: "An unexpected error occurred. Please try again.",
+        message: t('unexpectedError'),
         duration: 3000
       })
     } finally {
@@ -85,7 +87,7 @@ export default function ForgotPasswordPage() {
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
-            <span>All data will be encrypted</span>
+            <span>{t('allDataEncrypted')}</span>
           </div>
         </div>
       </div>
@@ -97,20 +99,20 @@ export default function ForgotPasswordPage() {
             className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back
+            {t('back')}
           </Link>
 
           <div className="mb-8 text-center">
-            <h1 className="mb-3 text-xl font-bold">Forgot password</h1>
+            <h1 className="mb-3 text-xl font-bold">{t('forgotPassword')}</h1>
             <p className="text-sm text-muted-foreground">
-              Confirm your email address below, and we'll send you a 6-digit password reset code.
+              {t('forgotPasswordDesc')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-medium">
-                Email address <span className="text-rose-500">*</span>
+                {t('emailAddress')} <span className="text-rose-500">*</span>
               </label>
               <Input
                 id="email"
@@ -119,7 +121,7 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-12"
-                placeholder="Enter your email address"
+                placeholder={t('enterYourEmailAddress')}
                 disabled={isLoading}
                 required
               />
@@ -133,10 +135,10 @@ export default function ForgotPasswordPage() {
               {isLoading ? (
                 <>
                   <Loader className=" h-4 w-4 animate-spin" />
-                  Sending...
+                  {t('sending')}
                 </>
               ) : (
-                "Submit"
+                t('submit')
               )}
             </Button>
           </form>

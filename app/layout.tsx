@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify"
 import { ApolloWrapper } from "@/lib/apollo-provider"
 import { ReduxProvider } from "@/lib/redux-provider"
 import { PWAInstallPrompt } from "@/components/pwa-install-prompt"
+import { I18nProvider } from "@/lib/i18n-provider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,28 +56,30 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
         <ReduxProvider>
-          <ApolloWrapper>
-            <AuthProvider>
-              <CartProvider>
-                {children}
-                <CartDrawer />
-                <PWAInstallPrompt />
-              </CartProvider>
-            </AuthProvider>
+          <I18nProvider>
+            <ApolloWrapper>
+              <AuthProvider>
+                <CartProvider>
+                  {children}
+                  <CartDrawer />
+                  <PWAInstallPrompt />
+                </CartProvider>
+              </AuthProvider>
 
-            <ToastContainer
-              position="top-right"
-              autoClose={2000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="light"
-            />
-          </ApolloWrapper>
+              <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+              />
+            </ApolloWrapper>
+          </I18nProvider>
         </ReduxProvider>
       </body>
     </html>

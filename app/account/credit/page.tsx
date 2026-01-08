@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useMutation, useQuery } from "@apollo/client/react"
 import { ChevronRight, Lock, Plus, Minus, Copy, Upload, Check, Loader } from "lucide-react"
 
@@ -23,6 +24,7 @@ import { cryptoAddresses } from "./constants"
 import { CloudinaryResponse, DepositBalanceResponse, TransactionHistoryResponse, WalletBalanceResponse } from "./interfaces"
 
 export default function CreditPage() {
+  const { t } = useTranslation('account')
   const { successMessage, errorMessage } = useToast()
   const [depositBalance] = useMutation<DepositBalanceResponse>(MUTATION_DEPOSIT_BALANCE)
 
@@ -77,7 +79,7 @@ export default function CreditPage() {
   const handleDeposit = async () => {
     if (!voucherFile) {
       errorMessage({
-        message: "Please upload a voucher",
+        message: t('pleaseUploadVoucher'),
         duration: 3000,
       })
       return
@@ -126,7 +128,7 @@ export default function CreditPage() {
         setIsDepositModalOpen(false)
 
         successMessage({
-          message: "Deposit successful!",
+          message: t('depositSuccess'),
           duration: 3000,
         })
 
@@ -135,13 +137,13 @@ export default function CreditPage() {
         refetchWallet()
       } else {
         errorMessage({
-          message: res?.data?.customerRechargeBalance?.error?.details || "Deposit failed",
+          message: res?.data?.customerRechargeBalance?.error?.details || t('depositFailed'),
           duration: 3000,
         })
       }
     } catch (error) {
       errorMessage({
-        message: "Unexpected error happened!",
+        message: t('unexpectedErrorHappened'),
         duration: 3000,
       })
     } finally {
@@ -155,10 +157,10 @@ export default function CreditPage() {
         <div className="flex items-center justify-between px-2 sm:px-6 py-3">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Link href="/" className="hover:text-primary">
-              Home
+              {t('home')}
             </Link>
             <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-900">Credit balance</span>
+            <span className="text-gray-900">{t('creditBalance')}</span>
           </div>
 
           <Button
@@ -167,7 +169,7 @@ export default function CreditPage() {
             onClick={() => setIsDepositModalOpen(true)}
           >
             <Plus />
-            Deposit
+            {t('deposit')}
           </Button>
         </div>
       </div>
@@ -175,10 +177,10 @@ export default function CreditPage() {
       <div className="flex-1 bg-white p-2 sm:p-6">
         <div className="mx-auto max-w-5xl">
           <div className="mb-4 flex items-center justify-start gap-4">
-            <h1 className="text-lg font-bold text-gray-900">Credit balance</h1>
+            <h1 className="text-lg font-bold text-gray-900">{t('creditBalance')}</h1>
             <div className="flex items-center gap-2 text-sm text-green-600">
               <Lock className="h-4 w-4" />
-              <span className="font-medium">All data is safeguarded</span>
+              <span className="font-medium">{t('allDataSafeguarded')}</span>
             </div>
           </div>
           <div className="mb-6 flex items-center gap-3 rounded-lg bg-green-600 px-4 py-3 text-white">
@@ -189,19 +191,19 @@ export default function CreditPage() {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-sm">Be wary of messages about delivery issues claiming to be from USPS.</span>
+            <span className="text-sm">{t('uspsWarning')}</span>
           </div>
 
           <div className="flex items-center justify-start gap-6">
             <div className="mb-8">
-              <p className="mb-2 text-sm text-gray-600">Total(USD):</p>
+              <p className="mb-2 text-sm text-gray-600">{t('totalUsd')}</p>
               <p className="text-3xl font-bold text-gray-900">
                 {walletLoading ? "..." : `$${(wallet?.total_balance || 0).toFixed(2)}`}
               </p>
             </div>
 
             <div className="mb-8">
-              <p className="mb-2 text-sm text-gray-600">Pending(USD):</p>
+              <p className="mb-2 text-sm text-gray-600">{t('pendingUsd')}</p>
               <p className="text-3xl font-bold text-gray-900">
                 {walletLoading ? "..." : `$${(wallet?.total_frozen_balance || 0).toFixed(2)}`}
               </p>
@@ -209,24 +211,24 @@ export default function CreditPage() {
           </div>
 
           <div className="mb-8">
-            <h2 className="mb-4 text-md font-bold text-gray-900">Histories:</h2>
+            <h2 className="mb-4 text-md font-bold text-gray-900">{t('histories')}</h2>
 
             {transactionsLoading ? (
               <div className="py-12 text-center">
                 <Loader className="mx-auto mb-4 h-6 w-6 animate-spin text-orange-500" />
-                <p className="text-gray-600">Loading transactions...</p>
+                <p className="text-gray-600">{t('loadingTransactions')}</p>
               </div>
             ) : transactions.length > 0 ? (
               <div className="overflow-x-auto">
                 <div className="min-w-[600px]">
                   <div className="mb-4 grid grid-cols-7 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
-                    <div className="text-center">ID</div>
-                    <div>Voucher</div>
-                    <div>Transaction</div>
-                    <div>Amount</div>
-                    <div>Coin Type</div>
-                    <div>Status</div>
-                    <div>Date</div>
+                    <div className="text-center">{t('id')}</div>
+                    <div>{t('voucher')}</div>
+                    <div>{t('transaction')}</div>
+                    <div>{t('amount')}</div>
+                    <div>{t('coinType')}</div>
+                    <div>{t('status')}</div>
+                    <div>{t('date')}</div>
                   </div>
                   <div className="space-y-2">
                     {transactions.map((transaction, index: number) => (
@@ -242,7 +244,7 @@ export default function CreditPage() {
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline"
                             >
-                              View
+                              {t('view')}
                             </a>
                           ) : (
                             <span className="text-gray-400">-</span>
@@ -255,7 +257,7 @@ export default function CreditPage() {
                               : "bg-red-100 text-red-800"
                               }`}
                           >
-                            {transaction.identifier || "N/A"}
+                            {transaction.identifier || t('na')}
                           </span>
                         </div>
                         <div className="font-medium whitespace-nowrap">
@@ -307,14 +309,14 @@ export default function CreditPage() {
                       <line x1="65" y1="55" x2="45" y2="75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     </svg>
                   </div>
-                  <p className="text-gray-900">You don't have any activities</p>
+                  <p className="text-gray-900">{t('noActivities')}</p>
                 </div>
                 <div className="space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-900">Can't find your credit?</h3>
+                  <h3 className="text-sm font-semibold text-gray-900">{t('cantFindCredit')}</h3>
 
                   <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300 hover:bg-gray-50">
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-gray-900">Try signing in with another account</span>
+                      <span className="text-sm text-gray-900">{t('trySigningAnother')}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       {/* Google icon */}
@@ -353,7 +355,7 @@ export default function CreditPage() {
                   </button>
 
                   <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300 hover:bg-gray-50">
-                    <span className="text-sm text-gray-900">Self-service to find credit</span>
+                    <span className="text-sm text-gray-900">{t('selfServiceCredit')}</span>
                     <ChevronRight className="h-5 w-5 text-gray-400" />
                   </button>
                 </div>
@@ -368,18 +370,18 @@ export default function CreditPage() {
       <Dialog open={isDepositModalOpen} onOpenChange={setIsDepositModalOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold">Top-Up Your Wallet Balance:</DialogTitle>
+            <DialogTitle className="text-lg font-bold">{t('topUpWallet')}</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             {/* Select Type */}
             <div className="space-y-2">
               <Label htmlFor="crypto-type" className="text-sm font-medium">
-                Select type
+                {t('selectType')}
               </Label>
               <Select value={cryptoType} onValueChange={setCryptoType}>
                 <SelectTrigger id="crypto-type">
-                  <SelectValue placeholder="Select cryptocurrency type" />
+                  <SelectValue placeholder={t('selectCryptoType')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ERC20">ERC20</SelectItem>
@@ -392,7 +394,7 @@ export default function CreditPage() {
             {/* Amount Input */}
             <div className="space-y-2">
               <Label htmlFor="amount" className="text-sm font-medium">
-                Amount
+                {t('amount')}
               </Label>
               <div className="flex items-center gap-2">
                 <Button
@@ -427,21 +429,21 @@ export default function CreditPage() {
             {/* Transaction ID */}
             <div className="space-y-2">
               <Label htmlFor="transaction-id" className="text-sm font-medium">
-                Transaction ID <span className="text-red-500">*</span>
+                {t('transactionId')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="transaction-id"
                 type="text"
                 value={transactionId}
                 onChange={(e) => setTransactionId(e.target.value)}
-                placeholder="Enter transaction ID"
+                placeholder={t('enterTransactionId')}
                 required
               />
             </div>
 
             {/* Upload Voucher */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Upload deposit voucher</Label>
+              <Label className="text-sm font-medium">{t('uploadVoucher')}</Label>
               <div className="flex items-center gap-2">
                 <Input
                   id="voucher-file"
@@ -457,28 +459,28 @@ export default function CreditPage() {
                   onClick={() => document.getElementById('voucher-file')?.click()}
                 >
                   <Upload className="h-4 w-4 " />
-                  {voucherFile ? voucherFile.name : 'Choose file'}
+                  {voucherFile ? voucherFile.name : t('chooseFile')}
                 </Button>
               </div>
             </div>
 
             {/* Deposit Information */}
             <div className="rounded-lg border border-gray-200 p-4 space-y-3 bg-gray-50">
-              <h4 className="text-sm font-semibold">Deposit information</h4>
+              <h4 className="text-sm font-semibold">{t('depositInfo')}</h4>
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Amount:</span>
+                  <span className="text-gray-600">{t('amount')}:</span>
                   <span className="font-medium">${amount.toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Conversion rate:</span>
+                  <span className="text-gray-600">{t('conversionRate')}</span>
                   <span className="font-medium">{conversionRate.toFixed(2)}</span>
                 </div>
 
                 <div className="pt-2 border-t">
-                  <p className="text-gray-600 mb-1">Account address:</p>
+                  <p className="text-gray-600 mb-1">{t('accountAddress')}</p>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 text-xs bg-white p-2 rounded border break-all">
                       {accountAddress}
@@ -503,7 +505,7 @@ export default function CreditPage() {
               disabled={!transactionId || amount <= 0 || !voucherFile || isLoading}
               className="w-full bg-orange-500 hover:bg-orange-600 text-white"
             >
-              {isLoading ? "Processing..." : "Deposit"}
+              {isLoading ? t('processing') : t('deposit')}
             </Button>
           </div>
         </DialogContent>

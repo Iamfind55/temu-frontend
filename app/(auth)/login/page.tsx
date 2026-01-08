@@ -11,6 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useToast } from "@/lib/toast"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "react-i18next"
 import { SiteFooter } from "@/components/site-footer"
 
 // API and TYPES:
@@ -24,6 +25,7 @@ export default function LoginPage() {
   const dispatch = useDispatch()
   const [isLoading, setIsLoading] = useState(false)
   const { successMessage, errorMessage } = useToast()
+  const { t } = useTranslation('customer-auth')
   const [customerLogin] = useMutation<ICustomerLoginResponse>(MUTATION_CUSTOMER_LOGIN)
   const [loginData, setLoginData] = useState<ICustomerLoginCredentials>({
     username: "",
@@ -42,13 +44,13 @@ export default function LoginPage() {
 
     // Validate form fields
     if (!loginData.username) {
-      errorMessage({ message: "Email is required!", duration: 2000 })
+      errorMessage({ message: t('emailRequired'), duration: 2000 })
       setIsLoading(false)
       return
     }
 
     if (!loginData.password) {
-      errorMessage({ message: "Password is required!", duration: 2000 })
+      errorMessage({ message: t('passwordRequired'), duration: 2000 })
       setIsLoading(false)
       return
     }
@@ -84,20 +86,20 @@ export default function LoginPage() {
         document.cookie = `auth_token=${res.token}; path=/; max-age=3600`
 
         successMessage({
-          message: "Login successful!",
+          message: t('loginSuccessful'),
           duration: 3000,
         })
 
         router.push(redirectUrl)
       } else {
         errorMessage({
-          message: data?.customerLogin?.error?.message || "Login failed",
+          message: data?.customerLogin?.error?.message || t('loginFailed'),
           duration: 3000,
         })
       }
     } catch (error) {
       errorMessage({
-        message: "An unexpected error occurred during login.",
+        message: t('unexpectedLoginError'),
         duration: 3000,
       })
     } finally {
@@ -128,7 +130,7 @@ export default function LoginPage() {
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
-            <span>All data will be encrypted</span>
+            <span>{t('allDataEncrypted')}</span>
           </div>
         </div>
       </div>
@@ -140,13 +142,13 @@ export default function LoginPage() {
             className="flex sm:hidden mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back home
+            {t('backHome')}
           </Link>
           <div className="mb-8 text-center">
-            <h1 className="mb-2 text-2xl font-bold">Sign in</h1>
+            <h1 className="mb-2 text-2xl font-bold">{t('signIn')}</h1>
             <div className="flex items-center justify-center gap-2 text-sm text-green-700">
               <Lock className="h-4 w-4" />
-              <span className="font-bold">All data is safeguarded</span>
+              <span className="font-bold">{t('allDataSafeguarded')}</span>
             </div>
           </div>
 
@@ -164,8 +166,8 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-semibold text-green-700">Price adjustment</div>
-                  <div className="text-green-700">Within 30 days</div>
+                  <div className="text-lg font-semibold text-green-700">{t('priceAdjustment')}</div>
+                  <div className="text-green-700">{t('within30Days')}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-lg p-4">
@@ -180,8 +182,8 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-semibold text-green-700">Free shipping</div>
-                  <div className="text-green-700">excludes local items</div>
+                  <div className="text-lg font-semibold text-green-700">{t('freeShipping')}</div>
+                  <div className="text-green-700">{t('excludesLocalItems')}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-lg p-4">
@@ -202,8 +204,8 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-semibold text-green-700">Free returns</div>
-                  <div className="text-green-700">Up to 90 days</div>
+                  <div className="text-lg font-semibold text-green-700">{t('freeReturns')}</div>
+                  <div className="text-green-700">{t('upTo90Days')}</div>
                 </div>
               </div>
               <div className="flex items-center gap-3 rounded-lg p-4">
@@ -219,8 +221,8 @@ export default function LoginPage() {
                   </svg>
                 </div>
                 <div className="text-sm">
-                  <div className="text-lg font-semibold text-green-700">Delivery guarantee</div>
-                  <div className="text-green-700">Refund for any issue</div>
+                  <div className="text-lg font-semibold text-green-700">{t('deliveryGuarantee')}</div>
+                  <div className="text-green-700">{t('refundForAnyIssue')}</div>
                 </div>
               </div>
             </div>
@@ -229,7 +231,7 @@ export default function LoginPage() {
           {/* Login forms */}
           <div className="w-full flex items-center justify-center p-2 sm:p-3">
             <div className="w-full sm:w-1/2 rounded-lg border bg-white p-4 sm:p-8">
-              <h2 className="mb-6 text-md font-semibold">Sign in with a previously used account</h2>
+              <h2 className="mb-6 text-md font-semibold">{t('signInWithPreviousAccount')}</h2>
 
               <div className="mb-6 hidden sm:flex flex-col items-center">
                 <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-muted">
@@ -253,7 +255,7 @@ export default function LoginPage() {
               <form onSubmit={handleSubmitForm}>
                 <div className="mb-4">
                   <label htmlFor="username" className="text-sm font-medium">
-                    Email <span className="text-rose-500">*</span>
+                    {t('email')} <span className="text-rose-500">*</span>
                   </label>
                   <Input
                     type="text"
@@ -261,7 +263,7 @@ export default function LoginPage() {
                     id="username"
                     name="username"
                     className="h-12 mt-2"
-                    placeholder="Please enter your email"
+                    placeholder={t('pleaseEnterEmail')}
                     value={loginData.username}
                     onChange={handleInputChange}
                     disabled={isLoading}
@@ -270,10 +272,10 @@ export default function LoginPage() {
                 <div className="mb-4">
                   <div className="flex items-center justify-between">
                     <label htmlFor="password" className="text-sm font-medium">
-                      Password <span className="text-rose-500">*</span>
+                      {t('password')} <span className="text-rose-500">*</span>
                     </label>
                     <Link href="/forgot-password" className="text-sm text-primary underline">
-                      Forgot password?
+                      {t('forgotPasswordQuestion')}
                     </Link>
                   </div>
                   <Input
@@ -282,7 +284,7 @@ export default function LoginPage() {
                     name="password"
                     type="password"
                     className="h-12 mt-2"
-                    placeholder="Please enter your password"
+                    placeholder={t('pleaseEnterPassword')}
                     value={loginData.password}
                     onChange={handleInputChange}
                     disabled={isLoading}
@@ -297,18 +299,18 @@ export default function LoginPage() {
                   {isLoading ? (
                     <>
                       <Loader className=" h-4 w-4 animate-spin" />
-                      Signing In...
+                      {t('signingIn')}
                     </>
                   ) : (
-                    "Sign In"
+                    t('signIn')
                   )}
                 </Button>
 
                 <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-                  <span>Don't have an account yet?</span>
+                  <span>{t('dontHaveAccount')}</span>
                   <span>|</span>
                   <Link href="/register" className="hover:text-foreground cursor-pointer text-orange-500 font-bold hover:text-orange-600">
-                    Create New
+                    {t('createNew')}
                   </Link>
                 </div>
               </form>
@@ -316,14 +318,14 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-8 text-center text-sm text-muted-foreground space-y-2">
-            <span> By signing in or continuing, you agree to our{" "}</span>
+            <span>{t('bySigningIn')}{" "}</span>
             <div>
               <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
-                Terms of Use
+                {t('termsOfUse')}
               </Link>{" "}
-              and{" "}
+              {t('and')}{" "}
               <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
-                Privacy Policy.
+                {t('privacyPolicy')}.
               </Link>
             </div>
           </div>

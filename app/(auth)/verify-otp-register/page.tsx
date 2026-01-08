@@ -3,6 +3,7 @@
 import Link from "next/link"
 import type React from "react"
 import { useMutation } from "@apollo/client/react"
+import { useTranslation } from "react-i18next"
 import { useState, useRef, useEffect } from "react"
 import { Lock, ChevronLeft, Loader } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -15,6 +16,7 @@ import { IVerifyOtpRegisterResponse, IRegisterEmailResponse } from "@/app/interf
 import { MUTATION_CUSTOMER_VERIFY_OTP_REGISTER, MUTATION_CUSTOMER_REGISTER_EMAIL } from "@/app/api/auth"
 
 export default function VerifyOtpRegisterPage() {
+  const { t } = useTranslation('customer-auth')
   const router = useRouter()
   const searchParams = useSearchParams()
   const { successMessage, errorMessage } = useToast()
@@ -90,12 +92,12 @@ export default function VerifyOtpRegisterPage() {
     const otpCode = otp.join("")
 
     if (otpCode.length !== 6) {
-      errorMessage({ message: "Please enter all 6 digits", duration: 2000 })
+      errorMessage({ message: t('enterAll6Digits'), duration: 2000 })
       return
     }
 
     if (!email) {
-      errorMessage({ message: "Email is missing", duration: 2000 })
+      errorMessage({ message: t('emailMissing'), duration: 2000 })
       return
     }
 
@@ -113,7 +115,7 @@ export default function VerifyOtpRegisterPage() {
 
       if (data?.customerVerifyOtp?.success) {
         successMessage({
-          message: "OTP verified successfully!",
+          message: t('otpVerified'),
           duration: 3000
         })
 
@@ -122,13 +124,13 @@ export default function VerifyOtpRegisterPage() {
         }, 1500)
       } else {
         errorMessage({
-          message: data?.customerVerifyOtp?.error?.message || "Invalid OTP code",
+          message: data?.customerVerifyOtp?.error?.message || t('invalidOtpCode'),
           duration: 3000
         })
       }
     } catch (error) {
       errorMessage({
-        message: "An unexpected error occurred. Please try again.",
+        message: t('unexpectedError'),
         duration: 3000
       })
     } finally {
@@ -140,7 +142,7 @@ export default function VerifyOtpRegisterPage() {
     if (countdown > 0) return
 
     if (!email) {
-      errorMessage({ message: "Email is missing", duration: 2000 })
+      errorMessage({ message: t('emailMissing'), duration: 2000 })
       return
     }
 
@@ -155,7 +157,7 @@ export default function VerifyOtpRegisterPage() {
 
       if (data?.customerRegister?.success) {
         successMessage({
-          message: "OTP resent! Check your email.",
+          message: t('otpResent'),
           duration: 3000
         })
         setCountdown(120)
@@ -163,13 +165,13 @@ export default function VerifyOtpRegisterPage() {
         inputRefs.current[0]?.focus()
       } else {
         errorMessage({
-          message: data?.customerRegister?.error?.message || "Failed to resend OTP",
+          message: data?.customerRegister?.error?.message || t('failedToResendOtp'),
           duration: 3000
         })
       }
     } catch (error) {
       errorMessage({
-        message: "An unexpected error occurred. Please try again.",
+        message: t('unexpectedError'),
         duration: 3000
       })
     }
@@ -200,7 +202,7 @@ export default function VerifyOtpRegisterPage() {
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
-            <span>All data will be encrypted</span>
+            <span>{t('allDataEncrypted')}</span>
           </div>
         </div>
       </div>
@@ -212,21 +214,21 @@ export default function VerifyOtpRegisterPage() {
             className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back
+            {t('back')}
           </Link>
 
           <div className="mb-8 text-center">
-            <h1 className="mb-3 text-2xl font-bold">Enter verification code</h1>
+            <h1 className="mb-3 text-2xl font-bold">{t('enterVerificationCode')}</h1>
             <p className="text-sm text-muted-foreground">
-              Please check your mailbox now! Enter the 6-digit verification code sent to{" "}
-              <span className="font-medium text-foreground">{email}</span>. The code expires after 2 hours.
+              {t('enterVerificationCodeDesc')}{" "}
+              <span className="font-medium text-foreground">{email}</span>. {t('codeExpiresAfter2Hours')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="mb-3 block text-sm font-medium">
-                Verification code <span className="text-rose-500">*</span>
+                {t('verificationCode')} <span className="text-rose-500">*</span>
               </label>
               <div className="flex items-center justify-between gap-2">
                 {otp.map((digit, index) => (
@@ -255,16 +257,16 @@ export default function VerifyOtpRegisterPage() {
                   disabled={countdown > 0}
                   className="text-sm text-muted-foreground hover:text-primary disabled:cursor-not-allowed disabled:hover:text-muted-foreground"
                 >
-                  {countdown > 0 ? `Resend code in ${countdown}s` : "Resend code"}
+                  {countdown > 0 ? t('resendCodeIn', { countdown }) : t('resendCode')}
                 </button>
               </div>
             </div>
 
             <div className="space-y-2 text-sm text-muted-foreground">
-              <p className="font-medium text-foreground">Didn't receive the email?</p>
+              <p className="font-medium text-foreground">{t('didntReceiveEmail')}</p>
               <ol className="list-inside list-decimal space-y-1">
-                <li>Make sure your email address is correct.</li>
-                <li>Please check your spam folder.</li>
+                <li>{t('checkEmailCorrect')}</li>
+                <li>{t('checkSpamFolder')}</li>
               </ol>
             </div>
 
@@ -276,10 +278,10 @@ export default function VerifyOtpRegisterPage() {
               {isLoading ? (
                 <>
                   <Loader className=" h-4 w-4 animate-spin" />
-                  Verifying...
+                  {t('verifying')}
                 </>
               ) : (
-                "Continue"
+                t('continue')
               )}
             </Button>
           </form>

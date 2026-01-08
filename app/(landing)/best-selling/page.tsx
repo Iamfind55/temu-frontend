@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useQuery } from "@apollo/client/react"
 import type { Product } from "@/lib/product-data"
 import { ChevronDown, Loader } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 // Api:
 import { QUERY_GET_ALL_MAIN_CATEGORIES } from "@/app/api/category"
@@ -19,6 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 type TimePeriod = 30 | 14 | 7 | null
 
 export default function BestSellingPage() {
+  const { t } = useTranslation('landing')
+  const { t: tCommon } = useTranslation('common')
   const [timePeriod, setTimePeriod] = useState<TimePeriod>(null)
   const [categoryId, setCategoryId] = useState<string | null>(null)
   const [page, setPage] = useState(1)
@@ -153,7 +156,7 @@ export default function BestSellingPage() {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-red-600">
-            Error loading products. Please try again later.
+            {tCommon('error')}
           </div>
         </div>
       </div>
@@ -165,7 +168,7 @@ export default function BestSellingPage() {
       <div className="container mx-auto px-4 py-6 space-y-4">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="hidden sm:flex items-center gap-4">
-            <h1 className="text-sm">Best-Selling Items</h1>
+            <h1 className="text-sm">{t('bestSellingItems')}</h1>
             <div className="flex gap-2">
               <Button
                 variant={timePeriod === null ? "default" : "outline"}
@@ -240,11 +243,11 @@ export default function BestSellingPage() {
 
         {loading && allProducts.length === 0 ? (
           <div className="flex items-center justify-center py-20 gap-2">
-            <Loader className="h-6 w-6 animate-spin text-orange-400" /> Loading...
+            <Loader className="h-6 w-6 animate-spin text-orange-400" /> {tCommon('loading')}
           </div>
         ) : allProducts.length === 0 ? (
           <div className="py-20 text-center">
-            <p className="text-lg text-muted-foreground">No products found.</p>
+            <p className="text-lg text-muted-foreground">{tCommon('noResults')}</p>
           </div>
         ) : (
           <>
@@ -265,11 +268,11 @@ export default function BestSellingPage() {
                   {loading ? (
                     <>
                       <Loader className="h-4 w-4 animate-spin" />
-                      Loading...
+                      {tCommon('loading')}
                     </>
                   ) : (
                     <>
-                      <span>Load More</span>
+                      <span>{tCommon('loadMore')}</span>
                       <ChevronDown />
                     </>
                   )}
@@ -279,7 +282,7 @@ export default function BestSellingPage() {
 
             {!hasMore && allProducts.length > 0 && (
               <div className="text-center text-sm text-muted-foreground pt-6">
-                You've reached the end of the products
+                {tCommon('noResults')}
               </div>
             )}
           </>

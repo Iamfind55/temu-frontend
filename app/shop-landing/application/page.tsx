@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/lib/toast"
+import { useTranslation } from "react-i18next"
 import { uploadToCloudinary } from "@/lib/cloudinary-upload"
 import { ChevronDown, ChevronUp, Info, Upload, X, CheckCircle, Clock, Loader } from "lucide-react"
 
@@ -16,6 +17,7 @@ import { businessTypes, faqItems, steps } from "./constants"
 import { MUTATION_SHOP_UPDATE_INFORMATION } from "@/app/api/shop/auth"
 
 export default function ApplicationPage() {
+   const { t } = useTranslation('shop-landing')
    const { successMessage, errorMessage } = useToast()
    const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION)
 
@@ -73,7 +75,7 @@ export default function ApplicationPage() {
 
    const handleSubmit = async () => {
       if (!idFrontImage || !idBackImage) {
-         errorMessage({ message: "Please upload both front and back ID card images" })
+         errorMessage({ message: t('uploadBothIdImages') })
          return
       }
 
@@ -87,7 +89,7 @@ export default function ApplicationPage() {
          ])
 
          if (!frontUpload.success || !backUpload.success) {
-            errorMessage({ message: "Failed to upload ID card images. Please try again." })
+            errorMessage({ message: t('uploadFailed') })
             setIsSubmitting(false)
             return
          }
@@ -113,15 +115,15 @@ export default function ApplicationPage() {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.updateShopInformation?.success) {
-            successMessage({ message: "Application submitted successfully!" })
+            successMessage({ message: t('applicationSubmitted') })
             setCurrentStep(3)
          } else {
             const error = result?.updateShopInformation?.error
-            errorMessage({ message: error?.message || "Failed to submit application. Please try again." })
+            errorMessage({ message: error?.message || t('applicationFailed') })
          }
       } catch (error) {
          console.error("Application submission error:", error)
-         errorMessage({ message: "An error occurred. Please try again." })
+         errorMessage({ message: t('applicationError') })
       } finally {
          setIsSubmitting(false)
       }
@@ -155,7 +157,7 @@ export default function ApplicationPage() {
                                  currentStep >= step.number ? "text-gray-900" : "text-gray-500"
                               )}
                            >
-                              {step.label}
+                              {t(step.labelKey)}
                            </span>
                         </div>
                         {index < steps.length - 1 && (
@@ -177,21 +179,18 @@ export default function ApplicationPage() {
                <div className="flex-1">
                   {currentStep === 1 && (
                      <div className="bg-white rounded-lg p-4 md:p-8 shadow-sm">
-                        <h1 className="text-md sm:text-xl font-bold text-gray-900 mb-2">Business information</h1>
-                        <p className="text-gray-600 mb-8">Welcome! Let us know about your business.</p>
+                        <h1 className="text-md sm:text-xl font-bold text-gray-900 mb-2">{t('businessInformation')}</h1>
+                        <p className="text-gray-600 mb-8">{t('welcomeBusinessInfo')}</p>
                         <div className="mb-8">
                            <Label className="text-sm font-semibold text-gray-900 mb-1 block">
-                              Business type
+                              {t('businessType')}
                            </Label>
                            <p className="text-sm text-gray-500 mb-3 flex items-start gap-1">
                               <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                               <span>
-                                 You can check on some related documents to select the appropriate business type.
-                                 Please note that you can only select "Corporation" if the company name ends with
-                                 INC, Corp or corporation and if it is a limited liability company, you cannot
-                                 select "Individual".{" "}
+                                 {t('businessTypeHint')}{" "}
                                  <Link href="#" className="text-orange-500 hover:underline">
-                                    See example &gt;
+                                    {t('seeExample')}
                                  </Link>
                               </span>
                            </p>
@@ -223,8 +222,8 @@ export default function ApplicationPage() {
                                           )}
                                        </div>
                                        <div>
-                                          <p className="font-semibold text-gray-900">{type.name}</p>
-                                          <p className="text-sm text-gray-500">{type.description}</p>
+                                          <p className="font-semibold text-gray-900">{t(type.nameKey)}</p>
+                                          <p className="text-sm text-gray-500">{t(type.descriptionKey)}</p>
                                        </div>
                                     </div>
                                  </button>
@@ -238,7 +237,7 @@ export default function ApplicationPage() {
                               disabled={!businessType}
                               className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-16 py-4 rounded-lg text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                            >
-                              Next
+                              {t('next')}
                            </Button>
                         </div>
                      </div>
@@ -246,64 +245,64 @@ export default function ApplicationPage() {
 
                   {currentStep === 2 && (
                      <div className="bg-white rounded-lg p-6 md:p-8 shadow-sm">
-                        <h1 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Seller information</h1>
-                        <p className="text-gray-600 mb-8">Please provide your personal details.</p>
+                        <h1 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">{t('sellerInformation')}</h1>
+                        <p className="text-gray-600 mb-8">{t('providePersonalDetails')}</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                            <div>
                               <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                                 Full name <span className="text-red-500">*</span>
+                                 {t('fullName')} <span className="text-red-500">*</span>
                               </Label>
                               <Input
                                  type="text"
                                  value={fullName}
                                  onChange={(e) => setFullName(e.target.value)}
-                                 placeholder="Enter your full name"
+                                 placeholder={t('enterFullName')}
                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                               />
                            </div>
 
                            <div>
                               <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                                 Username <span className="text-red-500">*</span>
+                                 {t('username')} <span className="text-red-500">*</span>
                               </Label>
                               <Input
                                  type="text"
                                  value={username}
                                  onChange={(e) => setUsername(e.target.value)}
-                                 placeholder="Enter your username"
+                                 placeholder={t('enterUsername')}
                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                               />
                            </div>
 
                            <div>
                               <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                                 Store name <span className="text-red-500">*</span>
+                                 {t('storeName')} <span className="text-red-500">*</span>
                               </Label>
                               <Input
                                  type="text"
                                  value={storeName}
                                  onChange={(e) => setStoreName(e.target.value)}
-                                 placeholder="Enter your store name"
+                                 placeholder={t('enterStoreName')}
                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                               />
                            </div>
                            <div>
                               <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                                 Phone number <span className="text-red-500">*</span>
+                                 {t('phoneNumber')} <span className="text-red-500">*</span>
                               </Label>
                               <Input
                                  type="tel"
                                  value={phoneNumber}
                                  onChange={(e) => setPhoneNumber(e.target.value)}
-                                 placeholder="Enter your phone number"
+                                 placeholder={t('enterPhoneNumber')}
                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                               />
                            </div>
 
                            <div>
                               <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                                 Date of birth <span className="text-red-500">*</span>
+                                 {t('dateOfBirth')} <span className="text-red-500">*</span>
                               </Label>
                               <Input
                                  type="date"
@@ -315,27 +314,27 @@ export default function ApplicationPage() {
                         </div>
                         <div className="mb-8">
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Remark
+                              {t('remark')}
                            </Label>
                            <textarea
                               value={remark}
                               onChange={(e) => setRemark(e.target.value)}
-                              placeholder="Any additional information (optional)"
+                              placeholder={t('remarkPlaceholder')}
                               rows={3}
                               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 resize-none"
                            />
                         </div>
                         <div className="mb-8">
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              ID Card <span className="text-red-500">*</span>
+                              {t('idCard')} <span className="text-red-500">*</span>
                            </Label>
                            <p className="text-sm text-gray-500 mb-4">
-                              Please upload clear photos of your ID card (front and back).
+                              {t('idCardHint')}
                            </p>
 
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                 <p className="text-sm font-medium text-gray-700 mb-2">Front side</p>
+                                 <p className="text-sm font-medium text-gray-700 mb-2">{t('frontSide')}</p>
                                  {idFrontPreview ? (
                                     <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden">
                                        <img
@@ -354,7 +353,7 @@ export default function ApplicationPage() {
                                  ) : (
                                     <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
                                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                                       <span className="text-sm text-gray-500">Click to upload</span>
+                                       <span className="text-sm text-gray-500">{t('clickToUpload')}</span>
                                        <input
                                           type="file"
                                           accept="image/*"
@@ -370,7 +369,7 @@ export default function ApplicationPage() {
 
                               {/* Back Side */}
                               <div>
-                                 <p className="text-sm font-medium text-gray-700 mb-2">Back side</p>
+                                 <p className="text-sm font-medium text-gray-700 mb-2">{t('backSide')}</p>
                                  {idBackPreview ? (
                                     <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden">
                                        <img
@@ -389,7 +388,7 @@ export default function ApplicationPage() {
                                  ) : (
                                     <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
                                        <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                                       <span className="text-sm text-gray-500">Click to upload</span>
+                                       <span className="text-sm text-gray-500">{t('clickToUpload')}</span>
                                        <input
                                           type="file"
                                           accept="image/*"
@@ -412,7 +411,7 @@ export default function ApplicationPage() {
                               disabled={isSubmitting}
                               className="px-12 py-4 rounded-lg text-md"
                            >
-                              Back
+                              {t('back')}
                            </Button>
                            <Button
                               onClick={handleSubmit}
@@ -422,10 +421,10 @@ export default function ApplicationPage() {
                               {isSubmitting ? (
                                  <>
                                     <Loader className="h-5 w-5 animate-spin" />
-                                    Submitting...
+                                    {t('submitting')}
                                  </>
                               ) : (
-                                 "Submit"
+                                 t('submit')
                               )}
                            </Button>
                         </div>
@@ -442,11 +441,10 @@ export default function ApplicationPage() {
                         </div>
 
                         <h1 className="text-md md:text-xl font-bold text-gray-900 mb-4">
-                           Application Submitted Successfully!
+                           {t('applicationSubmittedTitle')}
                         </h1>
                         <p className="text-gray-600 mb-8 max-w-lg mx-auto">
-                           Thank you for applying to become a Temu seller. Your application is currently
-                           under review by our team. We'll notify you via email once it's approved.
+                           {t('applicationSubmittedDesc')}
                         </p>
 
                         <div className="bg-orange-50 border border-orange-200 rounded-lg p-6 mb-8 max-w-md mx-auto">
@@ -455,8 +453,8 @@ export default function ApplicationPage() {
                                  <Clock className="w-5 h-5 text-white" />
                               </div>
                               <div className="text-left">
-                                 <p className="font-semibold text-gray-900">Review in Progress</p>
-                                 <p className="text-sm text-gray-500">Usually takes 1-2 business days</p>
+                                 <p className="font-semibold text-gray-900">{t('reviewInProgress')}</p>
+                                 <p className="text-sm text-gray-500">{t('reviewTime')}</p>
                               </div>
                            </div>
                            <div className="w-full bg-orange-200 rounded-full h-2">
@@ -465,13 +463,13 @@ export default function ApplicationPage() {
                         </div>
 
                         <div className="space-y-4 text-left max-w-md mx-auto mb-8">
-                           <h3 className="font-semibold text-gray-900">What happens next?</h3>
+                           <h3 className="font-semibold text-gray-900">{t('whatHappensNext')}</h3>
                            <div className="flex items-start gap-3">
                               <div className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
                                  1
                               </div>
                               <p className="text-sm text-gray-600">
-                                 Our team will review your application and verify your documents.
+                                 {t('nextStep1')}
                               </p>
                            </div>
                            <div className="flex items-start gap-3">
@@ -479,7 +477,7 @@ export default function ApplicationPage() {
                                  2
                               </div>
                               <p className="text-sm text-gray-600">
-                                 You'll receive an email notification about your application status.
+                                 {t('nextStep2')}
                               </p>
                            </div>
                            <div className="flex items-start gap-3">
@@ -487,14 +485,14 @@ export default function ApplicationPage() {
                                  3
                               </div>
                               <p className="text-sm text-gray-600">
-                                 Once approved, you can start setting up your shop and listing products!
+                                 {t('nextStep3')}
                               </p>
                            </div>
                         </div>
 
                         <Link href="/shop-landing">
                            <Button className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-12 py-5 rounded-lg text-sm transition-colors">
-                              Back to Home
+                              {t('backToHome')}
                            </Button>
                         </Link>
                      </div>
@@ -505,7 +503,7 @@ export default function ApplicationPage() {
                   <div className="lg:w-80 flex-shrink-0">
                      <div className="bg-white rounded-lg p-6 shadow-sm sticky top-24">
                         <div className="flex items-center justify-between mb-4">
-                           <h2 className="font-bold text-gray-900">FAQ</h2>
+                           <h2 className="font-bold text-gray-900">{t('faqTitle')}</h2>
                            <button className="text-gray-400 hover:text-gray-600">
                               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
@@ -522,7 +520,7 @@ export default function ApplicationPage() {
                                     className="w-full py-3 flex items-center justify-between text-left"
                                  >
                                     <span className="text-sm font-medium text-gray-900 pr-2">
-                                       {item.question}
+                                       {t(item.questionKey)}
                                     </span>
                                     {expandedFaq === index ? (
                                        <ChevronUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -531,7 +529,7 @@ export default function ApplicationPage() {
                                     )}
                                  </button>
                                  {expandedFaq === index && (
-                                    <p className="text-sm text-gray-500 pb-3">{item.answer}</p>
+                                    <p className="text-sm text-gray-500 pb-3">{t(item.answerKey)}</p>
                                  )}
                               </div>
                            ))}
@@ -544,15 +542,14 @@ export default function ApplicationPage() {
                               </div>
                               <div>
                                  <p className="text-sm font-semibold text-gray-900">Temu</p>
-                                 <p className="text-xs text-gray-500">Seller service</p>
+                                 <p className="text-xs text-gray-500">{t('sellerService')}</p>
                               </div>
                            </div>
                            <div className="bg-gray-50 rounded-lg p-3">
                               <p className="text-xs text-gray-500 text-right mb-2">9:36 am</p>
                               <div className="bg-white rounded-lg p-3 shadow-sm">
                                  <p className="text-sm text-gray-700">
-                                    Welcome to the Temu seller registration process! Need help completing
-                                    this step? Talk to a real person in seconds.
+                                    {t('welcomeMessage')}
                                  </p>
                               </div>
                            </div>

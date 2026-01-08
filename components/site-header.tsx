@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingCart, User, ChevronDown, TruckIcon, DollarSign, Undo2, Truck, Smartphone, ChevronRight, ThumbsUp, Star, Logs, MapPin, Wallet, Shield, FileText, LogOut, CreditCard } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { Separator } from "./ui/separator";
 import { Input } from "@/components/ui/input"
@@ -19,25 +20,26 @@ import { maskEmail } from "@/utils/function";
 import { useAppSelector } from "@/app/redux/store";
 import { signOut } from "@/app/redux/slice/customerAuthSlice";
 
-const messages = [
+const getMessages = (t: (key: string) => string) => [
   {
     icon: <Truck />,
-    title: "Delivery guarantee",
-    text: "Refund for any issues",
+    title: t('deliveryGuarantee'),
+    text: t('deliveryGuaranteeSubtext'),
   },
   {
     icon: <Undo2 />,
-    title: "Free returns",
-    text: "Up to 90 days*",
+    title: t('freeReturns'),
+    text: t('freeReturnsSubtext'),
   },
   {
     icon: <DollarSign />,
-    title: "Price adjustment",
-    text: "Within 30 days",
+    title: t('priceAdjustment'),
+    text: t('priceAdjustmentSubtext'),
   },
 ];
 
 export function SiteHeader({ className }: { className?: string }) {
+  const { t } = useTranslation('header')
   const router = useRouter()
   const dispatch = useDispatch()
   const customer = useAppSelector((state) => state.customerAuth.customer)
@@ -81,9 +83,11 @@ export function SiteHeader({ className }: { className?: string }) {
     router.push("/")
   }
 
+  const messages = getMessages(t);
+
   React.useEffect(() => {
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % messages.length);
+      setIndex((prev) => (prev + 1) % 3);
     }, 5000);
     return () => clearInterval(interval);
   }, []);
@@ -97,8 +101,8 @@ export function SiteHeader({ className }: { className?: string }) {
           <div className="hidden sm:flex items-center gap-2 space-x-2 text-green-300">
             <TruckIcon />
             <div className="flex items-start justify-center flex-col">
-              <span className="text-bold text-lg font-semibold">Free shipping</span>
-              <span className="text-xs font-bold">30-day no delivery refund</span>
+              <span className="text-bold text-lg font-semibold">{t('freeShipping')}</span>
+              <span className="text-xs font-bold">{t('freeShippingSubtext')}</span>
             </div>
           </div>
           <div className="hidden items-center gap-8 sm:flex">
@@ -123,7 +127,7 @@ export function SiteHeader({ className }: { className?: string }) {
           </div>
           <div className="hidden sm:flex items-center gap-2 text-yellow-100">
             <Smartphone />
-            <span className="font-bold text-lg">Get the Temu App</span>
+            <span className="font-bold text-lg">{t('getTheApp')}</span>
           </div>
           <div></div>
           <div
@@ -136,13 +140,13 @@ export function SiteHeader({ className }: { className?: string }) {
                 "url('https://commimg.kwcdn.com/upload_commimg/support/4c86e9a0-1dee-4013-b53c-4b224cf595f8.png')",
             }}
           >
-            Sell on Temu
+            {t('sellOnTemu')}
             <Button
               size="sm"
               className="text-xs font-bold rounded-full bg-orange-400"
               onClick={() => router.push("/shop-landing")}
             >
-              <span>Join Now</span>
+              <span>{t('joinNow')}</span>
               <ChevronRight />
             </Button>
           </div>
@@ -174,14 +178,14 @@ export function SiteHeader({ className }: { className?: string }) {
           <Link href="/best-selling" className="hidden sm:block">
             <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-semibold hover:text-white">
               <ThumbsUp />
-              Best-Selling Items
+              {t('bestSellingItems')}
             </Button>
           </Link>
 
           <Link href="/5-star-rated" className="hidden sm:block">
             <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full  font-semibold hover:text-white">
               <Star />
-              5-Star Rated
+              {t('fiveStarRated')}
             </Button>
           </Link>
 
@@ -195,7 +199,7 @@ export function SiteHeader({ className }: { className?: string }) {
                 variant="ghost"
                 className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full  font-semibold hover:text-white"
               >
-                Categories
+                {t('categories')}
                 <ChevronDown className="ml-1 h-4 w-4" />
               </Button>
               <Logs className="block sm:hidden h-6 sm:h-4 w-6 sm:w-4 hover:text-white cursor-pointer" />
@@ -213,7 +217,7 @@ export function SiteHeader({ className }: { className?: string }) {
           <div className="relative flex-1 max-w-2xl">
             <Input
               type="search"
-              placeholder="Search Temu"
+              placeholder={t('searchPlaceholder')}
               className="h-8 sm:h-11 w-full rounded-full border bg-white pr-12 text-foreground placeholder:text-muted-foreground"
             />
             <Button
@@ -231,8 +235,8 @@ export function SiteHeader({ className }: { className?: string }) {
                   <Button variant="ghost" className="hidden sm:flex hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
                     <User className="mr-0 sm:mr-1 h-8 sm:h-5 w-8 sm:w-5" />
                     <div className="text-left text-xs">
-                      <div>Hello, {maskEmail(customer.email)}</div>
-                      <div className="font-semibold">Orders & Account</div>
+                      <div>{t('hello', { email: maskEmail(customer.email) })}</div>
+                      <div className="font-semibold">{t('ordersAndAccount')}</div>
                     </div>
                   </Button>
                   <User className="flex sm:hidden h-5 sm:h-4 w-5 sm:w-4 hover:text-white" />
@@ -240,22 +244,22 @@ export function SiteHeader({ className }: { className?: string }) {
 
                 <div className="absolute right-0 top-full hidden w-48 rounded-lg bg-white py-2 shadow-lg group-hover:block">
                   <Link href="/account/orders" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <FileText size={14} />Your orders
+                    <FileText size={14} />{t('yourOrders')}
                   </Link>
                   <Link href="/account/profile" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <User size={14} /> Your profile
+                    <User size={14} /> {t('yourProfile')}
                   </Link>
                   <Link href="/account/credit" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <CreditCard size={14} />Credits
+                    <CreditCard size={14} />{t('credits')}
                   </Link>
                   <Link href="/account/addresses" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <MapPin size={14} /> Addresses
+                    <MapPin size={14} /> {t('addresses')}
                   </Link>
                   <Link href="/account/payment" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <Wallet size={14} />Payment
+                    <Wallet size={14} />{t('payment')}
                   </Link>
                   <Link href="/account/security" className="flex items-center gap-2 block px-4 py-2 text-sm text-foreground hover:bg-muted">
-                    <Shield size={14} />Security
+                    <Shield size={14} />{t('security')}
                   </Link>
                   <Separator />
                   <button
@@ -263,7 +267,7 @@ export function SiteHeader({ className }: { className?: string }) {
                     className="cursor-pointer flex items-center gap-2  w-full px-4 py-2 text-left text-sm text-foreground hover:bg-muted"
                   >
                     <LogOut size={14} />
-                    Sign out
+                    {t('signOut')}
                   </button>
                 </div>
               </div>
@@ -271,9 +275,9 @@ export function SiteHeader({ className }: { className?: string }) {
               <Link href="/login">
                 <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-bold hover:text-white">
                   <User className="mr-0 sm: h-8 sm:h-5 w-8 sm:w-5" />
-                  <div className="text-left text-xs">
-                    <div>Sign in / Register</div>
-                    <div className="font-bold">Order & Account</div>
+                  <div className="hidden sm:block text-left text-xs">
+                    <div>{t('signInRegister')}</div>
+                    <div className="font-bold">{t('orderAndAccount')}</div>
                   </div>
                 </Button>
               </Link>

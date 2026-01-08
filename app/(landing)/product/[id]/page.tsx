@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useQuery } from "@apollo/client/react"
 import { ChevronRight, Loader } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 // Components:
 import { ProductInfo } from "@/components/product-info"
@@ -16,6 +17,8 @@ import { IGetProductResponse, IProductDetail } from "@/app/interface/product"
 import type { Product } from "@/lib/product-data"
 
 export default function ProductPage() {
+  const { t } = useTranslation('product')
+  const { t: tCommon } = useTranslation('common')
   const params = useParams()
   const productId = params.id as string
 
@@ -76,7 +79,7 @@ export default function ProductPage() {
         <main className="bg-background">
           <div className="container mx-auto px-4 py-20">
             <div className="flex items-center justify-center gap-2">
-              <Loader className="h-6 w-6 animate-spin text-orange-400" /> Loading product...
+              <Loader className="h-6 w-6 animate-spin text-orange-400" /> {t('loadingProduct')}
             </div>
           </div>
         </main>
@@ -90,15 +93,15 @@ export default function ProductPage() {
         <main className="bg-background">
           <div className="container mx-auto px-4 py-20">
             <div className="text-center">
-              <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+              <h1 className="text-2xl font-bold mb-4">{t('productNotFound')}</h1>
               <p className="text-muted-foreground mb-6">
-                The product you're looking for doesn't exist or has been removed.
+                {t('productNotFoundDesc')}
               </p>
               <Link
                 href="/"
                 className="inline-block px-6 py-2 bg-orange-400 text-white rounded-full hover:bg-orange-500"
               >
-                Back to Home
+                {tCommon('returnToHomepage')}
               </Link>
             </div>
           </div>

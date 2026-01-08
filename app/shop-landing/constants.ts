@@ -9,44 +9,40 @@ import {
 } from "lucide-react";
 
 export const features = [
-  { icon: TrendingUp, text: "Trending Platform" },
-  { icon: Zap, text: "Fast First Sale" },
-  { icon: DollarSign, text: "Cost-efficient from the Start" },
-  { icon: Headphones, text: "Personalized Seller Support" },
+  { icon: TrendingUp, textKey: "featureTrendingPlatform" },
+  { icon: Zap, textKey: "featureFastFirstSale" },
+  { icon: DollarSign, textKey: "featureCostEfficient" },
+  { icon: Headphones, textKey: "featurePersonalizedSupport" },
 ];
 
 export const whySellFeatures = [
   {
     icon: TrendingUp,
-    titleHighlight: "Trending",
-    titleNormal: "Platform",
+    titleHighlightKey: "whySellTrendingHighlight",
+    titleNormalKey: "whySellTrendingNormal",
     highlightFirst: true,
-    description:
-      "Thanks to Temu's global popularity and influence, you'll be able to easily promote your products to more potential customers.",
+    descriptionKey: "whySellTrendingDesc",
   },
   {
     icon: CreditCard,
-    titleHighlight: "First Sale",
-    titleNormal: "Fast",
+    titleHighlightKey: "whySellFirstSaleHighlight",
+    titleNormalKey: "whySellFirstSaleNormal",
     highlightFirst: false,
-    description:
-      "With Temu's high traffic, 50% of new sellers make their first sale within 20 days.",
+    descriptionKey: "whySellFirstSaleDesc",
     footnote: "2",
   },
   {
     icon: Wallet,
-    titleHighlight: "Cost-efficient",
-    titleNormal: "from the Start",
+    titleHighlightKey: "whySellCostHighlight",
+    titleNormalKey: "whySellCostNormal",
     highlightFirst: true,
-    description:
-      "Benefit from cost-efficiency in store setup, selling, operation and marketing",
+    descriptionKey: "whySellCostDesc",
   },
   {
     icon: MessageCircle,
-    titleHighlight: "Personalized",
-    titleNormal: "Seller Support",
+    titleHighlightKey: "whySellSupportHighlight",
+    titleNormalKey: "whySellSupportNormal",
     highlightFirst: true,
-    description:
-      "Our dedicated team of specialists is here to support your success. From onboarding to boosting product competitiveness, our experienced team provides the guidance you need every step.",
+    descriptionKey: "whySellSupportDesc",
   },
 ];

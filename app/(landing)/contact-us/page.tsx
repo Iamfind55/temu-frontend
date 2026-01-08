@@ -2,8 +2,11 @@
 
 import Link from "next/link"
 import { MessageCircle, MapPin, ChevronRight, AlertCircle } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 export default function ContactUsPage() {
+   const { t } = useTranslation('landing')
+
    return (
       <div className="min-h-screen bg-white">
          <div className="bg-gray-100">
@@ -12,10 +15,10 @@ export default function ContactUsPage() {
                   {/* Left Content */}
                   <div className="text-center md:text-start w-full">
                      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
-                        Contact us
+                        {t('contactUs')}
                      </h1>
                      <p className="text-lg md:text-xl text-gray-700">
-                        Real-time and fast responses
+                        {t('realTimeResponses')}
                      </p>
                   </div>
 
@@ -43,16 +46,16 @@ export default function ContactUsPage() {
                         </div>
                         <div className="flex-1">
                            <h2 className="text-md md:text-lg font-semibold text-gray-900 mb-2">
-                              Need help?
+                              {t('needHelp')}
                            </h2>
                            <p className="text-gray-600 mb-3">
-                              You can contact Temu customer service for help.
+                              {t('canContactService')}
                            </p>
                            <Link
                               href="https://t.me/Tiktokshop24h_online"
                               className="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors"
                            >
-                              Contact us
+                              {t('contactUs')}
                               <ChevronRight className="w-4 h-4 ml-1" />
                            </Link>
                         </div>
@@ -69,22 +72,15 @@ export default function ContactUsPage() {
 
                         <div className="flex-1">
                            <h2 className="text-md md:text-lg font-semibold text-gray-900 mb-2">
-                              Office address
+                              {t('officeAddress')}
                            </h2>
                            <p className="text-gray-600 mb-3 text-sm">
-                              Suite 355, 31 St. James Avenue, Boston, Massachusetts 02116, USA
+                              {t('officeAddressValue')}
                            </p>
                            <div className="flex items-start gap-2 text-orange-500">
                               <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                               <p className="text-sm">
-                                 Please note, returns will not be accepted at this address. If you want to return your items,{" "}
-                                 <Link
-                                    href="/return-refund-policy"
-                                    className="hover:underline font-medium inline-flex items-center"
-                                 >
-                                    please click here
-                                    <ChevronRight className="w-4 h-4" />
-                                 </Link>
+                                 {t('returnNotice')}
                               </p>
                            </div>
                         </div>

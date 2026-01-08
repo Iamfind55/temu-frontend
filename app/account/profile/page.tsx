@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { User, Mail, Phone, Calendar, Save, X, Loader } from "lucide-react"
 
@@ -21,6 +22,7 @@ interface CloudinaryResponse {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation('account');
   const { errorMessage, successMessage } = useToast();
 
   // Form State
@@ -140,7 +142,7 @@ export default function ProfilePage() {
           setSelectedImage(null);
         } catch (error) {
           errorMessage({
-            message: "Failed to upload image. Try again!",
+            message: t('imageUploadFailed'),
             duration: 3000,
           });
           setIsLoading(false);
@@ -172,18 +174,18 @@ export default function ProfilePage() {
 
       if (res?.data?.updateCustomerInformation?.success) {
         successMessage({
-          message: "Profile updated successfully!",
+          message: t('profileUpdateSuccess'),
           duration: 3000,
         });
       } else {
         errorMessage({
-          message: "Failed to update profile. Try again later!",
+          message: t('profileUpdateFailed'),
           duration: 3000,
         });
       }
     } catch (error) {
       errorMessage({
-        message: "Unexpected error. Try again later!",
+        message: t('unexpectedError'),
         duration: 3000,
       });
     } finally {
@@ -216,13 +218,13 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-3xl space-y-6 mb-6">
         <Card className="rounded-sm shadow-sm">
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>Loading your profile information...</CardDescription>
+            <CardTitle>{t('personalInfo')}</CardTitle>
+            <CardDescription>{t('loadingProfile')}</CardDescription>
           </CardHeader>
           <CardContent className="flex items-center justify-center py-12">
             <div className="text-center">
               <Loader className="mx-auto h-8 w-8 animate-spin text-orange-500" />
-              <p className="mt-4 text-gray-600">Loading...</p>
+              <p className="mt-4 text-gray-600">{t('loading')}</p>
             </div>
           </CardContent>
         </Card>
@@ -235,8 +237,8 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-3xl space-y-6 mb-6">
         <Card className="rounded-sm">
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>Update your account details and personal information</CardDescription>
+            <CardTitle>{t('personalInfo')}</CardTitle>
+            <CardDescription>{t('updateAccountDetails')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit}>
@@ -265,20 +267,20 @@ export default function ProfilePage() {
                       onClick={() => document.getElementById('profile-image')?.click()}
                       disabled={isLoading}
                     >
-                      Change Photo
+                      {t('changePhoto')}
                     </Button>
                     <p className="mt-2 text-xs text-gray-500">
-                      {selectedImage ? `Selected: ${selectedImage.name}` : 'JPG, PNG or GIF. Max size 2MB'}
+                      {selectedImage ? t('selectedFile', { filename: selectedImage.name }) : t('photoHint')}
                     </p>
                   </div>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="firstName">{t('firstName')} <span className="text-rose-500">*</span></Label>
                     <Input
                       id="firstName"
-                      placeholder="Enter first name"
+                      placeholder={t('enterFirstName')}
                       value={formData.firstName}
                       onChange={handleChange("firstName")}
                       required
@@ -286,10 +288,10 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="lastName">{t('lastName')} <span className="text-rose-500">*</span></Label>
                     <Input
                       id="lastName"
-                      placeholder="Enter last name"
+                      placeholder={t('enterLastName')}
                       value={formData.lastName}
                       onChange={handleChange("lastName")}
                       required
@@ -300,13 +302,13 @@ export default function ProfilePage() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="email">{t('emailAddress')} <span className="text-rose-500">*</span></Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <Input
                         id="email"
                         type="email"
-                        placeholder="your.email@example.com"
+                        placeholder={t('emailPlaceholder')}
                         className="pl-10"
                         value={formData.email}
                         onChange={handleChange("email")}
@@ -317,13 +319,13 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="phone">{t('phoneNumber')} <span className="text-rose-500">*</span></Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="+1 (555) 000-0000"
+                        placeholder={t('phonePlaceholder')}
                         className="pl-10"
                         value={formData.phoneNumber}
                         onChange={handleChange("phoneNumber")}
@@ -336,10 +338,10 @@ export default function ProfilePage() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="username">{t('username')} <span className="text-rose-500">*</span></Label>
                     <Input
                       id="username"
-                      placeholder="Enter username"
+                      placeholder={t('enterUsername')}
                       value={formData.username}
                       onChange={handleChange("username")}
                       required
@@ -348,7 +350,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="birthday">Birthday <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="birthday">{t('birthday')} <span className="text-rose-500">*</span></Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 hidden sm:block" />
                       <Input
@@ -369,45 +371,45 @@ export default function ProfilePage() {
 
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <CardTitle>Payment setting</CardTitle>
-                  <CardDescription>Update your payment address for refund case.</CardDescription>
+                  <CardTitle>{t('paymentSetting')}</CardTitle>
+                  <CardDescription>{t('paymentDescription')}</CardDescription>
                 </div>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="wallet_address">Wallet address (USDT)</Label>
+                    <Label htmlFor="wallet_address">{t('walletAddress')}</Label>
                     <Input
                       id="wallet_address"
-                      placeholder="Enter wallet address"
+                      placeholder={t('enterWalletAddress')}
                       value={formData.walletAddress}
                       onChange={handleChange("walletAddress")}
                       disabled={isLoading}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="bank_name">Bank Name</Label>
+                    <Label htmlFor="bank_name">{t('bankName')}</Label>
                     <Input
                       id="bank_name"
-                      placeholder="Enter bank name"
+                      placeholder={t('enterBankName')}
                       value={formData.bankName}
                       onChange={handleChange("bankName")}
                       disabled={isLoading}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="bank_account_name">Bank Account Name</Label>
+                    <Label htmlFor="bank_account_name">{t('bankAccountName')}</Label>
                     <Input
                       id="bank_account_name"
-                      placeholder="Enter bank account name"
+                      placeholder={t('enterBankAccountName')}
                       value={formData.bankAccountName}
                       onChange={handleChange("bankAccountName")}
                       disabled={isLoading}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="bank_account_number">Bank account number</Label>
+                    <Label htmlFor="bank_account_number">{t('bankAccountNumber')}</Label>
                     <Input
                       id="bank_account_number"
-                      placeholder="Enter bank account number"
+                      placeholder={t('enterBankAccountNumber')}
                       value={formData.bankAccountNumber}
                       onChange={handleChange("bankAccountNumber")}
                       disabled={isLoading}
@@ -424,7 +426,7 @@ export default function ProfilePage() {
                   disabled={isLoading}
                 >
                   <X size={16} />
-                  Cancel
+                  {t('cancel')}
                 </Button>
                 <Button
                   type="submit"
@@ -432,7 +434,7 @@ export default function ProfilePage() {
                   disabled={isLoading}
                 >
                   {isLoading ? <Loader size={16} className="animate-spin" /> : <Save size={16} />}
-                  {isLoading ? "Saving..." : "Save Changes"}
+                  {isLoading ? t('saving') : t('saveChanges')}
                 </Button>
               </div>
             </form>

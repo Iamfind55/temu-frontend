@@ -1,13 +1,18 @@
+"use client"
+
 import Image from "next/image"
+import { useTranslation } from "react-i18next"
 
 export default function AboutUsPage() {
+  const { t } = useTranslation('landing')
+
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         {/* What is Temu? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
-            What is Temu?
+            {t('whatIsTemu')}
           </h2>
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="relative flex-shrink-0">
@@ -22,7 +27,7 @@ export default function AboutUsPage() {
               </div>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              Temu is an e-commerce company that connects consumers with millions of merchandise partners, manufacturers and brands with the mission to empower them to live a better life. Temu is committed to bringing affordable products onto its platform to enable consumers and merchandise partners to fulfill their dreams in an inclusive environment. Temu was founded in Boston, Massachusetts in 2022.
+              {t('temuDescription')}
             </p>
           </div>
         </section>
@@ -30,14 +35,14 @@ export default function AboutUsPage() {
         {/* What does Temu mean? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
-            What does Temu mean?
+            {t('whatDoesTemuMean')}
           </h2>
           <div className="space-y-2">
             <p className="text-gray-900 font-medium">
-              Temu  Shop Like a Billionaire
+              {t('temuSlogan')}
             </p>
             <p className="text-gray-700 leading-relaxed">
-              We hope that you will enjoy the affordable great products offered on our app from millions of merchandise partners, manufacturers and brands.
+              {t('temuMeaningDesc')}
             </p>
           </div>
         </section>
@@ -45,30 +50,30 @@ export default function AboutUsPage() {
         {/* Where are the products sold on Temu shipped from? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
-            Where are the products sold on Temu shipped from?
+            {t('whereShippedFrom')}
           </h2>
           <p className="text-gray-700 leading-relaxed">
-            The products from sellers on Temu are shipped using experienced and reliable logistics partners. The shipping origins vary depending on the product purchased.
+            {t('shippingOriginDesc')}
           </p>
         </section>
 
         {/* Temu's strengths */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
-            Temu's strengths
+            {t('temuStrengths')}
           </h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            Temu is bringing a sophisticated network of merchandise partners, manufacturers and brands of all sizes to your doorstops because of our:
+            {t('temuStrengthsDesc')}
           </p>
           <ul className="list-disc list-inside space-y-2 text-gray-700">
             <li>
-              Ability to <span className="font-bold">offer a wide selection of products</span>
+              <span className="font-bold">{t('wideSelection')}</span>
             </li>
             <li>
-              Experience in <span className="font-bold">collaborating with logistical supply chains</span>
+              <span className="font-bold">{t('logisticsCollaboration')}</span>
             </li>
             <li>
-              <span className="font-bold">Consumer-to-Manufacturer ("C2M")</span>
+              <span className="font-bold">{t('c2m')}</span>
             </li>
           </ul>
         </section>
@@ -76,7 +81,7 @@ export default function AboutUsPage() {
         {/* Our values */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-12">
-            Our values
+            {t('ourValues')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Empowerment */}
@@ -92,10 +97,10 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-orange-500 mb-2">
-                  Empowerment
+                  {t('empowerment')}
                 </h3>
                 <p className="text-gray-700">
-                  Everyone deserves to live the life they dream of having
+                  {t('empowermentDesc')}
                 </p>
               </div>
             </div>
@@ -113,10 +118,10 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-orange-500 mb-2">
-                  Inclusion and diversity
+                  {t('inclusionDiversity')}
                 </h3>
                 <p className="text-gray-700">
-                  Respect and embrace differences
+                  {t('inclusionDiversityDesc')}
                 </p>
               </div>
             </div>
@@ -134,10 +139,10 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-orange-500 mb-2">
-                  Integrity
+                  {t('integrity')}
                 </h3>
                 <p className="text-gray-700">
-                  Honest, ethical, and trustworthy
+                  {t('integrityDesc')}
                 </p>
               </div>
             </div>
@@ -155,10 +160,10 @@ export default function AboutUsPage() {
               </div>
               <div>
                 <h3 className="text-xl font-bold text-orange-500 mb-2">
-                  Socially responsible
+                  {t('sociallyResponsible')}
                 </h3>
                 <p className="text-gray-700">
-                  Do good for the world
+                  {t('sociallyResponsibleDesc')}
                 </p>
               </div>
             </div>

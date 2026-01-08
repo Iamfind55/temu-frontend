@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useLazyQuery, useMutation } from "@apollo/client/react"
 import { ChevronRight, ShoppingBasket, Package, Loader, ChevronDown, MoreVertical, Eye, Trash2 } from "lucide-react"
@@ -25,6 +26,7 @@ import { formatDate, getStatusBadgeStyle, getStatusLabel } from "./functions"
 import { QUERY_GET_CUSTOMER_ORDERS, MUTATION_DELETE_ORDER } from "@/app/api/order"
 
 export default function OrdersPage() {
+  const { t } = useTranslation('account')
   const searchParams = useSearchParams()
   const router = useRouter()
   const { successMessage, errorMessage } = useToast()
@@ -126,18 +128,18 @@ export default function OrdersPage() {
       })
 
       if (result?.data?.deleteOrder?.success) {
-        successMessage({ message: "Order deleted successfully", duration: 3000 })
+        successMessage({ message: t('orderDeletedSuccess'), duration: 3000 })
         // Remove order from local state
         setAllOrders((prev) => prev.filter((order) => order.id !== deleteTargetId))
         setIsDeleteModalOpen(false)
         setDeleteTargetId("")
       } else {
-        const errorMsg = result?.data?.deleteOrder?.error?.message || "Failed to delete order"
+        const errorMsg = result?.data?.deleteOrder?.error?.message || t('orderDeleteFailed')
         errorMessage({ message: errorMsg, duration: 3000 })
       }
     } catch (err) {
       console.error("Error deleting order:", err)
-      errorMessage({ message: "An error occurred while deleting the order", duration: 3000 })
+      errorMessage({ message: t('errorDeletingOrder'), duration: 3000 })
     }
   }
 
@@ -184,23 +186,23 @@ export default function OrdersPage() {
           <div className="mb-8">
             <div className="hidden md:grid mb-4 grid-cols-8 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
               <div className="text-center">#</div>
-              <div>Order No</div>
-              <div>Items</div>
-              <div className="text-center">Qty</div>
-              <div>Total</div>
-              <div>Status</div>
-              <div>Date</div>
-              <div className="text-center">Actions</div>
+              <div>{t('orderNo')}</div>
+              <div>{t('items')}</div>
+              <div className="text-center">{t('qty')}</div>
+              <div>{t('total')}</div>
+              <div>{t('status')}</div>
+              <div>{t('date')}</div>
+              <div className="text-center">{t('actions')}</div>
             </div>
 
             {loading && allOrders.length === 0 ? (
               <div className="py-12 text-center flex items-center justify-center gap-2">
                 <Loader className="h-5 w-5 animate-spin text-orange-500" />
-                <p className="text-gray-600">Loading orders...</p>
+                <p className="text-gray-600">{t('loadingOrders')}</p>
               </div>
             ) : error ? (
               <div className="py-12 text-center">
-                <p className="text-red-600">Error loading orders. Please try again.</p>
+                <p className="text-red-600">{t('errorLoadingOrders')}</p>
               </div>
             ) : filteredOrders.length > 0 ? (
               <>
@@ -235,7 +237,7 @@ export default function OrdersPage() {
                                 className="cursor-pointer"
                               >
                                 <Eye className=" h-4 w-4" />
-                                View Details
+                                {t('viewDetails')}
                               </DropdownMenuItem>
                               {order.order_status === "NO_PICKUP" && (
                                 <DropdownMenuItem
@@ -244,7 +246,7 @@ export default function OrdersPage() {
                                   disabled={deleteLoading}
                                 >
                                   <Trash2 className=" h-4 w-4" />
-                                  Delete
+                                  {t('delete')}
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>
@@ -254,15 +256,15 @@ export default function OrdersPage() {
 
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Products</span>
-                          <span className="font-medium">{order.total_products} items ({order.total_quantity} qty)</span>
+                          <span className="text-gray-500">{t('products')}</span>
+                          <span className="font-medium">{order.total_products} {t('itemsText')} ({order.total_quantity} {t('qtyText')})</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Total</span>
+                          <span className="text-gray-500">{t('total')}</span>
                           <span className="font-bold text-green-600">${order.total_price.toFixed(2)}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Date</span>
+                          <span className="text-gray-500">{t('date')}</span>
                           <span className="text-gray-600">{formatDate(order.created_at)}</span>
                         </div>
                       </div>
@@ -274,7 +276,7 @@ export default function OrdersPage() {
                         onClick={(e) => handleViewDetails(order, e)}
                       >
                         <Eye className=" h-4 w-4" />
-                        View Details
+                        {t('viewDetails')}
                       </Button>
                     </div>
                   ))}
@@ -296,7 +298,7 @@ export default function OrdersPage() {
                       </div>
                       <div className="flex items-center">
                         <span className="text-sm text-gray-500">
-                          {order.total_products} products
+                          {order.total_products} {t('products')}
                         </span>
                       </div>
                       <div className="text-center flex items-center justify-center">
@@ -333,7 +335,7 @@ export default function OrdersPage() {
                               className="cursor-pointer"
                             >
                               <Eye className=" h-4 w-4" />
-                              View Details
+                              {t('viewDetails')}
                             </DropdownMenuItem>
                             {order.order_status === "NO_PICKUP" && (
                               <DropdownMenuItem
@@ -342,7 +344,7 @@ export default function OrdersPage() {
                                 disabled={deleteLoading}
                               >
                                 <Trash2 className=" h-4 w-4" />
-                                Delete
+                                {t('delete')}
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -358,17 +360,17 @@ export default function OrdersPage() {
                   <ShoppingBasket size={56} />
                 </div>
                 <h3 className="mb-8 text-sm sm:text-lg sm:font-semibold text-gray-900">
-                  You don't have any {currentStatus === "all" ? "" : currentStatus} orders
+                  {currentStatus === "all" ? t('noOrders') : t('noOrdersWithStatus', { status: currentStatus })}
                 </h3>
                 <div className="w-full max-w-3xl space-y-3">
                   <h4 className="text-sm font-semibold text-gray-900">
-                    Can't find your order?
+                    {t('cantFindOrder')}
                   </h4>
 
                   <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300">
                     <div className="flex items-center gap-3">
                       <span className="text-sm text-gray-900">
-                        Try signing in with another account
+                        {t('trySigningAnother')}
                       </span>
                     </div>
                     <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -376,7 +378,7 @@ export default function OrdersPage() {
 
                   <button className="flex w-full items-center justify-between rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:border-gray-300">
                     <span className="text-sm text-gray-900">
-                      Self-service to find order
+                      {t('selfServiceOrder')}
                     </span>
                     <ChevronRight className="h-5 w-5 text-gray-400" />
                   </button>
@@ -384,7 +386,7 @@ export default function OrdersPage() {
                   <Link href="/">
                     <button className="flex w-full items-center justify-between rounded-lg border border-orange-500 bg-orange-50 p-4 text-left transition-colors hover:bg-orange-100">
                       <span className="text-sm text-orange-600 font-medium">
-                        Start shopping now
+                        {t('startShopping')}
                       </span>
                       <ChevronRight className="h-5 w-5 text-orange-500" />
                     </button>
@@ -404,11 +406,11 @@ export default function OrdersPage() {
                   {loading ? (
                     <>
                       <Loader className=" h-4 w-4 animate-spin" />
-                      Loading...
+                      {t('loading')}
                     </>
                   ) : (
                     <>
-                      <span>Load More Orders</span>
+                      <span>{t('loadMoreOrders')}</span>
                       <ChevronDown className="ml-2" />
                     </>
                   )}
@@ -418,14 +420,14 @@ export default function OrdersPage() {
 
             {!hasMore && filteredOrders.length > 0 && (
               <div className="text-center text-xs text-gray-400 pt-6">
-                You've reached the end of your orders
+                {t('reachedEnd')}
               </div>
             )}
 
             {/* Order count summary */}
             {filteredOrders.length > 0 && (
               <div className="text-center text-xs text-gray-400">
-                Showing {filteredOrders.length} of {totalOrders} orders
+                {t('showingOrders', { current: filteredOrders.length, total: totalOrders })}
               </div>
             )}
           </div>
@@ -437,7 +439,7 @@ export default function OrdersPage() {
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
               <Package className="h-5 w-5 text-orange-500" />
-              Order Details
+              {t('orderDetails')}
             </DialogTitle>
           </DialogHeader>
 
@@ -445,29 +447,29 @@ export default function OrdersPage() {
             <div className="space-y-6 py-4">
               <div className="rounded-lg border border-gray-200 p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Order Number:</span>
+                  <span className="text-sm text-gray-600">{t('orderNumber')}</span>
                   <span className="font-mono text-sm font-medium">#{selectedOrder.order_no}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Status:</span>
+                  <span className="text-sm text-gray-600">{t('status')}:</span>
                   <Badge className={`text-xs ${getStatusBadgeStyle(selectedOrder.order_status)}`}>
                     {getStatusLabel(selectedOrder.order_status)}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Date:</span>
+                  <span className="text-sm text-gray-600">{t('date')}:</span>
                   <span className="text-sm">{formatDate(selectedOrder.created_at)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Delivery Type:</span>
+                  <span className="text-sm text-gray-600">{t('deliveryType')}</span>
                   <span className="text-sm px-2 py-1 bg-blue-50 text-blue-700 rounded">
-                    {selectedOrder.delivery_type === "DOOR_TO_DOOR" ? "Door-to-Door" : selectedOrder.delivery_type}
+                    {selectedOrder.delivery_type === "DOOR_TO_DOOR" ? t('doorToDoor') : selectedOrder.delivery_type}
                   </span>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold mb-3">Order Items ({selectedOrder.order_details.length})</h3>
+                <h3 className="text-sm font-semibold mb-3">{t('orderItems', { count: selectedOrder.order_details.length })}</h3>
                 <div className="space-y-3">
                   {selectedOrder.order_details.map((detail) => (
                     <div
@@ -490,7 +492,7 @@ export default function OrdersPage() {
                           {detail.product_name || "Product"}
                         </p>
                         <p className="text-xs text-gray-500">
-                          Qty: {detail.quantity}
+                          {t('qty')}: {detail.quantity}
                         </p>
                       </div>
                       <div className="text-right">
@@ -510,17 +512,17 @@ export default function OrdersPage() {
 
               <div className="rounded-lg bg-gray-50 p-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Total Items:</span>
+                  <span className="text-gray-600">{t('totalItems')}</span>
                   <span>{selectedOrder.total_quantity}</span>
                 </div>
                 {selectedOrder.total_discount > 0 && (
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Discount:</span>
+                    <span className="text-gray-600">{t('discount')}</span>
                     <span className="text-red-600">-${selectedOrder.total_discount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
-                  <span>Total:</span>
+                  <span>{t('total')}:</span>
                   <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
                 </div>
               </div>
@@ -529,7 +531,7 @@ export default function OrdersPage() {
                 onClick={() => setIsDetailModalOpen(false)}
                 className="w-full bg-orange-500 hover:bg-orange-600"
               >
-                Close
+                {t('close')}
               </Button>
             </div>
           )}
@@ -540,11 +542,11 @@ export default function OrdersPage() {
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent className="w-sm sm:w-md max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-gray-700">Delete Order</DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-gray-700">{t('deleteOrder')}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <p className="text-gray-600">
-              Are you sure you want to delete this order? This action cannot be undone.
+              {t('deleteOrderConfirm')}
             </p>
           </div>
           <div className="flex justify-end gap-2">
@@ -557,7 +559,7 @@ export default function OrdersPage() {
               }}
               disabled={deleteLoading}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="button"
@@ -566,7 +568,7 @@ export default function OrdersPage() {
               disabled={deleteLoading}
             >
               {deleteLoading ? <Loader className=" h-4 w-4 animate-spin" /> : null}
-              {deleteLoading ? "Deleting..." : "Delete"}
+              {deleteLoading ? t('deleting') : t('delete')}
             </Button>
           </div>
         </DialogContent>

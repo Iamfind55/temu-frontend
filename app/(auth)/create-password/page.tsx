@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { useDispatch } from "react-redux"
 import { useMutation } from "@apollo/client/react"
+import { useTranslation } from "react-i18next"
 import { Lock, Eye, EyeOff, Loader, ChevronLeft } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -18,6 +19,7 @@ import { MUTATION_CUSTOMER_CREATE_PASSWORD } from "@/app/api/auth"
 import { ICreatePasswordResponse } from "@/app/interface/customer"
 
 export default function CreatePasswordPage() {
+  const { t } = useTranslation('customer-auth')
   const router = useRouter()
   const dispatch = useDispatch()
   const searchParams = useSearchParams()
@@ -43,17 +45,17 @@ export default function CreatePasswordPage() {
 
     // Validation
     if (password.length < 8) {
-      errorMessage({ message: "Password must be at least 8 characters long", duration: 2000 })
+      errorMessage({ message: t('passwordMinLength'), duration: 2000 })
       return
     }
 
     if (password !== confirmPassword) {
-      errorMessage({ message: "Passwords do not match", duration: 2000 })
+      errorMessage({ message: t('passwordsDoNotMatch'), duration: 2000 })
       return
     }
 
     if (!email) {
-      errorMessage({ message: "Email is missing", duration: 2000 })
+      errorMessage({ message: t('emailMissing'), duration: 2000 })
       return
     }
 
@@ -93,7 +95,7 @@ export default function CreatePasswordPage() {
         )
 
         successMessage({
-          message: "Account created successfully!",
+          message: t('accountCreatedSuccessfully'),
           duration: 3000
         })
 
@@ -102,13 +104,13 @@ export default function CreatePasswordPage() {
         }, 1500)
       } else {
         errorMessage({
-          message: data?.customerCreatePassword?.error?.message || "Failed to create password",
+          message: data?.customerCreatePassword?.error?.message || t('failedToCreatePassword'),
           duration: 3000
         })
       }
     } catch (error) {
       errorMessage({
-        message: "An unexpected error occurred. Please try again.",
+        message: t('unexpectedError'),
         duration: 3000
       })
     } finally {
@@ -126,6 +128,19 @@ export default function CreatePasswordPage() {
         return "text-red-600"
       default:
         return "text-muted-foreground"
+    }
+  }
+
+  const getPasswordQualityText = () => {
+    switch (passwordQuality) {
+      case "Strong":
+        return t('passwordStrong')
+      case "Medium":
+        return t('passwordMedium')
+      case "Weak":
+        return t('passwordWeak')
+      default:
+        return "-"
     }
   }
 
@@ -152,7 +167,7 @@ export default function CreatePasswordPage() {
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />
-            <span>All data will be encrypted</span>
+            <span>{t('allDataEncrypted')}</span>
           </div>
         </div>
       </div>
@@ -164,19 +179,19 @@ export default function CreatePasswordPage() {
             className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back home
+            {t('backHome')}
           </Link>
           <div className="mb-8 text-center">
-            <h1 className="mb-3 text-2xl font-bold">Create your password</h1>
+            <h1 className="mb-3 text-2xl font-bold">{t('createYourPassword')}</h1>
             <p className="text-sm text-muted-foreground">
-              Almost there! Create a strong password to secure your account.
+              {t('createYourPasswordDesc')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="password" className="mb-2 block text-sm font-medium">
-                Password <span className="text-rose-500">*</span>
+                {t('password')} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -185,7 +200,7 @@ export default function CreatePasswordPage() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => handlePasswordChange(e.target.value)}
-                  placeholder="Minimum 8 characters required"
+                  placeholder={t('minimumCharactersRequired')}
                   className="h-12 pr-10"
                   disabled={isLoading}
                   required
@@ -200,14 +215,14 @@ export default function CreatePasswordPage() {
                 </button>
               </div>
               <div className="mt-2 text-sm">
-                <span className="font-medium">Password quality: </span>
-                <span className={getPasswordQualityColor()}>{passwordQuality}</span>
+                <span className="font-medium">{t('passwordQuality')} </span>
+                <span className={getPasswordQualityColor()}>{getPasswordQualityText()}</span>
               </div>
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium">
-                Confirm Password <span className="text-rose-500">*</span>
+                {t('confirmPassword')} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <Input
@@ -216,7 +231,7 @@ export default function CreatePasswordPage() {
                   type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter your password"
+                  placeholder={t('reenterPassword')}
                   className="h-12 pr-10"
                   disabled={isLoading}
                   required
@@ -231,12 +246,12 @@ export default function CreatePasswordPage() {
                 </button>
               </div>
               {confirmPassword && password !== confirmPassword && (
-                <p className="mt-2 text-sm text-red-600">Passwords do not match</p>
+                <p className="mt-2 text-sm text-red-600">{t('passwordsDoNotMatch')}</p>
               )}
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Don't use a password from another site, or something too obvious like your pet's name.
+              {t('passwordTip')}
             </p>
 
             <Button
@@ -247,22 +262,22 @@ export default function CreatePasswordPage() {
               {isLoading ? (
                 <>
                   <Loader className=" h-4 w-4 animate-spin" />
-                  Creating Account...
+                  {t('creatingAccount')}
                 </>
               ) : (
-                "Create Account"
+                t('createAccount')
               )}
             </Button>
           </form>
 
           <div className="mt-8 text-center text-sm text-muted-foreground">
-            By creating an account, you agree to our{" "}
+            {t('byCreatingAccount')}{" "}
             <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
-              Terms of Use
+              {t('termsOfUse')}
             </Link>{" "}
-            and{" "}
+            {t('and')}{" "}
             <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
-              Privacy Policy
+              {t('privacyPolicy')}
             </Link>
             .
           </div>
