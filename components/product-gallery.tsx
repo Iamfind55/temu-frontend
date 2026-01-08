@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import EmptyPage from "./ui/empty"
 import { Button } from "@/components/ui/button"
 import { SkeletonImage } from "@/components/ui/skeleton-image"
@@ -14,6 +15,7 @@ interface ProductGalleryProps {
 }
 
 export function ProductGallery({ images, title, rating = 0, reviewCount = 0 }: ProductGalleryProps) {
+  const { t } = useTranslation("product")
   const [selectedImage, setSelectedImage] = useState(0)
 
   const handlePrevious = () => {
@@ -71,7 +73,7 @@ export function ProductGallery({ images, title, rating = 0, reviewCount = 0 }: P
 
       <div className="w-full flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
         <div className="flex gap-2">
-          <span className="text-md font-bold">{reviewCount} Review{reviewCount !== 1 ? 's' : ''}  |</span>
+          <span className="text-md font-bold">{reviewCount} {reviewCount !== 1 ? t("reviewsCountPlural") : t("reviewsCount")}  |</span>
           <div className="flex gap-3 items-center">
             <span className="text-md font-semibold">{rating.toFixed(1)} </span>
             <div className="flex gap-2">
@@ -89,17 +91,17 @@ export function ProductGallery({ images, title, rating = 0, reviewCount = 0 }: P
             <ShieldCheck size={16} className="text-white" />
           </div>
           <div className="py-1.5 px-2 bg-gray-50 w-full">
-            <span className="text-xs text-green-600 font-bold">All reviews are from verified purchases</span>
+            <span className="text-xs text-green-600 font-bold">{t("allReviewsVerified")}</span>
           </div>
         </div>
       </div>
 
       <div className="hidden sm:block text-sm">
         <div className="border-b py-1">
-          <p className="text-md">All recommended:</p>
+          <p className="text-md">{t("allRecommended")}</p>
         </div>
         <div>
-          <EmptyPage icon={MessageSquareText} title="No recommaned yet!" description="There is no recommended or comment for this product yet." />
+          <EmptyPage icon={MessageSquareText} title={t("noRecommendedYet")} description={t("noRecommendedDesc")} />
         </div>
       </div>
     </div>

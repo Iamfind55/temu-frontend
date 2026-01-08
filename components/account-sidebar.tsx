@@ -11,44 +11,46 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const menuItems = [
   {
     id: "orders",
-    label: "Your orders",
+    labelKey: "yourOrders",
     icon: FileText,
     href: "/account/orders",
     subItems: [
-      { label: "All orders", href: "/account/orders" },
-      { label: "Processing", href: "/account/orders?status=processing" },
-      { label: "Packing", href: "/account/orders?status=packing" },
-      { label: "Shipping", href: "/account/orders?status=shipping" },
-      { label: "Completed", href: "/account/orders?status=completed" },
-      { label: "Cancelled", href: "/account/orders?status=cancelled" },
+      { labelKey: "allOrders", href: "/account/orders" },
+      { labelKey: "processing", href: "/account/orders?status=processing" },
+      { labelKey: "packing", href: "/account/orders?status=packing" },
+      { labelKey: "shipping", href: "/account/orders?status=shipping" },
+      { labelKey: "completed", href: "/account/orders?status=completed" },
+      { labelKey: "cancelled", href: "/account/orders?status=cancelled" },
     ],
   },
   {
     id: "profile",
-    label: "Your profile",
+    labelKey: "yourProfile",
     icon: User,
     href: "/account/profile",
   },
   {
     id: "credit",
-    label: "Credit balance",
+    labelKey: "creditBalance",
     icon: CreditCard,
     href: "/account/credit",
   },
   {
     id: "addresses",
-    label: "Addresses",
+    labelKey: "addresses",
     icon: MapPin,
     href: "/account/addresses",
   },
 ];
 
 export function AccountSidebar() {
+  const { t } = useTranslation("account");
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const status = searchParams.get("status") || "all";
@@ -78,7 +80,7 @@ export function AccountSidebar() {
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="h-5 w-5" />
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey)}</span>
                   </div>
                   {isExpanded ? (
                     <ChevronUp className="h-4 w-4" />
@@ -98,7 +100,7 @@ export function AccountSidebar() {
                 >
                   <div className="flex items-center gap-3">
                     <Icon className="h-5 w-5" />
-                    <span>{item.label}</span>
+                    <span>{t(item.labelKey)}</span>
                   </div>
                 </Link>
               )}
@@ -125,7 +127,7 @@ export function AccountSidebar() {
                             : "text-gray-600 hover:bg-gray-50"
                         )}
                       >
-                        {subItem.label}
+                        {t(subItem.labelKey)}
                       </Link>
                     );
                   })}

@@ -80,5 +80,14 @@
   "errorOccurred": "เกิดข้อผิดพลาด",
   "orderProcessingError": "เกิดข้อผิดพลาดในการดำเนินการคำสั่งซื้อ",
   "lightningDeal": "ดีลสายฟ้า",
-  "color": "สี"
+  "color": "สี",
+  "shoppingCart": "Shopping Cart",
+  "yourCartEmpty": "Your cart is empty",
+  "addItemsGetStarted": "Add items to get started",
+  "continueShopping": "Continue Shopping",
+  "outOfStock": "Out of stock",
+  "proceedToCheckout": "Proceed to Checkout",
+  "addToCartExclaim": "Add to cart!",
+  "allDetails": "All details",
+  "sold": "sold"
 }

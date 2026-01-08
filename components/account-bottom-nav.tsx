@@ -3,34 +3,36 @@
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import { useDispatch } from "react-redux"
+import { useTranslation } from "react-i18next"
 import { FileText, CreditCard, MapPin, User, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { signOut } from "@/app/redux/slice/customerAuthSlice"
 
 const navItems = [
    {
-      label: "Orders",
+      labelKey: "navOrders",
       icon: FileText,
       href: "/account/orders",
    },
    {
-      label: "Credit",
+      labelKey: "navCredit",
       icon: CreditCard,
       href: "/account/credit",
    },
    {
-      label: "Address",
+      labelKey: "navAddress",
       icon: MapPin,
       href: "/account/addresses",
    },
    {
-      label: "Profile",
+      labelKey: "navProfile",
       icon: User,
       href: "/account/profile",
    },
 ]
 
 export function AccountBottomNav() {
+   const { t } = useTranslation("account")
    const router = useRouter()
    const pathname = usePathname()
    const dispatch = useDispatch()
@@ -59,7 +61,7 @@ export function AccountBottomNav() {
                      )}
                   >
                      <Icon className={cn("h-4 w-4", isActive && "fill-orange-100")} />
-                     <span className={cn("text-xs", isActive && "font-semibold")}>{item.label}</span>
+                     <span className={cn("text-xs", isActive && "font-semibold")}>{t(item.labelKey)}</span>
                   </Link>
                )
             })}
@@ -68,7 +70,7 @@ export function AccountBottomNav() {
                className="flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors text-gray-500 hover:text-red-500"
             >
                <LogOut className="h-4 w-4 text-rose-500" />
-               <span className="text-xs text-rose-500">Logout</span>
+               <span className="text-xs text-rose-500">{t("navLogout")}</span>
             </button>
          </div>
       </nav>

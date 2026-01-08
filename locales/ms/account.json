@@ -46,7 +46,6 @@
   "createAddressSuccess": "Alamat berjaya dicipta!",
   "createAddressFailed": "Gagal mencipta alamat. Cuba lagi kemudian!",
   "unexpectedError": "Ralat tidak dijangka. Cuba lagi kemudian!",
-
   "home": "Laman Utama",
   "creditBalance": "Baki kredit",
   "deposit": "Deposit",
@@ -84,7 +83,6 @@
   "depositSuccess": "Deposit berjaya!",
   "depositFailed": "Deposit gagal",
   "unexpectedErrorHappened": "Ralat tidak dijangka berlaku!",
-
   "loadingOrders": "Memuatkan pesanan...",
   "errorLoadingOrders": "Ralat memuatkan pesanan. Sila cuba lagi.",
   "orderNo": "No Pesanan",
@@ -117,7 +115,6 @@
   "orderDeletedSuccess": "Pesanan berjaya dipadamkan",
   "orderDeleteFailed": "Gagal memadamkan pesanan",
   "errorDeletingOrder": "Ralat berlaku semasa memadamkan pesanan",
-
   "personalInfo": "Maklumat Peribadi",
   "loadingProfile": "Memuatkan maklumat profil anda...",
   "updateAccountDetails": "Kemas kini butiran akaun dan maklumat peribadi anda",
@@ -148,5 +145,17 @@
   "saveChanges": "Simpan Perubahan",
   "profileUpdateSuccess": "Profil berjaya dikemas kini!",
   "profileUpdateFailed": "Gagal mengemas kini profil. Cuba lagi kemudian!",
-  "imageUploadFailed": "Gagal memuat naik imej. Cuba lagi!"
+  "imageUploadFailed": "Gagal memuat naik imej. Cuba lagi!",
+  "navOrders": "Orders",
+  "navCredit": "Credit",
+  "navAddress": "Address",
+  "navProfile": "Profile",
+  "navLogout": "Logout",
+  "yourOrders": "Your orders",
+  "allOrders": "All orders",
+  "yourProfile": "Your profile",
+  "packing": "Packing",
+  "shipping": "Shipping",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
 }

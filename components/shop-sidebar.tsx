@@ -18,6 +18,7 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useQuery } from "@apollo/client/react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useShopStore } from "@/store/shop-store";
@@ -27,68 +28,68 @@ import { QUERY_SHOP_CREDIT_TRANSACTIONS } from "@/app/api/shop/credit";
 const menuItems = [
    {
       id: "orders",
-      label: "Your orders",
+      labelKey: "yourOrders",
       icon: ShoppingCart,
       href: "/shop-dashboard/orders",
       subItems: [
-         { label: "All orders", href: "/shop-dashboard/orders" },
-         { label: "Processing", href: "/shop-dashboard/orders?status=processing" },
-         { label: "Packing", href: "/shop-dashboard/orders?status=packing" },
-         { label: "Shipping", href: "/shop-dashboard/orders?status=shipping" },
-         { label: "Completed", href: "/shop-dashboard/orders?status=completed" },
-         { label: "Cancelled", href: "/shop-dashboard/orders?status=cancelled" },
+         { labelKey: "allOrders", href: "/shop-dashboard/orders" },
+         { labelKey: "processing", href: "/shop-dashboard/orders?status=processing" },
+         { labelKey: "packing", href: "/shop-dashboard/orders?status=packing" },
+         { labelKey: "shipping", href: "/shop-dashboard/orders?status=shipping" },
+         { labelKey: "completed", href: "/shop-dashboard/orders?status=completed" },
+         { labelKey: "cancelled", href: "/shop-dashboard/orders?status=cancelled" },
       ],
    },
    {
       id: "products",
-      label: "Products",
+      labelKey: "navProducts",
       icon: Apple,
       href: "/shop-dashboard/product",
       subItems: [
-         { label: "All products", href: "/shop-dashboard/product" },
-         { label: "Apply new", href: "/shop-dashboard/product/apply-new" },
-         { label: "Apply VIP product", href: "/shop-dashboard/product/apply-vip" },
+         { labelKey: "navAllProducts", href: "/shop-dashboard/product" },
+         { labelKey: "navApplyNew", href: "/shop-dashboard/product/apply-new" },
+         { labelKey: "navApplyVip", href: "/shop-dashboard/product/apply-vip" },
       ],
    },
    {
       id: "credit",
-      label: "Credit balance",
+      labelKey: "creditBalance",
       icon: CreditCard,
       href: "/shop-dashboard/credit",
    },
    {
       id: "addresses",
-      label: "Addresses",
+      labelKey: "navAddresses",
       icon: MapPin,
       href: "/shop-dashboard/addresses",
    },
    {
       id: "permission",
-      label: "Permission",
+      labelKey: "navPermission",
       icon: ShieldCheck,
       href: "/shop-dashboard/permission",
    },
    {
       id: "notification",
-      label: "Notifications",
+      labelKey: "notifications",
       icon: Bell,
       href: "/shop-dashboard/notifications",
    },
    {
       id: "vip_access",
-      label: "VIP Access",
+      labelKey: "navVipAccess",
       icon: Award,
       href: "/shop-dashboard/vip-access",
    },
    {
       id: "payment_method",
-      label: "Your payment method",
+      labelKey: "yourPaymentMethod",
       icon: CreditCard,
       href: "/shop-dashboard/payment",
    },
    {
       id: "profile",
-      label: "Your profile",
+      labelKey: "yourProfile",
       icon: User,
       href: "/shop-dashboard/profile",
    },
@@ -102,6 +103,7 @@ const vipConfig: Record<string, { name: string; color: string; bgColor: string }
 };
 
 export function ShopDashboardSidebar() {
+   const { t } = useTranslation("shop-dashboard");
    const router = useRouter();
    const pathname = usePathname();
    const searchParams = useSearchParams();
@@ -202,7 +204,7 @@ export function ShopDashboardSidebar() {
                         >
                            <div className="flex items-center gap-3">
                               <Icon className="h-5 w-5" />
-                              <span>{item.label}</span>
+                              <span>{t(item.labelKey)}</span>
                            </div>
                            {isExpanded ? (
                               <ChevronUp className="h-4 w-4" />
@@ -222,7 +224,7 @@ export function ShopDashboardSidebar() {
                         >
                            <div className="flex items-center gap-3">
                               <Icon className="h-5 w-5" />
-                              <span>{item.label}</span>
+                              <span>{t(item.labelKey)}</span>
                            </div>
                            {/* Badge for notifications */}
                            {item.id === "notification" && unreadNotificationCount > 0 && (
@@ -268,7 +270,7 @@ export function ShopDashboardSidebar() {
                                           : "text-gray-600 hover:bg-gray-50"
                                     )}
                                  >
-                                    {subItem.label}
+                                    {t(subItem.labelKey)}
                                  </Link>
                               );
                            })}
@@ -286,7 +288,7 @@ export function ShopDashboardSidebar() {
                className="flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             >
                <LogOut className="h-5 w-5" />
-               <span>Sign out</span>
+               <span>{t("signOut")}</span>
             </button>
          </div>
       </aside>

@@ -17,11 +17,11 @@ export const vipLevels: VIPLevel[] = [
     reward: "1,500 USDT",
     profitPoint: "25%",
     dailyTraffic: "3,000-5,000",
-    features: [
-      "VIP store function can be opened",
-      "Fixed national international stations can be opened",
-      "Basic priority listing",
-      "Standard customer support",
+    featureKeys: [
+      "vip1Feature1",
+      "vip1Feature2",
+      "vip1Feature3",
+      "vip1Feature4",
     ],
   },
   {
@@ -36,11 +36,11 @@ export const vipLevels: VIPLevel[] = [
     reward: "3,000 USDT",
     profitPoint: "30%",
     dailyTraffic: "5,000-8,000",
-    features: [
-      "VIP business post function activated",
-      "National international service station can be opened",
-      "Enhanced product visibility",
-      "Priority customer support",
+    featureKeys: [
+      "vip2Feature1",
+      "vip2Feature2",
+      "vip2Feature3",
+      "vip2Feature4",
     ],
     popular: true,
   },
@@ -56,12 +56,12 @@ export const vipLevels: VIPLevel[] = [
     reward: "4,500 USDT",
     profitPoint: "35%",
     dailyTraffic: "8,000-11,000",
-    features: [
-      "Full VIP store function access",
-      "National international service station can be opened",
-      "Maximum product exposure",
-      "Dedicated account manager",
-      "Exclusive promotional events",
+    featureKeys: [
+      "vip3Feature1",
+      "vip3Feature2",
+      "vip3Feature3",
+      "vip3Feature4",
+      "vip3Feature5",
     ],
   },
 ];
@@ -69,32 +69,27 @@ export const vipLevels: VIPLevel[] = [
 export const faqs: FAQ[] = [
   {
     id: "offer",
-    question: "ABOUT THE OFFER",
-    answer:
-      "VIP membership grants access to a range of exclusive benefits, including increased profit margins and enhanced traffic exposure. Higher VIP levels unlock even greater advantages, helping merchants achieve better visibility and improved sales performance compared to non-VIP members.",
+    questionKey: "faqOffer",
+    answerKey: "faqOfferAnswer",
   },
   {
     id: "sales",
-    question: "ABOUT SALES",
-    answer:
-      "As a VIP member, you gain access to priority product placement, increased daily traffic allowances, and higher profit percentages. VIP3 members can achieve up to 35% profit points with daily traffic reaching 8,000-11,000 potential customers.",
+    questionKey: "faqSales",
+    answerKey: "faqSalesAnswer",
   },
   {
     id: "delivery",
-    question: "ABOUT DELIVERY",
-    answer:
-      "VIP members enjoy expedited shipping options and priority order processing. Your products will be featured in faster delivery categories, improving customer satisfaction and increasing repeat purchases.",
+    questionKey: "faqDelivery",
+    answerKey: "faqDeliveryAnswer",
   },
   {
     id: "product",
-    question: "ABOUT THE PRODUCT",
-    answer:
-      "VIP membership allows you to list more products, access premium product categories, and receive enhanced product visibility in search results. Higher VIP tiers unlock exclusive category access and promotional opportunities.",
+    questionKey: "faqProduct",
+    answerKey: "faqProductAnswer",
   },
   {
     id: "upgrade",
-    question: "HOW TO UPGRADE TO A VIP LEVEL",
-    answer:
-      "To upgrade your VIP level, navigate to the Apply VIP section and select your desired tier. Meet the cumulative deposit requirement for your chosen level, and your account will be upgraded automatically. Benefits are activated immediately upon successful upgrade.",
+    questionKey: "faqUpgrade",
+    answerKey: "faqUpgradeAnswer",
   },
 ];

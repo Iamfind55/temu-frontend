@@ -12,6 +12,7 @@ import enLanding from '@/locales/en/landing.json';
 import enCustomerAuth from '@/locales/en/customer-auth.json';
 import enAccount from '@/locales/en/account.json';
 import enShopLanding from '@/locales/en/shop-landing.json';
+import enShopDashboard from '@/locales/en/shop-dashboard.json';
 
 // Thai translations
 import thCommon from '@/locales/th/common.json';
@@ -23,6 +24,7 @@ import thLanding from '@/locales/th/landing.json';
 import thCustomerAuth from '@/locales/th/customer-auth.json';
 import thAccount from '@/locales/th/account.json';
 import thShopLanding from '@/locales/th/shop-landing.json';
+import thShopDashboard from '@/locales/th/shop-dashboard.json';
 
 // Chinese translations
 import zhCommon from '@/locales/zh/common.json';
@@ -34,6 +36,7 @@ import zhLanding from '@/locales/zh/landing.json';
 import zhCustomerAuth from '@/locales/zh/customer-auth.json';
 import zhAccount from '@/locales/zh/account.json';
 import zhShopLanding from '@/locales/zh/shop-landing.json';
+import zhShopDashboard from '@/locales/zh/shop-dashboard.json';
 
 // Vietnamese translations
 import viCommon from '@/locales/vi/common.json';
@@ -45,6 +48,7 @@ import viLanding from '@/locales/vi/landing.json';
 import viCustomerAuth from '@/locales/vi/customer-auth.json';
 import viAccount from '@/locales/vi/account.json';
 import viShopLanding from '@/locales/vi/shop-landing.json';
+import viShopDashboard from '@/locales/vi/shop-dashboard.json';
 
 // Malay translations
 import msCommon from '@/locales/ms/common.json';
@@ -56,6 +60,7 @@ import msLanding from '@/locales/ms/landing.json';
 import msCustomerAuth from '@/locales/ms/customer-auth.json';
 import msAccount from '@/locales/ms/account.json';
 import msShopLanding from '@/locales/ms/shop-landing.json';
+import msShopDashboard from '@/locales/ms/shop-dashboard.json';
 
 export const supportedLanguages = ['en', 'th', 'zh', 'vi', 'ms'] as const;
 export type SupportedLanguage = typeof supportedLanguages[number];
@@ -87,6 +92,7 @@ const resources = {
     'customer-auth': enCustomerAuth,
     account: enAccount,
     'shop-landing': enShopLanding,
+    'shop-dashboard': enShopDashboard,
   },
   th: {
     common: thCommon,
@@ -98,6 +104,7 @@ const resources = {
     'customer-auth': thCustomerAuth,
     account: thAccount,
     'shop-landing': thShopLanding,
+    'shop-dashboard': thShopDashboard,
   },
   zh: {
     common: zhCommon,
@@ -109,6 +116,7 @@ const resources = {
     'customer-auth': zhCustomerAuth,
     account: zhAccount,
     'shop-landing': zhShopLanding,
+    'shop-dashboard': zhShopDashboard,
   },
   vi: {
     common: viCommon,
@@ -120,6 +128,7 @@ const resources = {
     'customer-auth': viCustomerAuth,
     account: viAccount,
     'shop-landing': viShopLanding,
+    'shop-dashboard': viShopDashboard,
   },
   ms: {
     common: msCommon,
@@ -131,6 +140,7 @@ const resources = {
     'customer-auth': msCustomerAuth,
     account: msAccount,
     'shop-landing': msShopLanding,
+    'shop-dashboard': msShopDashboard,
   },
 };
 
@@ -141,7 +151,7 @@ i18n
     resources,
     fallbackLng: 'en',
     defaultNS: 'common',
-    ns: ['common', 'header', 'footer', 'cart', 'product', 'landing', 'customer-auth', 'account', 'shop-landing'],
+    ns: ['common', 'header', 'footer', 'cart', 'product', 'landing', 'customer-auth', 'account', 'shop-landing', 'shop-dashboard'],
     interpolation: {
       escapeValue: false,
     },

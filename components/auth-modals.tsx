@@ -7,6 +7,7 @@ import { useMutation } from "@apollo/client/react"
 import { useState, useEffect, useRef } from "react"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Eye, EyeOff, CircleCheck, ArrowLeft, Loader } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 // type and api:
 import { cn } from "@/lib/utils"
@@ -31,6 +32,7 @@ interface AuthModalsProps {
 
 export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
    const router = useRouter()
+   const { t } = useTranslation("shop-landing")
    const { successMessage, errorMessage } = useToast()
 
    // Shop store
@@ -133,7 +135,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       e.preventDefault()
 
       if (!signInEmail || !signInPassword) {
-         errorMessage({ message: "Please enter email and password" })
+         errorMessage({ message: t("enterEmailPassword") })
          return
       }
 
@@ -156,16 +158,16 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             // Save shop data to store
             setShop(data)
 
-            successMessage({ message: "Login successful!" })
+            successMessage({ message: t("loginSuccessful") })
             onModalChange(null)
             router.push("/shop-dashboard")
          } else {
             const error = response.data?.shopLogin?.error
-            errorMessage({ message: error?.message || "Login failed. Please try again." })
+            errorMessage({ message: error?.message || t("loginFailed") })
          }
       } catch (error) {
          console.error("Login error:", error)
-         errorMessage({ message: "An error occurred during login. Please try again." })
+         errorMessage({ message: t("loginError") })
       }
    }
 
@@ -174,19 +176,19 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
       // Validate empty fields
       if (!signUpEmail || !signUpPassword) {
-         errorMessage({ message: "Please enter email and password" })
+         errorMessage({ message: t("enterEmailPassword") })
          return
       }
 
       // Validate passwords match
       if (signUpPassword !== signUpConfirmPassword) {
-         errorMessage({ message: "Passwords do not match" })
+         errorMessage({ message: t("passwordsDoNotMatch") })
          return
       }
 
       // Validate password requirements
       if (!passwordValidation.minLength || !passwordValidation.mixedChars || !passwordValidation.noEmail) {
-         errorMessage({ message: "Please meet all password requirements" })
+         errorMessage({ message: t("meetPasswordRequirements") })
          return
       }
 
@@ -203,7 +205,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopRegister?.success) {
-            successMessage({ message: "Registration successful! Please verify your email." })
+            successMessage({ message: t("registrationSuccess") })
             // After sign up, show verification modal
             setForgotPasswordEmail(signUpEmail)
             setResendCountdown(60)
@@ -212,11 +214,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             onModalChange("signup-verification")
          } else {
             const error = result?.shopRegister?.error
-            errorMessage({ message: error?.message || "Registration failed. Please try again." })
+            errorMessage({ message: error?.message || t("registrationFailed") })
          }
       } catch (error) {
          console.error("Registration error:", error)
-         errorMessage({ message: "An error occurred during registration. Please try again." })
+         errorMessage({ message: t("registrationError") })
       }
    }
 
@@ -237,7 +239,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       e.preventDefault()
 
       if (!forgotPasswordEmail) {
-         errorMessage({ message: "Please enter your email address" })
+         errorMessage({ message: t("enterEmailAddress") })
          return
       }
 
@@ -251,18 +253,18 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopForgotPassword?.success) {
-            successMessage({ message: "Verification code sent to your email!" })
+            successMessage({ message: t("verificationCodeSent") })
             setResendCountdown(60)
             setCanResend(false)
             setOtpDigits(["", "", "", "", "", ""])
             onModalChange("verification")
          } else {
             const error = result?.shopForgotPassword?.error
-            errorMessage({ message: error?.message || "Failed to send verification code. Please try again." })
+            errorMessage({ message: error?.message || t("verificationCodeFailed") })
          }
       } catch (error) {
          console.error("Forgot password error:", error)
-         errorMessage({ message: "An error occurred. Please try again." })
+         errorMessage({ message: t("genericError") })
       }
    }
 
@@ -303,16 +305,16 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopResendOTP?.success) {
-            successMessage({ message: "Verification code resent!" })
+            successMessage({ message: t("codeResent") })
             setResendCountdown(60)
             setCanResend(false)
          } else {
             const error = result?.shopResendOTP?.error
-            errorMessage({ message: error?.message || "Failed to resend code. Please try again." })
+            errorMessage({ message: error?.message || t("resendFailed") })
          }
       } catch (error) {
          console.error("Resend code error:", error)
-         errorMessage({ message: "An error occurred. Please try again." })
+         errorMessage({ message: t("genericError") })
       }
    }
 
@@ -340,11 +342,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             onModalChange("reset-password")
          } else {
             const error = result?.shopVerifyOTP?.error
-            errorMessage({ message: error?.message || "Verification failed. Please try again." })
+            errorMessage({ message: error?.message || t("verificationFailed") })
          }
       } catch (error) {
          console.error("Verification error:", error)
-         errorMessage({ message: "An error occurred during verification. Please try again." })
+         errorMessage({ message: t("verificationError") })
       }
    }
 
@@ -370,16 +372,16 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             if (token) {
                Cookies.set("shop_auth_token", token)
             }
-            successMessage({ message: "Email verified successfully!" })
+            successMessage({ message: t("emailVerified") })
             onModalChange(null)
             router.push("/shop-landing/application")
          } else {
             const error = result?.shopVerifyOTP?.error
-            errorMessage({ message: error?.message || "Verification failed. Please try again." })
+            errorMessage({ message: error?.message || t("verificationFailed") })
          }
       } catch (error) {
          console.error("Verification error:", error)
-         errorMessage({ message: "An error occurred during verification. Please try again." })
+         errorMessage({ message: t("verificationError") })
       }
    }
 
@@ -388,13 +390,13 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
       // Validate passwords match
       if (newPassword !== confirmNewPassword) {
-         errorMessage({ message: "Passwords do not match" })
+         errorMessage({ message: t("passwordsDoNotMatch") })
          return
       }
 
       // Validate password requirements
       if (!resetPasswordValidation.minLength || !resetPasswordValidation.mixedChars || !resetPasswordValidation.noEmail) {
-         errorMessage({ message: "Please meet all password requirements" })
+         errorMessage({ message: t("meetPasswordRequirements") })
          return
       }
 
@@ -412,7 +414,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopResetPassword?.success) {
-            successMessage({ message: "Password reset successfully! Please sign in." })
+            successMessage({ message: t("passwordResetSuccess") })
             // Clear states
             setVerifiedOtp("")
             setNewPassword("")
@@ -421,11 +423,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             onModalChange("signin")
          } else {
             const error = result?.shopResetPassword?.error
-            errorMessage({ message: error?.message || "Failed to reset password. Please try again." })
+            errorMessage({ message: error?.message || t("passwordResetFailed") })
          }
       } catch (error) {
          console.error("Reset password error:", error)
-         errorMessage({ message: "An error occurred. Please try again." })
+         errorMessage({ message: t("genericError") })
       }
    }
 
@@ -455,16 +457,16 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "signin"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle className="text-md sm:text-xl">Sign in to Temu Seller</DialogTitle>
+                  <DialogTitle className="text-md sm:text-xl">{t("signInToTemuSeller")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
-                     <h2 className="text-md sm:text-2xl font-bold text-center text-gray-900 mb-6">Sign in</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-center text-gray-900 mb-6">{t("signIn")}</h2>
 
                      <form onSubmit={handleSignInSubmit} className="space-y-5">
                         <div>
                            <Label className="text-sm text-gray-900 mb-2 block">
-                              Email or phone number <span className="text-rose-500">*</span>
+                              {t("emailOrPhone")} <span className="text-rose-500">*</span>
                            </Label>
                            <Input
                               type="text"
@@ -476,7 +478,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <div>
                            <Label className="text-sm text-gray-900 mb-2 block">
-                              Password <span className="text-rose-500">*</span>
+                              {t("password")} <span className="text-rose-500">*</span>
                            </Label>
                            <div className="relative">
                               <Input
@@ -499,7 +501,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                                  onClick={openForgotPassword}
                                  className="text-sm text-gray-600 hover:text-gray-900"
                               >
-                                 Forgot password?
+                                 {t("forgotPassword")}
                               </button>
                            </div>
                         </div>
@@ -512,30 +514,30 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            {loginLoading ? (
                               <>
                                  <Loader className="h-5 w-5 animate-spin " />
-                                 Signing in...
+                                 {t("signingIn")}
                               </>
                            ) : (
-                              "Continue"
+                              t("continue")
                            )}
                         </Button>
 
                         <p className="text-center text-xs sm:text-sm text-gray-600">
-                           By continuing, you agree to our{" "}
+                           {t("bySigningUp")}{" "}
                            <Link href="/shop-landing/seller-policy" className="text-xs sm:text-sm text-blue-500 hover:underline">
-                              Seller Privacy Policy
+                              {t("sellerPrivacyPolicy")}
                            </Link>
                            .
                         </p>
 
                         <div className="border-t border-gray-200 pt-4">
                            <p className="text-center text-sm font-semibold text-gray-900">
-                              Don't have a Temu seller account?{" "}&nbsp;
+                              {t("dontHaveAccount")}{" "}&nbsp;
                               <button
                                  type="button"
                                  onClick={switchToSignUp}
                                  className="cursor-pointer text-orange-500 font-semibold hover:underline"
                               >
-                                 Sign up
+                                 {t("signUp")}
                               </button>
                            </p>
                         </div>
@@ -549,22 +551,22 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "signup"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle>Sign up to sell on Temu</DialogTitle>
+                  <DialogTitle>{t("signUpToSellOnTemu")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="bg-orange-50 p-6 sm:p-8 pb-4">
-                     <h2 className="text-xl font-bold text-center text-gray-900 mb-4">Sign up to sell on Temu</h2>
+                     <h2 className="text-xl font-bold text-center text-gray-900 mb-4">{t("signUpToSellOnTemu")}</h2>
 
                      <div className="flex items-center justify-center gap-3">
                         <div className="flex items-baseline gap-1">
                            <span className="text-3xl font-bold text-orange-500">0%</span>
-                           <span className="text-sm text-orange-500">Commission Fees</span>
+                           <span className="text-sm text-orange-500">{t("commissionFees")}</span>
                         </div>
                         <div className="text-gray-300">|</div>
                         <div className="flex items-baseline gap-1">
                            <span className="text-3xl font-bold text-orange-500">1</span>
-                           <span className="text-xl font-bold text-orange-500">Min</span>
-                           <span className="text-sm text-orange-500">Quick Signup</span>
+                           <span className="text-xl font-bold text-orange-500">{t("minute")}</span>
+                           <span className="text-sm text-orange-500">{t("quickSignup")}</span>
                         </div>
                      </div>
                   </div>
@@ -573,7 +575,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                      <form onSubmit={handleSignUpSubmit} className="space-y-4">
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Email or phone number
+                              {t("emailOrPhone")}
                            </Label>
                            <Input
                               type="text"
@@ -584,7 +586,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         </div>
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Password
+                              {t("password")}
                            </Label>
                            <div className="relative">
                               <Input
@@ -606,19 +608,19 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                               <div className="flex items-center gap-2 text-sm">
                                  <CircleCheck className={cn("h-4 w-4", passwordValidation.minLength ? "text-green-500" : "text-gray-300")} />
                                  <span className={cn(passwordValidation.minLength ? "text-gray-700" : "text-gray-500")}>
-                                    Use minimum 8 characters
+                                    {t("passwordMinLength")}
                                  </span>
                               </div>
                               <div className="flex items-center gap-2 text-sm">
                                  <CircleCheck className={cn("h-4 w-4", passwordValidation.mixedChars ? "text-green-500" : "text-gray-300")} />
                                  <span className={cn(passwordValidation.mixedChars ? "text-gray-700" : "text-gray-500")}>
-                                    A mix of letters, numbers and symbols
+                                    {t("passwordMixedChars")}
                                  </span>
                               </div>
                               <div className="flex items-center gap-2 text-sm">
                                  <CircleCheck className={cn("h-4 w-4", passwordValidation.noEmail ? "text-green-500" : "text-gray-300")} />
                                  <span className={cn(passwordValidation.noEmail ? "text-gray-700" : "text-gray-500")}>
-                                    Don't use your email or email prefix in the password
+                                    {t("passwordNoEmail")}
                                  </span>
                               </div>
                            </div>
@@ -626,7 +628,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Confirm password
+                              {t("confirmPassword")}
                            </Label>
                            <div className="relative">
                               <Input
@@ -653,30 +655,30 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            {registerLoading ? (
                               <>
                                  <Loader className="h-5 w-5 animate-spin " />
-                                 Creating account...
+                                 {t("creatingAccount")}
                               </>
                            ) : (
-                              "Continue"
+                              t("continue")
                            )}
                         </Button>
 
                         <p className="text-center text-sm text-gray-600">
-                           By continuing, you agree to our{" "}
+                           {t("bySigningUp")}{" "}
                            <Link href="/shop-landing/seller-policy" className="text-blue-500 underline">
-                              Seller Privacy Policy
+                              {t("sellerPrivacyPolicy")}
                            </Link>
                            .
                         </p>
 
                         <div className="border-t border-gray-200 pt-4">
                            <p className="text-center text-sm font-semibold text-gray-900">
-                              Already have a Temu seller account?{" "}
+                              {t("alreadyHaveAccount")}{" "}
                               <button
                                  type="button"
                                  onClick={switchToSignIn}
                                  className="cursor-pointer text-orange-500 font-semibold hover:underline"
                               >
-                                 Sign in
+                                 {t("signIn")}
                               </button>
                            </p>
                         </div>
@@ -690,7 +692,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "forgot-password"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle>Forgot password</DialogTitle>
+                  <DialogTitle>{t("forgotPasswordTitle")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
@@ -700,24 +702,24 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
                      >
                         <ArrowLeft className="h-4 w-4" />
-                        <span className="text-sm">Back</span>
+                        <span className="text-sm">{t("back")}</span>
                      </button>
 
-                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Forgot password</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">{t("forgotPasswordTitle")}</h2>
                      <p className="text-gray-600 text-sm mb-6">
-                        Enter your email address and we'll send you a verification code.
+                        {t("enterEmailForVerification")}
                      </p>
 
                      <form onSubmit={handleForgotPasswordSubmit} className="space-y-5">
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Email <span className="text-rose-500">*</span>
+                              {t("email")} <span className="text-rose-500">*</span>
                            </Label>
                            <Input
                               type="email"
                               value={forgotPasswordEmail}
                               onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                              placeholder="Enter your email address"
+                              placeholder={t("enterYourEmailAddress")}
                               className="text-sm w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                            />
                         </div>
@@ -730,10 +732,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            {forgotPasswordLoading ? (
                               <>
                                  <Loader className="h-5 w-5 animate-spin " />
-                                 Sending...
+                                 {t("sending")}
                               </>
                            ) : (
-                              "Continue"
+                              t("continue")
                            )}
                         </Button>
                      </form>
@@ -746,7 +748,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "verification"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle>Enter verification code</DialogTitle>
+                  <DialogTitle>{t("enterVerificationCodeTitle")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
@@ -756,12 +758,12 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
                      >
                         <ArrowLeft className="h-4 w-4" />
-                        <span className="text-sm">Back</span>
+                        <span className="text-sm">{t("back")}</span>
                      </button>
 
-                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Enter verification code</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">{t("enterVerificationCodeTitle")}</h2>
                      <p className="text-gray-600 text-sm mb-6">
-                        Enter the 6-digit code sent to{" "}
+                        {t("enterCodeSentTo")}{" "}
                         <span className="text-orange-500 font-medium">{forgotPasswordEmail}</span>
                      </p>
 
@@ -792,7 +794,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                                  canResend && !resendLoading ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
                               )}
                            >
-                              {resendLoading ? "Sending..." : canResend ? "Resend code" : `${resendCountdown}s Resend code`}
+                              {resendLoading ? t("sending") : canResend ? t("resendCode") : t("resendCodeWithTimer", { seconds: resendCountdown })}
                            </button>
                         </div>
 
@@ -804,10 +806,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            {verifyLoading ? (
                               <>
                                  <Loader className="h-5 w-5 animate-spin " />
-                                 Verifying...
+                                 {t("verifying")}
                               </>
                            ) : (
-                              "Continue"
+                              t("continue")
                            )}
                         </Button>
                      </form>
@@ -820,7 +822,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "reset-password"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle>Reset password</DialogTitle>
+                  <DialogTitle>{t("resetPasswordTitle")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
@@ -830,18 +832,18 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
                      >
                         <ArrowLeft className="h-4 w-4" />
-                        <span className="text-sm">Back</span>
+                        <span className="text-sm">{t("back")}</span>
                      </button>
 
-                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">Reset password</h2>
+                     <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">{t("resetPasswordTitle")}</h2>
                      <p className="text-gray-600 text-sm mb-6">
-                        Create a new password for your account.
+                        {t("createNewPassword")}
                      </p>
 
                      <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              New password <span className="text-rose-500">*</span>
+                              {t("newPassword")} <span className="text-rose-500">*</span>
                            </Label>
                            <div className="relative">
                               <Input
@@ -863,19 +865,19 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                               <div className="flex items-center gap-2 text-sm">
                                  <CircleCheck className={cn("h-4 w-4", resetPasswordValidation.minLength ? "text-green-500" : "text-gray-300")} />
                                  <span className={cn(resetPasswordValidation.minLength ? "text-gray-700" : "text-gray-500")}>
-                                    Use minimum 8 characters
+                                    {t("passwordMinLength")}
                                  </span>
                               </div>
                               <div className="flex items-center gap-2 text-sm">
                                  <CircleCheck className={cn("h-4 w-4", resetPasswordValidation.mixedChars ? "text-green-500" : "text-gray-300")} />
                                  <span className={cn(resetPasswordValidation.mixedChars ? "text-gray-700" : "text-gray-500")}>
-                                    A mix of letters, numbers and symbols
+                                    {t("passwordMixedChars")}
                                  </span>
                               </div>
                               <div className="flex items-center gap-2 text-sm">
                                  <CircleCheck className={cn("h-4 w-4", resetPasswordValidation.noEmail ? "text-green-500" : "text-gray-300")} />
                                  <span className={cn(resetPasswordValidation.noEmail ? "text-gray-700" : "text-gray-500")}>
-                                    Don't use your email or email prefix in the password
+                                    {t("passwordNoEmail")}
                                  </span>
                               </div>
                            </div>
@@ -883,7 +885,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <div>
                            <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                              Confirm new password <span className="text-rose-500">*</span>
+                              {t("confirmNewPassword")} <span className="text-rose-500">*</span>
                            </Label>
                            <div className="relative">
                               <Input
@@ -910,10 +912,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            {resetPasswordLoading ? (
                               <>
                                  <Loader className="h-5 w-5 animate-spin " />
-                                 Resetting...
+                                 {t("resetting")}
                               </>
                            ) : (
-                              "Reset password"
+                              t("resetPasswordButton")
                            )}
                         </Button>
                      </form>
@@ -926,7 +928,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "signup-verification"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle>Verify your email</DialogTitle>
+                  <DialogTitle>{t("verifyYourEmail")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
@@ -936,12 +938,12 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
                      >
                         <ArrowLeft className="h-4 w-4" />
-                        <span className="text-sm">Back</span>
+                        <span className="text-sm">{t("back")}</span>
                      </button>
 
-                     <h2 className="text-2xl font-bold text-gray-900 mb-2">Verify your email</h2>
+                     <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("verifyYourEmail")}</h2>
                      <p className="text-gray-600 text-sm mb-6">
-                        Enter the 6-digit code sent to{" "}
+                        {t("enterCodeSentTo")}{" "}
                         <span className="text-orange-500 font-medium">{forgotPasswordEmail}</span>
                      </p>
 
@@ -972,7 +974,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                                  canResend && !resendLoading ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
                               )}
                            >
-                              {resendLoading ? "Sending..." : canResend ? "Resend code" : `${resendCountdown}s Resend code`}
+                              {resendLoading ? t("sending") : canResend ? t("resendCode") : t("resendCodeWithTimer", { seconds: resendCountdown })}
                            </button>
                         </div>
 
@@ -984,10 +986,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            {verifyLoading ? (
                               <>
                                  <Loader className="h-5 w-5 animate-spin " />
-                                 Verifying...
+                                 {t("verifying")}
                               </>
                            ) : (
-                              "Verify & Continue"
+                              t("verifyAndContinue")
                            )}
                         </Button>
                      </form>

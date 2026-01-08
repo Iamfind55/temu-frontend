@@ -26,5 +26,24 @@
   "allRecommended": "All recommended:",
   "noRecommendedYet": "No recommaned yet!",
   "noRecommendedDesc": "There is no recommended or comment for this product yet.",
-  "allReviewsVerified": "All reviews are from verified purchases"
+  "allReviewsVerified": "All reviews are from verified purchases",
+
+  "local": "Local",
+  "sold": "sold",
+  "bestSellingItem": "#{{rank}} BEST-SELLING ITEM in {{category}}",
+  "topRated": "#1 TOP RATED in {{category}}",
+  "starStore": "Star store",
+  "brandLabel": "Brand: {{brand}}",
+  "reviewsCount": "Review",
+  "reviewsCountPlural": "Reviews",
+  "exploreYourInterests": "Explore your interests",
+  "earlyBlackFriday": "EARLY BLACK FRIDAY",
+  "exploreInterests": "EXPLORE YOUR INTERESTS",
+  "errorLoadingProducts": "Error loading products. Please try again later.",
+  "loadMore": "Load More",
+  "loadingText": "Loading...",
+  "reachedEndProducts": "You've reached the end of the products",
+  "expired": "Expired",
+  "addToCart": "Add to cart",
+  "freeShippingText": "Free shipping"
 }

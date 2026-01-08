@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "@apollo/client/react"
 import { ChevronDown, Loader } from "lucide-react"
 import { Button } from "./ui/button"
@@ -10,6 +11,7 @@ import { ProductCard } from "@/components/product-card"
 import { IGetProductsResponse, IProduct } from "@/app/interface/product"
 
 export function ProductGrid() {
+  const { t } = useTranslation("product")
   const [page, setPage] = useState(1)
   const [allProducts, setAllProducts] = useState<Product[]>([])
   const limit = 20
@@ -91,7 +93,7 @@ export function ProductGrid() {
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center text-red-600">
-            Error loading products. Please try again later.
+            {t("errorLoadingProducts")}
           </div>
         </div>
       </section>
@@ -103,9 +105,9 @@ export function ProductGrid() {
       <div className="container mx-auto px-4 space-y-10">
         <div className="text-center">
           <h2 className="text-xl font-bold mb-2 text-balance">
-            <span className="text-red-800">EARLY BLACK FRIDAY</span>
+            <span className="text-red-800">{t("earlyBlackFriday")}</span>
           </h2>
-          <p className="text-2xl font-bold">EXPLORE YOUR INTERESTS</p>
+          <p className="text-2xl font-bold">{t("exploreInterests")}</p>
         </div>
 
         {loading && allProducts.length === 0 ? (
@@ -131,11 +133,11 @@ export function ProductGrid() {
                   {loading ? (
                     <>
                       <Loader className=" h-4 w-4 animate-spin" />
-                      Loading...
+                      {t("loadingText")}
                     </>
                   ) : (
                     <>
-                      <span>Load More</span>
+                      <span>{t("loadMore")}</span>
                       <ChevronDown />
                     </>
                   )}
@@ -145,7 +147,7 @@ export function ProductGrid() {
 
             {!hasMore && allProducts.length > 0 && (
               <div className="text-center text-sm text-muted-foreground">
-                You've reached the end of the products
+                {t("reachedEndProducts")}
               </div>
             )}
           </>

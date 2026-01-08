@@ -46,7 +46,6 @@
   "createAddressSuccess": "สร้างที่อยู่สำเร็จ!",
   "createAddressFailed": "ไม่สามารถสร้างที่อยู่ได้ ลองอีกครั้งภายหลัง!",
   "unexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด ลองอีกครั้งภายหลัง!",
-
   "home": "หน้าแรก",
   "creditBalance": "ยอดเครดิต",
   "deposit": "ฝากเงิน",
@@ -84,7 +83,6 @@
   "depositSuccess": "ฝากเงินสำเร็จ!",
   "depositFailed": "ฝากเงินไม่สำเร็จ",
   "unexpectedErrorHappened": "เกิดข้อผิดพลาดที่ไม่คาดคิด!",
-
   "loadingOrders": "กำลังโหลดคำสั่งซื้อ...",
   "errorLoadingOrders": "เกิดข้อผิดพลาดในการโหลดคำสั่งซื้อ กรุณาลองอีกครั้ง",
   "orderNo": "เลขที่คำสั่งซื้อ",
@@ -117,7 +115,6 @@
   "orderDeletedSuccess": "ลบคำสั่งซื้อสำเร็จ",
   "orderDeleteFailed": "ไม่สามารถลบคำสั่งซื้อได้",
   "errorDeletingOrder": "เกิดข้อผิดพลาดขณะลบคำสั่งซื้อ",
-
   "personalInfo": "ข้อมูลส่วนตัว",
   "loadingProfile": "กำลังโหลดข้อมูลโปรไฟล์ของคุณ...",
   "updateAccountDetails": "อัปเดตรายละเอียดบัญชีและข้อมูลส่วนตัวของคุณ",
@@ -148,5 +145,17 @@
   "saveChanges": "บันทึกการเปลี่ยนแปลง",
   "profileUpdateSuccess": "อัปเดตโปรไฟล์สำเร็จ!",
   "profileUpdateFailed": "ไม่สามารถอัปเดตโปรไฟล์ได้ ลองอีกครั้งภายหลัง!",
-  "imageUploadFailed": "ไม่สามารถอัปโหลดรูปภาพได้ ลองอีกครั้ง!"
+  "imageUploadFailed": "ไม่สามารถอัปโหลดรูปภาพได้ ลองอีกครั้ง!",
+  "navOrders": "Orders",
+  "navCredit": "Credit",
+  "navAddress": "Address",
+  "navProfile": "Profile",
+  "navLogout": "Logout",
+  "yourOrders": "Your orders",
+  "allOrders": "All orders",
+  "yourProfile": "Your profile",
+  "packing": "Packing",
+  "shipping": "Shipping",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
 }

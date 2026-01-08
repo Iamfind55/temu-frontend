@@ -148,5 +148,18 @@
   "saveChanges": "Save Changes",
   "profileUpdateSuccess": "Profile updated successfully!",
   "profileUpdateFailed": "Failed to update profile. Try again later!",
-  "imageUploadFailed": "Failed to upload image. Try again!"
+  "imageUploadFailed": "Failed to upload image. Try again!",
+
+  "navOrders": "Orders",
+  "navCredit": "Credit",
+  "navAddress": "Address",
+  "navProfile": "Profile",
+  "navLogout": "Logout",
+  "yourOrders": "Your orders",
+  "allOrders": "All orders",
+  "yourProfile": "Your profile",
+  "packing": "Packing",
+  "shipping": "Shipping",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
 }

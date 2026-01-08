@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useMutation } from "@apollo/client/react";
+import { useTranslation } from "react-i18next";
 import { User, Mail, Phone, Calendar, Save, X, Loader, Upload } from "lucide-react"
 
 // API & Interfaces
@@ -26,6 +27,7 @@ interface CloudinaryResponse {
 }
 
 export default function ProfilePage() {
+  const { t } = useTranslation('shop-dashboard');
   const { errorMessage, successMessage } = useToast();
 
   // Shop Store from Zustand:
@@ -163,18 +165,18 @@ export default function ProfilePage() {
         setShop(updatedShopData);
 
         successMessage({
-          message: "Profile updated successfully!",
+          message: t('profileUpdatedSuccess'),
           duration: 3000,
         });
       } else {
         errorMessage({
-          message: "Failed to update profile. Try again later!",
+          message: t('profileUpdateFailed'),
           duration: 3000,
         });
       }
     } catch (error) {
       errorMessage({
-        message: "Unexpected error. Try again later!",
+        message: t('unexpectedError'),
         duration: 3000,
       });
     } finally {
@@ -187,8 +189,8 @@ export default function ProfilePage() {
       <div className="mx-auto space-y-6 mb-6 px-1 sm:px-6">
         <Card className="rounded-sm">
           <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>Update your account details and personal information</CardDescription>
+            <CardTitle>{t('personalInformation')}</CardTitle>
+            <CardDescription>{t('updateAccountDetails')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit}>
@@ -218,16 +220,16 @@ export default function ProfilePage() {
                         onClick={() => document.getElementById('profile-image')?.click()}
                         disabled={isLoading}
                       >
-                        Change
+                        {t('change')}
                       </Button>
                       <p className="hidden sm:block mt-2 text-xs text-gray-500">
-                        {selectedLogo ? `Selected: ${selectedLogo.name}` : 'JPG, PNG or GIF. Max size 2MB'}
+                        {selectedLogo ? t('selectedFile', { filename: selectedLogo.name }) : t('imageFormatInfo')}
                       </p>
                     </div>
                   </div>
 
                   <div className="w-1/2">
-                    <p className="text-sm font-medium text-gray-700 mb-2">Shop cover image</p>
+                    <p className="text-sm font-medium text-gray-700 mb-2">{t('shopCoverImage')}</p>
                     {formData.cover ? (
                       <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden">
                         <img
@@ -246,7 +248,7 @@ export default function ProfilePage() {
                     ) : (
                       <label className="flex flex-col items-center justify-center w-full h-30 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
                         <Upload className="w-4 h-4 text-gray-400 mb-2" />
-                        <span className="text-sm text-gray-500">Click to upload</span>
+                        <span className="text-sm text-gray-500">{t('clickToUpload')}</span>
                         <input
                           type="file"
                           accept="image/*"
@@ -260,10 +262,10 @@ export default function ProfilePage() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="fullname">Full Name <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="fullname">{t('fullName')} <span className="text-rose-500">*</span></Label>
                     <Input
                       id="fullname"
-                      placeholder="Enter full name"
+                      placeholder={t('enterFullName')}
                       value={formData.fullname}
                       onChange={handleChange("fullname")}
                       required
@@ -271,10 +273,10 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="username">Username <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="username">{t('username')} <span className="text-rose-500">*</span></Label>
                     <Input
                       id="username"
-                      placeholder="Enter username"
+                      placeholder={t('enterUsername')}
                       value={formData.username}
                       onChange={handleChange("username")}
                       required
@@ -285,13 +287,13 @@ export default function ProfilePage() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="email">{t('emailAddress')} <span className="text-rose-500">*</span></Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <Input
                         id="email"
                         type="email"
-                        placeholder="your.email@example.com"
+                        placeholder={t('emailPlaceholder')}
                         className="pl-10"
                         value={formData.email}
                         onChange={handleChange("email")}
@@ -302,13 +304,13 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="phone">{t('phoneNumber')} <span className="text-rose-500">*</span></Label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="+1 (555) 000-0000"
+                        placeholder={t('phonePlaceholder')}
                         className="pl-10"
                         value={formData.phoneNumber}
                         onChange={handleChange("phoneNumber")}
@@ -321,10 +323,10 @@ export default function ProfilePage() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="storeName">Store Name <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="storeName">{t('storeName')} <span className="text-rose-500">*</span></Label>
                     <Input
                       id="storeName"
-                      placeholder="Enter store name"
+                      placeholder={t('enterStoreName')}
                       value={formData.storeName}
                       onChange={handleChange("storeName")}
                       required
@@ -333,7 +335,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="birthday">Birthday <span className="text-rose-500">*</span></Label>
+                    <Label htmlFor="birthday">{t('birthday')} <span className="text-rose-500">*</span></Label>
                     <div className="relative">
                       <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                       <Input
@@ -349,10 +351,10 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="remark">Remark</Label>
+                  <Label htmlFor="remark">{t('remark')}</Label>
                   <Textarea
                     id="remark"
-                    placeholder="Enter remark"
+                    placeholder={t('enterRemark')}
                     value={formData.remark}
                     onChange={handleChange("remark")}
                     disabled={isLoading}
@@ -365,15 +367,15 @@ export default function ProfilePage() {
               <div>
                 <div className="mb-8">
                   <Label className="text-sm font-semibold text-gray-900 mb-2 block">
-                    ID Card
+                    {t('idCard')}
                   </Label>
                   <p className="text-sm text-gray-500 mb-4">
-                    Your verified ID card images (read-only).
+                    {t('idCardReadOnly')}
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">Front side</p>
+                      <p className="text-sm font-medium text-gray-700 mb-2">{t('frontSide')}</p>
                       {formData.idCardFront ? (
                         <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                           <img
@@ -385,13 +387,13 @@ export default function ProfilePage() {
                       ) : (
                         <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 rounded-lg bg-gray-50">
                           <User className="w-8 h-8 text-gray-300 mb-2" />
-                          <span className="text-sm text-gray-400">No image</span>
+                          <span className="text-sm text-gray-400">{t('noImage')}</span>
                         </div>
                       )}
                     </div>
 
                     <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">Back side</p>
+                      <p className="text-sm font-medium text-gray-700 mb-2">{t('backSide')}</p>
                       {formData.idCardBack ? (
                         <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
                           <img
@@ -403,7 +405,7 @@ export default function ProfilePage() {
                       ) : (
                         <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 rounded-lg bg-gray-50">
                           <User className="w-8 h-8 text-gray-300 mb-2" />
-                          <span className="text-sm text-gray-400">No image</span>
+                          <span className="text-sm text-gray-400">{t('noImage')}</span>
                         </div>
                       )}
                     </div>
@@ -418,7 +420,7 @@ export default function ProfilePage() {
                   disabled={isLoading}
                 >
                   {isLoading ? <Loader size={16} className="animate-spin" /> : <Save size={16} />}
-                  {isLoading ? "Saving..." : "Save Changes"}
+                  {isLoading ? t('saving') : t('saveChanges')}
                 </Button>
               </div>
             </form>

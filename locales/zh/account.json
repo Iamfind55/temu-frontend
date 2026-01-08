@@ -46,7 +46,6 @@
   "createAddressSuccess": "地址创建成功！",
   "createAddressFailed": "无法创建地址，请稍后重试！",
   "unexpectedError": "发生意外错误，请稍后重试！",
-
   "home": "首页",
   "creditBalance": "信用余额",
   "deposit": "充值",
@@ -84,7 +83,6 @@
   "depositSuccess": "充值成功！",
   "depositFailed": "充值失败",
   "unexpectedErrorHappened": "发生意外错误！",
-
   "loadingOrders": "正在加载订单...",
   "errorLoadingOrders": "加载订单时出错，请重试。",
   "orderNo": "订单号",
@@ -117,7 +115,6 @@
   "orderDeletedSuccess": "订单删除成功",
   "orderDeleteFailed": "无法删除订单",
   "errorDeletingOrder": "删除订单时发生错误",
-
   "personalInfo": "个人信息",
   "loadingProfile": "正在加载您的个人资料...",
   "updateAccountDetails": "更新您的账户详情和个人信息",
@@ -148,5 +145,17 @@
   "saveChanges": "保存更改",
   "profileUpdateSuccess": "个人资料更新成功！",
   "profileUpdateFailed": "无法更新个人资料，请稍后重试！",
-  "imageUploadFailed": "无法上传图片，请重试！"
+  "imageUploadFailed": "无法上传图片，请重试！",
+  "navOrders": "Orders",
+  "navCredit": "Credit",
+  "navAddress": "Address",
+  "navProfile": "Profile",
+  "navLogout": "Logout",
+  "yourOrders": "Your orders",
+  "allOrders": "All orders",
+  "yourProfile": "Your profile",
+  "packing": "Packing",
+  "shipping": "Shipping",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
 }

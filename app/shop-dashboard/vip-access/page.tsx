@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useMutation, useLazyQuery } from "@apollo/client/react"
 import { faqs, vipLevels } from "./constant"
 import { Button } from "@/components/ui/button"
@@ -46,11 +47,11 @@ interface ShopProfileResponse {
    }
 }
 
-// VIP descriptions
-const vipDescriptions = {
-   "1": "Upgrade VIP1: The accumulated amount deposited in the store is 15,000 USDT, the reward is 1,500 USDT, the profit point is increased to 25%, the daily traffic can reach 3,000-5,000 people, the VIP store function can be opened!, and fixed national international stations can be opened",
-   "2": "Upgrade the VIP2 store to deposit a cumulative amount of 30,000 USDT and receive a reward of 3,000 USDT. The profit point is increased to 30%. The daily traffic can reach 5,000-8,000 people. The VIP business post function can be activated, and the national international service station can be opened!",
-   "3": "Upgrade the VIP3 store to deposit a cumulative amount of 45,000 USDT, and the reward is 4,500USD. The profit point is increased to 35%. The daily flow of people can reach 8,000-11,000 people. The VIP store function can be opened, and the national international service station can be opened!",
+// VIP description keys
+const vipDescriptionKeys = {
+   "1": "vip1Description",
+   "2": "vip2Description",
+   "3": "vip3Description",
 }
 
 // Mutation response type
@@ -66,6 +67,7 @@ interface VIPRequestResponse {
 }
 
 export default function VIPAccessPage() {
+   const { t } = useTranslation('shop-dashboard')
    const { successMessage } = useToast()
    const setShop = useShopStore((state) => state.setShop)
    const [openFaq, setOpenFaq] = useState<string | null>("offer")
@@ -111,7 +113,7 @@ export default function VIPAccessPage() {
          })
 
          if (result.data?.shopRequestVIP?.success) {
-            successMessage({ message: `Successfully applied for VIP${selectedVIP}! Your request is being processed.` })
+            successMessage({ message: t('vipApplySuccess', { level: selectedVIP }) })
             setIsDialogOpen(false)
 
             // Fetch latest shop profile and update store
@@ -122,10 +124,10 @@ export default function VIPAccessPage() {
             }
          } else {
             const error = result.data?.shopRequestVIP?.error
-            setErrorMessage(error?.message || "Failed to apply for VIP. Please try again.")
+            setErrorMessage(error?.message || t('vipApplyFailed'))
          }
       } catch (error: any) {
-         setErrorMessage(error?.message || "An error occurred while applying for VIP.")
+         setErrorMessage(error?.message || t('vipApplyError'))
       } finally {
          setIsApplying(false)
       }
@@ -138,14 +140,13 @@ export default function VIPAccessPage() {
                <div className="text-center mb-8 sm:mb-12">
                   <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
                      <Crown className="h-4 w-4" />
-                     Exclusive Membership Program
+                     {t('exclusiveMembershipProgram')}
                   </div>
                   <h1 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
-                     Unlock Your Store's Full Potential
+                     {t('unlockStorePotential')}
                   </h1>
                   <p className="text-gray-600 text-xs sm:text-sm max-w-2xl mx-auto">
-                     Join our VIP program and gain access to increased profit margins, enhanced traffic exposure,
-                     and exclusive features that help your business grow.
+                     {t('vipProgramDescription')}
                   </p>
                </div>
 
@@ -155,45 +156,45 @@ export default function VIPAccessPage() {
                         <TrendingUp className="h-4 w-4 text-green-600" />
                      </div>
                      <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">35%</p>
-                     <p className="text-xs text-gray-500">Max Profit Point</p>
+                     <p className="text-xs text-gray-500">{t('maxProfitPoint')}</p>
                   </div>
                   <div className="bg-white rounded-md p-4 border border-gray-200 text-center">
                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                         <Users className="h-4 w-4 text-blue-600" />
                      </div>
                      <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">11K+</p>
-                     <p className="text-xs text-gray-500">Daily Traffic</p>
+                     <p className="text-xs text-gray-500">{t('dailyTraffic')}</p>
                   </div>
                   <div className="bg-white rounded-md p-4 border border-gray-200 text-center">
                      <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
                         <Gift className="h-4 w-4 text-purple-600" />
                      </div>
                      <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">$4.5K</p>
-                     <p className="text-xs text-gray-500">Max Reward</p>
+                     <p className="text-xs text-gray-500">{t('maxReward')}</p>
                   </div>
                   <div className="bg-white rounded-md p-4 border border-gray-200 text-center">
                      <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
                         <Globe className="h-4 w-4 text-orange-600" />
                      </div>
-                     <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">Global</p>
-                     <p className="text-xs text-gray-500">Market Access</p>
+                     <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">{t('global')}</p>
+                     <p className="text-xs text-gray-500">{t('marketAccess')}</p>
                   </div>
                </div>
 
                <div className="mb-8 sm:mb-12">
                   <div className="text-center mb-8">
-                     <h2 className="text-md sm:text-lg font-bold text-gray-900 mb-2">VIP Levels</h2>
-                     <p className="text-gray-600 text-sm">Choose the plan that best fits your business needs</p>
+                     <h2 className="text-md sm:text-lg font-bold text-gray-900 mb-2">{t('vipLevels')}</h2>
+                     <p className="text-gray-600 text-sm">{t('vipLevelsDescription')}</p>
                   </div>
 
                   <div className="hidden md:grid md:grid-cols-3 gap-3">
                      {vipLevels.map((level) => (
-                        <VIPCard key={level.id} level={level} />
+                        <VIPCard key={level.id} level={level} t={t} />
                      ))}
                   </div>
 
                   <div className="md:hidden">
-                     <VIPCarousel />
+                     <VIPCarousel t={t} />
                   </div>
                </div>
 
@@ -202,11 +203,10 @@ export default function VIPAccessPage() {
                      <div className="text-center md:text-left">
                         <div className="flex items-center justify-center md:justify-start gap-2 mb-3">
                            <Zap className="h-6 w-6" />
-                           <h3 className="text-md sm:text-lg font-bold">Ready to Upgrade?</h3>
+                           <h3 className="text-md sm:text-lg font-bold">{t('readyToUpgrade')}</h3>
                         </div>
                         <p className="text-white/90 text-sm sm:text-sm max-w-lg">
-                           Start your VIP journey today and unlock exclusive benefits. Select products to apply
-                           for VIP status and watch your business grow.
+                           {t('startVipJourney')}
                         </p>
                      </div>
                      <div className="flex flex-col sm:flex-row gap-3">
@@ -216,7 +216,7 @@ export default function VIPAccessPage() {
                            className="bg-white border border-wite text-orange-600 hover:bg-orange-50 font-semibold px-8 py-4 rounded-md"
                         >
                            <Crown className="h-5 w-5" />
-                           Apply for VIP
+                           {t('applyForVip')}
                         </Button>
                         <Link href="/shop-dashboard/product/apply-new">
                            <Button
@@ -225,7 +225,7 @@ export default function VIPAccessPage() {
                               className="border border-white text-white hover:bg-white/10 hover:text-white font-semibold px-8 py-4 rounded-md bg-transparent"
                            >
                               <Store className="h-5 w-5" />
-                              Apply Products
+                              {t('applyProducts')}
                            </Button>
                         </Link>
                      </div>
@@ -235,10 +235,10 @@ export default function VIPAccessPage() {
                <div className="bg-white rounded-sm sm:border sm:border-gray-200 p-2 sm:p-10">
                   <div className="text-center mb-8">
                      <h2 className="text-md sm:text-lg font-bold text-gray-900 mb-2">
-                        Frequently Asked Questions
+                        {t('frequentlyAskedQuestions')}
                      </h2>
                      <p className="text-gray-600 text-sm">
-                        Find answers to common questions about our VIP program
+                        {t('faqDescription')}
                      </p>
                   </div>
 
@@ -249,16 +249,17 @@ export default function VIPAccessPage() {
                            faq={faq}
                            isOpen={openFaq === faq.id}
                            onToggle={() => handleFaqToggle(faq.id)}
+                           t={t}
                         />
                      ))}
                   </div>
 
                   <div className="mt-8 text-center">
-                     <p className="text-gray-500 text-sm mb-3">Still have questions?</p>
+                     <p className="text-gray-500 text-sm mb-3">{t('stillHaveQuestions')}</p>
                      <Link href="/shop-dashboard/support">
                         <Button variant="outline" className="rounded-md px-6">
                            <Shield className="h-4 w-4" />
-                           Contact Support
+                           {t('contactSupport')}
                         </Button>
                      </Link>
                   </div>
@@ -272,7 +273,7 @@ export default function VIPAccessPage() {
                <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
                      <Crown className="h-5 w-5 text-orange-500" />
-                     Apply for VIP Level
+                     {t('applyForVipLevel')}
                   </DialogTitle>
                </DialogHeader>
 
@@ -304,7 +305,7 @@ export default function VIPAccessPage() {
 
                   <div className="mt-8 p-4 bg-orange-50 rounded-lg border border-orange-200">
                      <p className="text-sm text-gray-700 leading-relaxed">
-                        {vipDescriptions[selectedVIP]}
+                        {t(vipDescriptionKeys[selectedVIP])}
                      </p>
                   </div>
 
@@ -322,7 +323,7 @@ export default function VIPAccessPage() {
                      onClick={handleCloseDialog}
                      disabled={isApplying}
                   >
-                     Close
+                     {t('close')}
                   </Button>
                   <Button
                      onClick={handleApplyVIP}
@@ -332,10 +333,10 @@ export default function VIPAccessPage() {
                      {isApplying ? (
                         <>
                            <Loader className="h-4 w-4 animate-spin" />
-                           Applying...
+                           {t('applying')}
                         </>
                      ) : (
-                        "Apply Now"
+                        t('applyNow')
                      )}
                   </Button>
                </DialogFooter>

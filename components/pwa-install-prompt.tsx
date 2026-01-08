@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useTranslation } from "react-i18next"
 import { X, Download, Smartphone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -29,6 +30,7 @@ function markShownThisSession(): void {
 }
 
 export function PWAInstallPrompt() {
+  const { t } = useTranslation("common")
   const [isOpen, setIsOpen] = useState(false)
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isIOS, setIsIOS] = useState(false)
@@ -129,7 +131,7 @@ export function PWAInstallPrompt() {
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Smartphone className="h-5 w-5 text-orange-500" />
-              Install Temu App
+              {t("installTemuApp")}
             </DialogTitle>
             <button
               onClick={handleDismiss}
@@ -150,40 +152,40 @@ export function PWAInstallPrompt() {
               />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">Temu Shopping</h3>
-              <p className="text-sm text-gray-500">Shop Like a Billionaire</p>
+              <h3 className="font-semibold text-gray-900">{t("temuShopping")}</h3>
+              <p className="text-sm text-gray-500">{t("shopLikeBillionaire")}</p>
             </div>
           </div>
 
           <div className="space-y-2 text-sm text-gray-600">
-            <p className="font-medium text-gray-900">Why install our app?</p>
+            <p className="font-medium text-gray-900">{t("whyInstallApp")}</p>
             <ul className="space-y-1.5">
               <li className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-                Faster browsing experience
+                {t("fasterBrowsing")}
               </li>
               <li className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-                Works offline
+                {t("worksOffline")}
               </li>
               <li className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-                Easy access from home screen
+                {t("easyAccess")}
               </li>
               <li className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-                Get notifications for deals
+                {t("getNotifications")}
               </li>
             </ul>
           </div>
 
           {isIOS ? (
             <div className="rounded-lg bg-gray-50 p-4 space-y-2">
-              <p className="text-sm font-medium text-gray-900">How to install on iOS:</p>
+              <p className="text-sm font-medium text-gray-900">{t("howToInstallIos")}</p>
               <ol className="text-sm text-gray-600 space-y-1">
-                <li>1. Tap the <span className="font-medium">Share</span> button in Safari</li>
-                <li>2. Scroll down and tap <span className="font-medium">"Add to Home Screen"</span></li>
-                <li>3. Tap <span className="font-medium">"Add"</span> to confirm</li>
+                <li>1. {t("tapShare")}</li>
+                <li>2. {t("scrollAddHome")}</li>
+                <li>3. {t("tapAddConfirm")}</li>
               </ol>
             </div>
           ) : (
@@ -193,14 +195,14 @@ export function PWAInstallPrompt() {
                 variant="outline"
                 className="flex-1"
               >
-                Maybe Later
+                {t("maybeLater")}
               </Button>
               <Button
                 onClick={handleInstall}
                 className="flex-1 bg-orange-500 hover:bg-orange-600 text-white"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Install Now
+                {t("installNow")}
               </Button>
             </div>
           )}
@@ -211,7 +213,7 @@ export function PWAInstallPrompt() {
               variant="outline"
               className="w-full"
             >
-              Got it
+              {t("gotIt")}
             </Button>
           )}
         </div>

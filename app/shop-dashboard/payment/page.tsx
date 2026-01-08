@@ -3,6 +3,7 @@
 import React from "react";
 import { Loader, Save } from "lucide-react";
 import { useMutation } from "@apollo/client/react";
+import { useTranslation } from "react-i18next";
 
 // API & Types
 import { useToast } from "@/lib/toast";
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { CardDescription, CardTitle } from "@/components/ui/card";
 
 export default function PaymentMethodPage() {
+   const { t } = useTranslation('shop-dashboard');
    const { errorMessage, successMessage } = useToast();
 
    // Shop Store from Zustand
@@ -78,18 +80,18 @@ export default function PaymentMethodPage() {
             setShop(updatedShopData);
 
             successMessage({
-               message: "Payment method updated successfully!",
+               message: t('paymentMethodUpdatedSuccess'),
                duration: 3000,
             });
          } else {
             errorMessage({
-               message: "Failed to update payment method. Try again later!",
+               message: t('paymentMethodUpdateFailed'),
                duration: 3000,
             });
          }
       } catch (error) {
          errorMessage({
-            message: "Unexpected error. Try again later!",
+            message: t('unexpectedError'),
             duration: 3000,
          });
       } finally {
@@ -100,45 +102,45 @@ export default function PaymentMethodPage() {
       <div className="w-full p-2 sm:p-8">
          <form onSubmit={handleSubmit} className="border space-y-8 p-4 rounded-sm">
             <div className="space-y-2">
-               <CardTitle>Payment setting</CardTitle>
-               <CardDescription>Update your payment address for receive funds from Temushop</CardDescription>
+               <CardTitle>{t('paymentSetting')}</CardTitle>
+               <CardDescription>{t('paymentSettingDescription')}</CardDescription>
             </div>
             <div className="space-y-6 sm:space-y-8">
                <div className="space-y-2">
-                  <Label htmlFor="wallet_address">Wallet address (USDT) <span className="text-rose-500">*</span></Label>
+                  <Label htmlFor="wallet_address">{t('walletAddressLabel')} <span className="text-rose-500">*</span></Label>
                   <Input
                      id="wallet_address"
-                     placeholder="Enter wallet address"
+                     placeholder={t('enterWalletAddress')}
                      value={formData.walletAddress}
                      onChange={handleChange("walletAddress")}
                      disabled={isLoading}
                   />
                </div>
                <div className="space-y-2">
-                  <Label htmlFor="bank_name">Bank Name <span className="text-rose-500">*</span></Label>
+                  <Label htmlFor="bank_name">{t('bankNameLabel')} <span className="text-rose-500">*</span></Label>
                   <Input
                      id="bank_name"
-                     placeholder="Enter bank name"
+                     placeholder={t('enterBankName')}
                      value={formData.bankName}
                      onChange={handleChange("bankName")}
                      disabled={isLoading}
                   />
                </div>
                <div className="space-y-2">
-                  <Label htmlFor="bank_account_name">Bank Account Name <span className="text-rose-500">*</span></Label>
+                  <Label htmlFor="bank_account_name">{t('bankAccountNameLabel')} <span className="text-rose-500">*</span></Label>
                   <Input
                      id="bank_account_name"
-                     placeholder="Enter bank account name"
+                     placeholder={t('enterBankAccountName')}
                      value={formData.bankAccountName}
                      onChange={handleChange("bankAccountName")}
                      disabled={isLoading}
                   />
                </div>
                <div className="space-y-2">
-                  <Label htmlFor="bank_account_number">Bank account number <span className="text-rose-500">*</span></Label>
+                  <Label htmlFor="bank_account_number">{t('bankAccountNumberLabel')} <span className="text-rose-500">*</span></Label>
                   <Input
                      id="bank_account_number"
-                     placeholder="Enter bank account number"
+                     placeholder={t('enterBankAccountNumber')}
                      value={formData.bankAccountNumber}
                      onChange={handleChange("bankAccountNumber")}
                      disabled={isLoading}
@@ -153,7 +155,7 @@ export default function PaymentMethodPage() {
                   disabled={isLoading}
                >
                   {isLoading ? <Loader size={16} className="animate-spin" /> : <Save size={16} />}
-                  {isLoading ? "Saving..." : "Save Changes"}
+                  {isLoading ? t('saving') : t('saveChanges')}
                </Button>
             </div>
          </form>

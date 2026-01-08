@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "react-i18next"
 import { useQuery, useMutation, useLazyQuery, useSubscription } from "@apollo/client/react"
 import { MessageCircle, X, Send, Smile, ArrowLeft, Loader2, Image as ImageIcon, Loader, Check, CheckCheck } from "lucide-react"
 import { useShopStore } from "@/store/shop-store"
@@ -96,6 +97,7 @@ const EMOJI_LIST = [
 ]
 
 export function ShopLiveChat() {
+   const { t } = useTranslation("shop-dashboard")
    const { shop } = useShopStore()
    const [isOpen, setIsOpen] = useState(false)
    const [isMinimized, setIsMinimized] = useState(false)
@@ -379,7 +381,7 @@ export function ShopLiveChat() {
                className="fixed bottom-20 sm:bottom-6 right-6 z-50 flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-3 rounded-full shadow-lg transition-all duration-300 hover:scale-105"
             >
                <MessageCircle className="h-4 w-4 animate-bounce" />
-               <span className="font-medium">Chat</span>
+               <span className="font-medium">{t("chatLabel")}</span>
             </button>
          )}
 
@@ -412,7 +414,7 @@ export function ShopLiveChat() {
                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                               <MessageCircle className="h-3 w-3 text-white" />
                            </div>
-                           <span className="text-sm font-semibold text-gray-800">Temu Support</span>
+                           <span className="text-sm font-semibold text-gray-800">{t("temuSupport")}</span>
                         </div>
                      </div>
                   </div>
@@ -438,8 +440,8 @@ export function ShopLiveChat() {
                         ) : messages.length === 0 ? (
                            <div className="flex flex-col items-center justify-center h-full text-gray-500">
                               <MessageCircle className="h-12 w-12 mb-2 text-gray-300" />
-                              <p className="text-sm">No messages yet</p>
-                              <p className="text-xs">Start a conversation with support</p>
+                              <p className="text-sm">{t("noMessagesYet")}</p>
+                              <p className="text-xs">{t("startConversation")}</p>
                            </div>
                         ) : (
                            <>
@@ -448,7 +450,7 @@ export function ShopLiveChat() {
                                     {msg.sender_type === "ADMIN" ? (
                                        <div className="flex flex-col gap-1">
                                           <span className="text-xs text-gray-500 ml-1">
-                                             Temu Support {formatTime(msg.created_at)}
+                                             {t("temuSupport")} {formatTime(msg.created_at)}
                                           </span>
                                           <div className="flex items-start gap-2">
                                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
@@ -559,7 +561,7 @@ export function ShopLiveChat() {
                                  value={message}
                                  onChange={(e) => setMessage(e.target.value)}
                                  onKeyPress={handleKeyPress}
-                                 placeholder="Write a message..."
+                                 placeholder={t("writeMessage")}
                                  disabled={isSending}
                                  className="w-full px-4 py-2.5 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 pr-20"
                               />
@@ -596,7 +598,7 @@ export function ShopLiveChat() {
                         {/* Powered by */}
                         <div className="text-center mt-2">
                            <span className="text-xs text-gray-400">
-                              Powered by{" "}
+                              {t("poweredBy")}{" "}
                               <span className="font-semibold text-orange-500">Temu</span>
                            </span>
                         </div>

@@ -80,5 +80,14 @@
   "errorOccurred": "Ralat berlaku",
   "orderProcessingError": "Ralat berlaku semasa memproses pesanan",
   "lightningDeal": "Tawaran Kilat",
-  "color": "Warna"
+  "color": "Warna",
+  "shoppingCart": "Shopping Cart",
+  "yourCartEmpty": "Your cart is empty",
+  "addItemsGetStarted": "Add items to get started",
+  "continueShopping": "Continue Shopping",
+  "outOfStock": "Out of stock",
+  "proceedToCheckout": "Proceed to Checkout",
+  "addToCartExclaim": "Add to cart!",
+  "allDetails": "All details",
+  "sold": "sold"
 }

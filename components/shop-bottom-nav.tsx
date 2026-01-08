@@ -17,6 +17,7 @@ import Link from "next/link"
 import Cookies from "js-cookie"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "@apollo/client/react"
 import { useRouter, usePathname } from "next/navigation"
 import { useShopStore } from "@/store/shop-store"
@@ -50,6 +51,7 @@ import {
 } from "@/components/ui/sheet"
 
 export function ShopBottomNav() {
+   const { t } = useTranslation("shop-dashboard")
    const router = useRouter()
    const pathname = usePathname()
    const { shop, clearShop } = useShopStore()
@@ -112,7 +114,7 @@ export function ShopBottomNav() {
    const navItems = [
       {
          id: "orders",
-         label: "Orders",
+         labelKey: "navOrders",
          icon: ShoppingCart,
          href: "/shop-dashboard/orders",
          onClick: () => router.push("/shop-dashboard/orders"),
@@ -120,14 +122,14 @@ export function ShopBottomNav() {
       },
       {
          id: "products",
-         label: "Products",
+         labelKey: "navProducts",
          icon: Apple,
          href: "/shop-dashboard/product",
          onClick: () => setProductSheetOpen(true),
       },
       {
          id: "credits",
-         label: "Credits",
+         labelKey: "navCredits",
          icon: CreditCard,
          href: "/shop-dashboard/credit",
          onClick: () => router.push("/shop-dashboard/credit"),
@@ -135,7 +137,7 @@ export function ShopBottomNav() {
       },
       {
          id: "notification",
-         label: "Notification",
+         labelKey: "navNotification",
          icon: Bell,
          href: "/shop-dashboard/notifications",
          onClick: () => router.push("/shop-dashboard/notifications"),
@@ -143,24 +145,24 @@ export function ShopBottomNav() {
       },
       {
          id: "setting",
-         label: "Setting",
+         labelKey: "navSetting",
          icon: Settings,
          onClick: () => setSettingSheetOpen(true),
       },
    ]
 
    const productSubItems = [
-      { label: "All products", href: "/shop-dashboard/product", icon: Apple },
-      { label: "Apply new", href: "/shop-dashboard/product/apply-new", icon: Plus },
-      { label: "Apply VIP product", href: "/shop-dashboard/product/apply-vip", icon: Award },
+      { labelKey: "navAllProducts", href: "/shop-dashboard/product", icon: Apple },
+      { labelKey: "navApplyNew", href: "/shop-dashboard/product/apply-new", icon: Plus },
+      { labelKey: "navApplyVip", href: "/shop-dashboard/product/apply-vip", icon: Award },
    ]
 
    const settingSubItems = [
-      { label: "Profile", href: "/shop-dashboard/profile", icon: User },
-      { label: "Addresses", href: "/shop-dashboard/addresses", icon: MapPin },
-      { label: "Payment method", href: "/shop-dashboard/payment", icon: CreditCard },
-      { label: "VIP Access", href: "/shop-dashboard/vip-access", icon: Award },
-      { label: "Permission", href: "/shop-dashboard/permission", icon: ShieldCheck },
+      { labelKey: "navProfile", href: "/shop-dashboard/profile", icon: User },
+      { labelKey: "navAddresses", href: "/shop-dashboard/addresses", icon: MapPin },
+      { labelKey: "navPaymentMethod", href: "/shop-dashboard/payment", icon: CreditCard },
+      { labelKey: "navVipAccess", href: "/shop-dashboard/vip-access", icon: Award },
+      { labelKey: "navPermission", href: "/shop-dashboard/permission", icon: ShieldCheck },
    ]
 
    return (
@@ -189,7 +191,7 @@ export function ShopBottomNav() {
                               </span>
                            )}
                         </div>
-                        <span className="text-xs mt-1">{item.label}</span>
+                        <span className="text-xs mt-1">{t(item.labelKey)}</span>
                      </button>
                   )
                })}
@@ -200,7 +202,7 @@ export function ShopBottomNav() {
          <Sheet open={productSheetOpen} onOpenChange={setProductSheetOpen}>
             <SheetContent side="bottom" className="h-auto rounded-t-xl">
                <SheetHeader className="border-b">
-                  <SheetTitle>Products</SheetTitle>
+                  <SheetTitle>{t("sheetProducts")}</SheetTitle>
                </SheetHeader>
                <div className="grid gap-2 pb-4">
                   {productSubItems.map((item) => {
@@ -220,7 +222,7 @@ export function ShopBottomNav() {
                            )}
                         >
                            <Icon className="h-5 w-5" />
-                           <span className="font-medium">{item.label}</span>
+                           <span className="font-medium">{t(item.labelKey)}</span>
                         </Link>
                      )
                   })}
@@ -232,7 +234,7 @@ export function ShopBottomNav() {
          <Sheet open={settingSheetOpen} onOpenChange={setSettingSheetOpen}>
             <SheetContent side="bottom" className="h-auto rounded-t-xl">
                <SheetHeader className="border-b">
-                  <SheetTitle>Settings</SheetTitle>
+                  <SheetTitle>{t("sheetSettings")}</SheetTitle>
                </SheetHeader>
                <div className="grid gap-2 pb-4">
                   {settingSubItems.map((item) => {
@@ -252,7 +254,7 @@ export function ShopBottomNav() {
                            )}
                         >
                            <Icon className="h-5 w-5" />
-                           <span className="font-medium">{item.label}</span>
+                           <span className="font-medium">{t(item.labelKey)}</span>
                         </Link>
                      )
                   })}
@@ -266,7 +268,7 @@ export function ShopBottomNav() {
                      className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 transition-colors mt-2 border-t pt-4"
                   >
                      <LogOut className="h-5 w-5" />
-                     <span className="font-medium">Logout</span>
+                     <span className="font-medium">{t("navLogout")}</span>
                   </button>
                </div>
             </SheetContent>

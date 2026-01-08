@@ -80,5 +80,15 @@
   "errorOccurred": "An error occurred",
   "orderProcessingError": "An error occurred while processing your order",
   "lightningDeal": "LIGHTNING DEAL",
-  "color": "Color"
+  "color": "Color",
+
+  "shoppingCart": "Shopping Cart",
+  "yourCartEmpty": "Your cart is empty",
+  "addItemsGetStarted": "Add items to get started",
+  "continueShopping": "Continue Shopping",
+  "outOfStock": "Out of stock",
+  "proceedToCheckout": "Proceed to Checkout",
+  "addToCartExclaim": "Add to cart!",
+  "allDetails": "All details",
+  "sold": "sold"
 }

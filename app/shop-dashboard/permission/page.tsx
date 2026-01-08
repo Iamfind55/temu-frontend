@@ -1,11 +1,13 @@
 "use client"
 
 import Link from "next/link"
+import { useTranslation } from "react-i18next"
 import { permissions } from "./constants"
 import { Lock, ChevronRight } from "lucide-react"
 import { PermissionCard } from "./components/permissionCard"
 
 export default function PermissionPage() {
+   const { t } = useTranslation('shop-dashboard')
    const simplePermissions = permissions.filter((p) => !p.hasDescription)
    const detailedPermissions = permissions.filter((p) => p.hasDescription && !p.isLast)
    const otherPermission = permissions.find((p) => p.isLast)
@@ -20,14 +22,14 @@ export default function PermissionPage() {
                   </div>
                   <div>
                      <h1 className="text-sm sm:xl font-bold text-green-700 leading-tight">
-                        Temu DOES NOT obtain your permissions on the browser
+                        {t('permissionTitle')}
                      </h1>
                      <div
                         className="text-xs text-gray-500 flex flex-col sm:flex-row items-start sm:items-center gap-1 sm:text-base mt-1 hover:underline"
                      >
-                        <p>To learn about the permissions of Temu App,</p>
+                        <p>{t('permissionLearnMore')}</p>
                         <Link href="#" className="flex items-center justify-center text-orange-500 hover:underline">
-                           click here
+                           {t('clickHere')}
                            <ChevronRight className="h-4 w-4" />
                         </Link>
                      </div>
@@ -36,31 +38,29 @@ export default function PermissionPage() {
 
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                   {simplePermissions.map((permission) => (
-                     <PermissionCard key={permission.id} permission={permission} />
+                     <PermissionCard key={permission.id} permission={permission} t={t} />
                   ))}
                </div>
 
                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
                   {detailedPermissions.map((permission) => (
-                     <PermissionCard key={permission.id} permission={permission} />
+                     <PermissionCard key={permission.id} permission={permission} t={t} />
                   ))}
                </div>
 
                {otherPermission && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                     <PermissionCard permission={otherPermission} />
+                     <PermissionCard permission={otherPermission} t={t} />
                   </div>
                )}
 
                <div className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-8">
                   <p>
-                     Temu believes in being transparent and requesting a minimal amount of permissions.
-                     You can also learn more about how we operate to protect our user's privacy in the{" "}
+                     {t('permissionTransparency')}{" "}
                      <Link href="#" className="text-gray-900 underline hover:text-orange-500">
-                        Privacy policy
+                        {t('privacyPolicy')}
                      </Link>
-                     , which includes details about how we handle information that does not involve
-                     requesting permission or personal privacy.
+                     {t('permissionDetails')}
                   </p>
                </div>
             </div>

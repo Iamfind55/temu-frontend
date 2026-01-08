@@ -2,11 +2,13 @@
 
 import { useCart } from "@/lib/cart-context"
 import { useRouter } from "next/navigation"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { SkeletonNextImage } from "@/components/ui/skeleton-image"
 import { X, Minus, Plus, Trash2, ShoppingBag } from "lucide-react"
 
 export function CartDrawer() {
+  const { t } = useTranslation("cart")
   const router = useRouter()
   const { items, isOpen, closeCart, updateQuantity, removeItem, itemCount, subtotal } = useCart()
 
@@ -21,7 +23,7 @@ export function CartDrawer() {
           <div className="flex items-center justify-between border-b px-6 py-4">
             <div className="flex items-center gap-2">
               <ShoppingBag className="h-5 w-5" />
-              <h2 className="text-lg font-semibold">Shopping Cart ({itemCount})</h2>
+              <h2 className="text-lg font-semibold">{t("shoppingCart")} ({itemCount})</h2>
             </div>
             <Button variant="ghost" size="icon" onClick={closeCart}>
               <X className="h-5 w-5" />
@@ -32,10 +34,10 @@ export function CartDrawer() {
             {items.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-center">
                 <ShoppingBag className="h-16 w-16 text-muted-foreground/50" />
-                <p className="mt-4 text-lg font-medium">Your cart is empty</p>
-                <p className="mt-2 text-sm text-muted-foreground">Add items to get started</p>
+                <p className="mt-4 text-lg font-medium">{t("yourCartEmpty")}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{t("addItemsGetStarted")}</p>
                 <Button className="mt-6" onClick={closeCart}>
-                  Continue Shopping
+                  {t("continueShopping")}
                 </Button>
               </div>
             ) : (
@@ -55,8 +57,8 @@ export function CartDrawer() {
                       <div className="flex justify-between">
                         <div className="flex-1">
                           <h3 className="text-sm font-medium line-clamp-2">{item.name}</h3>
-                          {item.color && <p className="mt-1 text-xs text-muted-foreground">Color: {item.color}</p>}
-                          {!item.inStock && <p className="mt-1 text-xs text-destructive">Out of stock</p>}
+                          {item.color && <p className="mt-1 text-xs text-muted-foreground">{t("color")}: {item.color}</p>}
+                          {!item.inStock && <p className="mt-1 text-xs text-destructive">{t("outOfStock")}</p>}
                         </div>
                         <Button
                           variant="ghost"
@@ -106,7 +108,7 @@ export function CartDrawer() {
           {items.length > 0 && (
             <div className="border-t px-6 py-4">
               <div className="mb-4 flex items-center justify-between">
-                <span className="text-sm font-medium">Subtotal ({itemCount} items)</span>
+                <span className="text-sm font-medium">{t("subtotal")} ({itemCount} {t("itemsTotal")})</span>
                 <span className="text-lg font-bold text-primary">${subtotal.toFixed(2)}</span>
               </div>
               <Button
@@ -114,7 +116,7 @@ export function CartDrawer() {
                 className="cursor-pointer w-full bg-orange-500 hover:bg-orange-600 text-md font-semibold"
                 size="lg"
               >
-                Proceed to Checkout
+                {t("proceedToCheckout")}
               </Button>
             </div>
           )}

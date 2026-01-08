@@ -80,5 +80,14 @@
   "errorOccurred": "Đã xảy ra lỗi",
   "orderProcessingError": "Đã xảy ra lỗi khi xử lý đơn hàng",
   "lightningDeal": "Flash Sale",
-  "color": "Màu sắc"
+  "color": "Màu sắc",
+  "shoppingCart": "Shopping Cart",
+  "yourCartEmpty": "Your cart is empty",
+  "addItemsGetStarted": "Add items to get started",
+  "continueShopping": "Continue Shopping",
+  "outOfStock": "Out of stock",
+  "proceedToCheckout": "Proceed to Checkout",
+  "addToCartExclaim": "Add to cart!",
+  "allDetails": "All details",
+  "sold": "sold"
 }

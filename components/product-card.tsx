@@ -6,6 +6,7 @@ import { Star, ShoppingCart } from "lucide-react"
 import type { Product } from "@/lib/product-data"
 import Link from "next/link"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { QuickAddModal } from "./quick-add-modal"
 import { SkeletonImage } from "@/components/ui/skeleton-image"
 
@@ -16,6 +17,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, bestSellingRank, showTopRated }: ProductCardProps) {
+  const { t } = useTranslation("product")
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleCartClick = (e: React.MouseEvent) => {
@@ -38,7 +40,7 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
 
             <div className="absolute top-2 left-2 flex flex-col gap-1">
               {product.category === "Home & Garden" && (
-                <Badge className="bg-green-600 text-white text-xs font-semibold px-2 py-0.5">Local</Badge>
+                <Badge className="bg-green-600 text-white text-xs font-semibold px-2 py-0.5">{t("local")}</Badge>
               )}
             </div>
 
@@ -56,7 +58,7 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-bold text-primary">${product.price.toFixed(2)}</span>
               <span className="text-xs text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
-              <span className="text-xs text-muted-foreground">{product.soldCount} sold</span>
+              <span className="text-xs text-muted-foreground">{product.soldCount} {t("sold")}</span>
             </div>
 
             {product.promotion && (
@@ -67,12 +69,12 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
 
             {bestSellingRank && (
               <div className="text-xs font-semibold text-green-600">
-                #{bestSellingRank} BEST-SELLING ITEM in {product.category}
+                {t("bestSellingItem", { rank: bestSellingRank, category: product.category })}
               </div>
             )}
 
             {showTopRated && (
-              <div className="text-xs font-semibold text-blue-600">#1 TOP RATED in {product.category}</div>
+              <div className="text-xs font-semibold text-blue-600">{t("topRated", { category: product.category })}</div>
             )}
 
             <div className="flex items-center gap-1">
@@ -87,12 +89,12 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
             </div>
 
             {product.badges.includes("Star store") && (
-              <Badge className="bg-purple-600 text-white text-xs font-medium px-2 py-0.5 w-fit">⭐ Star store</Badge>
+              <Badge className="bg-purple-600 text-white text-xs font-medium px-2 py-0.5 w-fit">⭐ {t("starStore")}</Badge>
             )}
 
             {product.brand && (
               <div className="inline-block w-auto text-xs border font-bold text-black py-0.5 px-1 rounded bg-gray-200">
-                Brand: {product.brand}
+                {t("brandLabel", { brand: product.brand })}
               </div>
             )}
 

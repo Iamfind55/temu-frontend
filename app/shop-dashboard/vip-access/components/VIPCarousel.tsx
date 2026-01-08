@@ -4,8 +4,13 @@ import { useState } from "react"
 import { VIPCard } from "./VIPCard"
 import { vipLevels } from "../constant"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { TFunction } from "i18next"
 
-export function VIPCarousel() {
+interface VIPCarouselProps {
+   t: TFunction
+}
+
+export function VIPCarousel({ t }: VIPCarouselProps) {
    const [currentIndex, setCurrentIndex] = useState(0)
    const [touchEnd, setTouchEnd] = useState<number | null>(null)
    const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -52,7 +57,7 @@ export function VIPCarousel() {
             >
                {vipLevels.map((level) => (
                   <div key={level.id} className="w-full flex-shrink-0 px-1">
-                     <VIPCard level={level} />
+                     <VIPCard level={level} t={t} />
                   </div>
                ))}
             </div>

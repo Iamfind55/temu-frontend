@@ -24,5 +24,13 @@
   "addresses": "Addresses",
   "payment": "Payment",
   "security": "Security",
-  "signOut": "Sign out"
+  "signOut": "Sign out",
+
+  "allCategory": "All {{category}}",
+  "noSubcategoriesAvailable": "No subcategories available",
+  "whyChooseTemu": "Why choose Temu",
+  "securePrivacy": "Secure privacy",
+  "safePayments": "Safe payments",
+  "beWaryUsps": "Be wary of messages about delivery issues claiming to be from USPS.",
+  "view": "View"
 }

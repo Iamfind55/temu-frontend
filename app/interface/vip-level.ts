@@ -14,12 +14,12 @@ export interface VIPLevel {
   reward: string;
   profitPoint: string;
   dailyTraffic: string;
-  features: string[];
+  featureKeys: string[];
   popular?: boolean;
 }
 
 export interface FAQ {
   id: string;
-  question: string;
-  answer: string;
+  questionKey: string;
+  answerKey: string;
 }

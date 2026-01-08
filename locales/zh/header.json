@@ -24,5 +24,12 @@
   "addresses": "收货地址",
   "payment": "支付方式",
   "security": "安全设置",
-  "signOut": "退出登录"
+  "signOut": "退出登录",
+  "allCategory": "All {{category}}",
+  "noSubcategoriesAvailable": "No subcategories available",
+  "whyChooseTemu": "Why choose Temu",
+  "securePrivacy": "Secure privacy",
+  "safePayments": "Safe payments",
+  "beWaryUsps": "Be wary of messages about delivery issues claiming to be from USPS.",
+  "view": "View"
 }

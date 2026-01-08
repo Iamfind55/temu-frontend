@@ -2,6 +2,7 @@
 
 import React from "react";
 import { MapPin, Plus, Save, X, MoreVertical, Edit2, Trash2, CheckCircle, Loader } from "lucide-react"
+import { useTranslation } from "react-i18next";
 
 import { useToast } from "@/lib/toast";
 import { useShopStore } from "@/store/shop-store";
@@ -18,6 +19,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function AddressesPage() {
+  const { t } = useTranslation('account');
   const { errorMessage, successMessage } = useToast();
   const [cityId, setCityId] = React.useState<string>("");
   const [stateId, setStateId] = React.useState<string>("");
@@ -169,18 +171,18 @@ export default function AddressesPage() {
       if (res?.data?.setShopAddressDefaultToUse?.success) {
         await refetch();
         successMessage({
-          message: "Default address set successfully!",
+          message: t('defaultAddressSuccess'),
           duration: 3000,
         });
       } else {
         errorMessage({
-          message: "Failed to set default address. Try again later!",
+          message: t('defaultAddressFailed'),
           duration: 3000,
         });
       }
     } catch (error) {
       errorMessage({
-        message: "Failed to set default address. Try again later!",
+        message: t('defaultAddressFailed'),
         duration: 3000,
       });
     } finally {
@@ -201,20 +203,20 @@ export default function AddressesPage() {
       if (res?.data?.deleteShopAddress?.success) {
         await refetch();
         successMessage({
-          message: "Address deleted successfully!",
+          message: t('deleteAddressSuccess'),
           duration: 3000,
         });
         setIsDeleteModalOpen(false);
         setDeleteTargetId("");
       } else {
         errorMessage({
-          message: "Failed to delete address. Try again later!",
+          message: t('deleteAddressFailed'),
           duration: 3000,
         });
       }
     } catch (error) {
       errorMessage({
-        message: "Failed to delete address. Try again later!",
+        message: t('deleteAddressFailed'),
         duration: 3000,
       });
     } finally {
@@ -229,7 +231,7 @@ export default function AddressesPage() {
     setIsLoading(true);
     if (!countryName && !cityName) {
       errorMessage({
-        message: "Please select country or city!",
+        message: t('selectCountryOrCity'),
         duration: 3000,
       });
     }
@@ -259,12 +261,12 @@ export default function AddressesPage() {
         if (res?.data?.updateShopAddress?.success) {
           await refetch();
           successMessage({
-            message: "Update address successful!",
+            message: t('updateAddressSuccess'),
             duration: 3000,
           });
         } else {
           errorMessage({
-            message: "Failed to update address. Try again later!",
+            message: t('updateAddressFailed'),
             duration: 3000,
           });
           setIsLoading(false);
@@ -294,12 +296,12 @@ export default function AddressesPage() {
         if (res?.data?.createShopAddress?.success) {
           await refetch();
           successMessage({
-            message: "Create address successful!",
+            message: t('createAddressSuccess'),
             duration: 3000,
           });
         } else {
           errorMessage({
-            message: "Failed to create address. Try again later!",
+            message: t('createAddressFailed'),
             duration: 3000,
           });
           setIsLoading(false);
@@ -308,7 +310,7 @@ export default function AddressesPage() {
       }
     } catch (error) {
       errorMessage({
-        message: "Unexpected error. Try again later!",
+        message: t('unexpectedError'),
         duration: 3000,
       });
       setIsLoading(false);
@@ -336,8 +338,8 @@ export default function AddressesPage() {
       <div className="bg-white px-0 sm:px-8 py-2 sm:py-6 mb-4 sm:mb-0">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-md sm:text-lg font-bold text-gray-900">Addresses</h1>
-            <p className="mt-0 sm:mt-1 text-sm text-gray-600">Manage your shipping and billing addresses</p>
+            <h1 className="text-md sm:text-lg font-bold text-gray-900">{t('addresses')}</h1>
+            <p className="mt-0 sm:mt-1 text-sm text-gray-600">{t('manageAddresses')}</p>
           </div>
           <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => {
             setIsUpdate(false);
@@ -345,7 +347,7 @@ export default function AddressesPage() {
             setIsModalOpen(true);
           }}>
             <Plus className="h-4 w-4" />
-            Add New
+            {t('addNew')}
           </Button>
         </div>
       </div>
@@ -353,7 +355,7 @@ export default function AddressesPage() {
       {addressesLoading ? (
         <div className="flex flex-col items-center justify-center py-20">
           <Loader className="h-8 w-8 animate-spin text-orange-500 mb-4" />
-          <p className="text-gray-600">Loading addresses...</p>
+          <p className="text-gray-600">{t('loadingAddresses')}</p>
         </div>
       ) : addressesData?.getShopAddresses?.data?.length ?? 0 > 0 ?
         <div className="w-full grid grid-cols-1 gap-2 sm:gap-4 lg:grid-cols-2 pb-16 px-0 sm:px-8">
@@ -378,7 +380,7 @@ export default function AddressesPage() {
                       className="w-full text-sm flex items-center justify-start gap-2 text-gray-700 hover:bg-gray-100 py-2 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <CheckCircle size={16} />
-                      {isSettingDefault ? "Setting..." : "Set as Default"}
+                      {isSettingDefault ? t('setting') : t('setAsDefault')}
                     </button>
                     <button
                       onClick={() => handleEdit(row)}
@@ -386,7 +388,7 @@ export default function AddressesPage() {
                       className="w-full text-sm flex items-center justify-start gap-2 text-gray-700 hover:bg-gray-100 py-2 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Edit2 size={16} />
-                      Edit
+                      {t('edit')}
                     </button>
                     <button
                       onClick={() => {
@@ -398,55 +400,55 @@ export default function AddressesPage() {
                       className="w-full text-sm flex items-center justify-start gap-2 text-red-600 hover:bg-red-50 py-2 px-4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 size={16} />
-                      Delete
+                      {t('delete')}
                     </button>
                   </div>
                 )}
               </div>
               {/* Address Details */}
               <p className="text-xs text-gray-500 flex items-start justify-start gap-1">
-                Address:&nbsp;
+                {t('address')}:&nbsp;
                 <strong className="text-black font-bold">
                   {row.address}
                 </strong>
               </p>
               <p className="text-xs text-gray-500">
-                Postal code:&nbsp;
+                {t('postalCode')}:&nbsp;
                 <strong className="text-black font-bold">
                   {row.postal_code}
                 </strong>
               </p>
               <p className="text-xs text-gray-500">
-                Province:&nbsp;
+                {t('province')}:&nbsp;
                 <strong className="text-black font-bold">
                   {row.city.city}
                 </strong>
               </p>
               {row?.state?.state &&
                 <p className="text-xs text-gray-500">
-                  States:&nbsp;
+                  {t('states')}:&nbsp;
                   <strong className="text-black font-bold">
                     {row?.state?.state ?? ""}
                   </strong>
                 </p>
               }
               <p className="text-xs text-gray-500">
-                Country:&nbsp;
+                {t('country')}:&nbsp;
                 <strong className="text-black font-bold">
                   {row.country.country}
                 </strong>
               </p>
               <p className="text-sm font-bold text-black mt-2">
-                Contact person:
+                {t('contactPerson')}:
               </p>
               <p className="text-xs text-gray-500">
-                Telephone:&nbsp;
+                {t('telephone')}:&nbsp;
                 <strong className="text-black font-bold">
                   {row.phone_number}
                 </strong>
               </p>
               <p className="text-xs text-gray-500">
-                Email:&nbsp;
+                {t('email')}:&nbsp;
                 <strong className="text-black font-bold">{row.email}</strong>
               </p>
             </div>
@@ -458,11 +460,11 @@ export default function AddressesPage() {
             <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
               <MapPin className="h-8 w-8 text-gray-400" />
             </div>
-            <h2 className="mb-2 text-lg font-semibold text-gray-900">No saved addresses</h2>
+            <h2 className="mb-2 text-lg font-semibold text-gray-900">{t('noSavedAddresses')}</h2>
             <p className="mb-6 text-center text-gray-600">
-              You haven't added any addresses yet.
+              {t('noAddressesDescription')}
               <br />
-              Add an address to make checkout faster!
+              {t('addAddressCheckout')}
             </p>
             <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => {
               setIsUpdate(false);
@@ -470,7 +472,7 @@ export default function AddressesPage() {
               setIsModalOpen(true);
             }}>
               <Plus className=" h-4 w-4" />
-              Add Your First Address
+              {t('addFirstAddress')}
             </Button>
           </div>
         </div>
@@ -498,7 +500,7 @@ export default function AddressesPage() {
         <DialogContent className="w-sm sm:w-2xl max-w-4xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold text-gray-700">
-              {isUpdate ? "Edit Address" : "Create new address"}
+              {isUpdate ? t('editAddress') : t('createNewAddress')}
             </DialogTitle>
           </DialogHeader>
           <form
@@ -507,19 +509,19 @@ export default function AddressesPage() {
           >
             <div>
               <Label className="mb-1 block font-medium text-gray-700">
-                Address <span className="text-red-500">*</span>
+                {t('address')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 required
                 value={address}
                 onChange={e => setAddress(e.target.value)}
-                placeholder="Enter address...."
+                placeholder={t('enterAddress')}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label className="mb-1 block font-medium text-gray-700">
-                  Country <span className="text-red-500">*</span>
+                  {t('country')} <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   required
@@ -533,7 +535,7 @@ export default function AddressesPage() {
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue
-                      placeholder="Select country"
+                      placeholder={t('selectCountry')}
                       className={countryId ? "text-black font-semibold" : "text-gray-400"}
                     />
                   </SelectTrigger>
@@ -545,7 +547,7 @@ export default function AddressesPage() {
                 </Select>
               </div>
               <div>
-                <Label className="mb-1 block font-medium text-gray-700">Province</Label>
+                <Label className="mb-1 block font-medium text-gray-700">{t('province')}</Label>
                 <Select
                   value={stateId}
                   onValueChange={val => {
@@ -556,7 +558,7 @@ export default function AddressesPage() {
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue
-                      placeholder="Select province"
+                      placeholder={t('selectProvince')}
                       className={stateId ? "text-black font-semibold" : "text-gray-400"}
                     />
                   </SelectTrigger>
@@ -571,7 +573,7 @@ export default function AddressesPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label className="mb-1 block font-medium text-gray-700">
-                  City <span className="text-red-500">*</span>
+                  {t('city')} <span className="text-red-500">*</span>
                 </Label>
                 <Select
                   required
@@ -583,7 +585,7 @@ export default function AddressesPage() {
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue
-                      placeholder="Select city"
+                      placeholder={t('selectCity')}
                       className={cityId ? "text-black font-semibold" : "text-gray-400"}
                     />
                   </SelectTrigger>
@@ -596,37 +598,37 @@ export default function AddressesPage() {
               </div>
               <div>
                 <Label className="mb-1 block font-medium text-gray-700">
-                  Postal code <span className="text-red-500">*</span>
+                  {t('postalCode')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   required
                   value={postalCode}
                   onChange={e => setPostalCode(e.target.value)}
-                  placeholder="Enter postal code...."
+                  placeholder={t('enterPostalCode')}
                 />
               </div>
             </div>
             <div>
               <Label className="mb-1 block font-medium text-gray-700">
-                Email <span className="text-red-500">*</span>
+                {t('email')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 required
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="Enter email...."
+                placeholder={t('enterEmail')}
               />
             </div>
             <div>
               <Label className="mb-1 block font-medium text-gray-700">
-                Telephone <span className="text-red-500">*</span>
+                {t('telephone')} <span className="text-red-500">*</span>
               </Label>
               <Input
                 required
                 value={telephone}
                 onChange={e => setTelephone(e.target.value)}
-                placeholder="Enter telephone...."
+                placeholder={t('enterTelephone')}
               />
             </div>
             <div className="flex justify-end pt-4 gap-2">
@@ -637,7 +639,7 @@ export default function AddressesPage() {
                 disabled={isLoading}
               >
                 <X size={14} />
-                Close
+                {t('close')}
               </Button>
               <Button
                 type="submit"
@@ -645,7 +647,7 @@ export default function AddressesPage() {
                 disabled={isLoading}
               >
                 {isLoading ? <Loader size={14} className="animate-spin" /> : <Save size={14} />}
-                {isLoading ? "Saving..." : "Save"}
+                {isLoading ? t('saving') : t('save')}
               </Button>
             </div>
           </form>
@@ -656,11 +658,11 @@ export default function AddressesPage() {
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent className="w-sm sm:w-xl max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-gray-700">Delete Address</DialogTitle>
+            <DialogTitle className="text-lg font-semibold text-gray-700">{t('deleteAddress')}</DialogTitle>
           </DialogHeader>
           <div className="">
             <p className="text-gray-600">
-              Are you sure you want to delete this address? This action cannot be undone.
+              {t('deleteAddressConfirm')}
             </p>
           </div>
           <div className="flex justify-end gap-2">
@@ -673,7 +675,7 @@ export default function AddressesPage() {
               }}
               disabled={isDeleting}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               type="button"
@@ -682,7 +684,7 @@ export default function AddressesPage() {
               disabled={isDeleting}
             >
               {isLoading && <Loader size={14} className="animate-spin" />}
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? t('deleting') : t('delete')}
             </Button>
           </div>
         </DialogContent>

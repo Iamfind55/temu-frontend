@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useQuery, useMutation } from "@apollo/client/react"
+import { useTranslation } from "react-i18next"
 import {
    Bell,
    Loader,
@@ -55,24 +56,24 @@ import {
 } from "@/types/notification"
 import { cn } from "@/lib/utils"
 
-// Notification type options for filter
-const notificationTypeOptions: { value: string; label: string }[] = [
-   { value: "all", label: "All Types" },
-   { value: "DEALER_APPLICATION", label: "Dealer Application" },
-   { value: "PRODUCT_APPLICATION", label: "Product Application" },
-   { value: "WITHDRAWAL", label: "Withdrawal" },
-   { value: "RECHARGE", label: "Recharge" },
-   { value: "ORDER", label: "Order" },
-   { value: "INVENTORY_SHIPMENT", label: "Inventory Shipment" },
-   { value: "FUND_PUNISH", label: "Fund Punish" },
-   { value: "SHOP_REQUEST_VIP", label: "VIP Request" },
+// Notification type options for filter (keys for translation)
+const notificationTypeKeys: { value: string; labelKey: string }[] = [
+   { value: "all", labelKey: "allTypes" },
+   { value: "DEALER_APPLICATION", labelKey: "dealerApplication" },
+   { value: "PRODUCT_APPLICATION", labelKey: "productApplication" },
+   { value: "WITHDRAWAL", labelKey: "withdrawal" },
+   { value: "RECHARGE", labelKey: "recharge" },
+   { value: "ORDER", labelKey: "order" },
+   { value: "INVENTORY_SHIPMENT", labelKey: "inventoryShipment" },
+   { value: "FUND_PUNISH", labelKey: "fundPunish" },
+   { value: "SHOP_REQUEST_VIP", labelKey: "vipRequest" },
 ]
 
-// Read status options for filter
-const readStatusOptions = [
-   { value: "all", label: "All Status" },
-   { value: "unread", label: "Unread" },
-   { value: "read", label: "Read" },
+// Read status options for filter (keys for translation)
+const readStatusKeys = [
+   { value: "all", labelKey: "allStatus" },
+   { value: "unread", labelKey: "unread" },
+   { value: "read", labelKey: "read" },
 ]
 
 // Get icon for notification type
@@ -99,8 +100,8 @@ function getNotificationIcon(type: NotificationType) {
    }
 }
 
-// Format date
-function formatDate(dateString: string) {
+// Format date with translation support
+function formatDate(dateString: string, t: (key: string, options?: Record<string, unknown>) => string) {
    const date = new Date(dateString)
    const now = new Date()
    const diffMs = now.getTime() - date.getTime()
@@ -108,10 +109,10 @@ function formatDate(dateString: string) {
    const diffHours = Math.floor(diffMs / 3600000)
    const diffDays = Math.floor(diffMs / 86400000)
 
-   if (diffMins < 1) return "Just now"
-   if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`
-   if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`
-   if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`
+   if (diffMins < 1) return t("justNow")
+   if (diffMins < 60) return t(diffMins > 1 ? "minsAgo" : "minAgo", { count: diffMins })
+   if (diffHours < 24) return t(diffHours > 1 ? "hoursAgo" : "hourAgo", { count: diffHours })
+   if (diffDays < 7) return t(diffDays > 1 ? "daysAgo" : "dayAgo", { count: diffDays })
 
    return date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -123,10 +124,12 @@ function formatDate(dateString: string) {
 // Notification Card Component
 function NotificationCard({
    notification,
-   onClick
+   onClick,
+   t
 }: {
    notification: INotification
    onClick: (notification: INotification) => void
+   t: (key: string, options?: Record<string, unknown>) => string
 }) {
    const typeConfig = notificationTypeConfig[notification.notification_type]
    const Icon = getNotificationIcon(notification.notification_type)
@@ -168,17 +171,17 @@ function NotificationCard({
 
                {/* Footer */}
                <div className="flex items-center justify-between mt-3">
-                  <span className="text-xs text-gray-500">{formatDate(notification.created_at)}</span>
+                  <span className="text-xs text-gray-500">{formatDate(notification.created_at, t)}</span>
                   <div className="flex items-center gap-1 text-xs text-gray-500">
                      {notification.is_read ? (
                         <>
                            <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />
-                           <span>Read</span>
+                           <span>{t("read")}</span>
                         </>
                      ) : (
                         <>
                            <Circle className="h-3.5 w-3.5 text-orange-500" />
-                           <span>Unread</span>
+                           <span>{t("unread")}</span>
                         </>
                      )}
                   </div>
@@ -190,27 +193,28 @@ function NotificationCard({
 }
 
 // Empty State Component
-function EmptyState() {
+function EmptyState({ t }: { t: (key: string) => string }) {
    return (
       <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg border">
          <Bell className="h-16 w-16 text-gray-300 mb-4" />
-         <h3 className="text-lg font-semibold text-gray-900 mb-2">No notifications</h3>
-         <p className="text-sm text-gray-600">You don't have any notifications yet</p>
+         <h3 className="text-lg font-semibold text-gray-900 mb-2">{t("noNotifications")}</h3>
+         <p className="text-sm text-gray-600">{t("noNotificationsYet")}</p>
       </div>
    )
 }
 
 // Loading State Component
-function LoadingState() {
+function LoadingState({ t }: { t: (key: string) => string }) {
    return (
       <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg">
          <Loader className="h-8 w-8 text-orange-500 animate-spin mb-4" />
-         <p className="text-sm text-gray-600">Loading notifications...</p>
+         <p className="text-sm text-gray-600">{t("loadingNotifications")}</p>
       </div>
    )
 }
 
 export default function NotificationsPage() {
+   const { t } = useTranslation('shop-dashboard')
    const { shop } = useShopStore()
    const [currentPage, setCurrentPage] = useState(1)
    const [selectedType, setSelectedType] = useState("all")
@@ -348,24 +352,24 @@ export default function NotificationsPage() {
                {/* Page Header */}
                <div className="flex flex-col sm:flex-row items-center justify-between">
                   <div className="mb-6 w-full sm:w-1/2">
-                     <h1 className="text-lg font-bold text-gray-900">Notifications</h1>
+                     <h1 className="text-lg font-bold text-gray-900">{t("notifications")}</h1>
                      <p className="text-sm text-gray-600 mt-1">
-                        Stay updated with your shop activities and important alerts
+                        {t("notificationsDescription")}
                      </p>
                   </div>
 
                   <div className="w-full sm:w-1/2 bg-white rounded-lg p-0 sm:p-4 mb-4">
                      <div className="flex gap-3">
                         <div className="flex-1">
-                           <label className="text-xs text-gray-500 mb-1 block">Notification Type</label>
+                           <label className="text-xs text-gray-500 mb-1 block">{t("notificationType")}</label>
                            <Select value={selectedType} onValueChange={handleTypeChange}>
                               <SelectTrigger className="w-full">
-                                 <SelectValue placeholder="Select type" />
+                                 <SelectValue placeholder={t("selectType")} />
                               </SelectTrigger>
                               <SelectContent>
-                                 {notificationTypeOptions.map((option) => (
+                                 {notificationTypeKeys.map((option) => (
                                     <SelectItem key={option.value} value={option.value}>
-                                       {option.label}
+                                       {t(option.labelKey)}
                                     </SelectItem>
                                  ))}
                               </SelectContent>
@@ -373,15 +377,15 @@ export default function NotificationsPage() {
                         </div>
 
                         <div className="flex-1">
-                           <label className="text-xs text-gray-500 mb-1 block">Read Status</label>
+                           <label className="text-xs text-gray-500 mb-1 block">{t("readStatus")}</label>
                            <Select value={selectedReadStatus} onValueChange={handleReadStatusChange}>
                               <SelectTrigger className="w-full">
-                                 <SelectValue placeholder="Select status" />
+                                 <SelectValue placeholder={t("allStatus")} />
                               </SelectTrigger>
                               <SelectContent>
-                                 {readStatusOptions.map((option) => (
+                                 {readStatusKeys.map((option) => (
                                     <SelectItem key={option.value} value={option.value}>
-                                       {option.label}
+                                       {t(option.labelKey)}
                                     </SelectItem>
                                  ))}
                               </SelectContent>
@@ -396,26 +400,26 @@ export default function NotificationsPage() {
                   <p className="text-sm text-gray-600">
                      {totalNotifications > 0 ? (
                         <>
-                           Showing{" "}
+                           {t("showing")}{" "}
                            <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span>
                            {" - "}
                            <span className="font-medium">
                               {Math.min(currentPage * itemsPerPage, totalNotifications)}
                            </span>
-                           {" of "}
-                           <span className="font-medium">{totalNotifications}</span> notifications
+                           {" "}{t("of")}{" "}
+                           <span className="font-medium">{totalNotifications}</span> {t("notificationsText")}
                         </>
                      ) : (
-                        "No notifications found"
+                        t("noNotificationsFound")
                      )}
                   </p>
                </div>
 
                {/* Notifications List */}
                {loading ? (
-                  <LoadingState />
+                  <LoadingState t={t} />
                ) : notifications.length === 0 ? (
-                  <EmptyState />
+                  <EmptyState t={t} />
                ) : (
                   <div className="space-y-3">
                      {notifications.map((notification) => (
@@ -423,6 +427,7 @@ export default function NotificationsPage() {
                            key={notification.id}
                            notification={notification}
                            onClick={handleNotificationClick}
+                           t={t}
                         />
                      ))}
                   </div>
@@ -441,7 +446,7 @@ export default function NotificationsPage() {
                               className="gap-1"
                            >
                               <ChevronLeft className="h-4 w-4" />
-                              Previous
+                              {t("previous")}
                            </Button>
                         </PaginationItem>
 
@@ -471,7 +476,7 @@ export default function NotificationsPage() {
                               disabled={currentPage === totalPages}
                               className="gap-1"
                            >
-                              Next
+                              {t("next")}
                               <ChevronRight className="h-4 w-4" />
                            </Button>
                         </PaginationItem>
@@ -516,7 +521,7 @@ export default function NotificationsPage() {
                         <div className="py-4 space-y-4">
                            {/* Description */}
                            <div>
-                              <h4 className="text-sm font-medium text-gray-700 mb-2">Description</h4>
+                              <h4 className="text-sm font-medium text-gray-700 mb-2">{t("description")}</h4>
                               <div className="bg-gray-50 rounded-lg p-4 border">
                                  <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
                                     {selectedNotification.description}
@@ -527,7 +532,7 @@ export default function NotificationsPage() {
                            {/* Reference ID if available */}
                            {selectedNotification.reference_id && (
                               <div>
-                                 <h4 className="text-sm font-medium text-gray-700 mb-2">Reference ID</h4>
+                                 <h4 className="text-sm font-medium text-gray-700 mb-2">{t("referenceId")}</h4>
                                  <div className="bg-blue-50 rounded-lg px-4 py-2 border border-blue-100">
                                     <code className="text-sm text-blue-700 font-mono">
                                        {selectedNotification.reference_id}
@@ -539,7 +544,7 @@ export default function NotificationsPage() {
                            {/* Additional Data if available */}
                            {selectedNotification.data && (
                               <div>
-                                 <h4 className="text-sm font-medium text-gray-700 mb-2">Additional Information</h4>
+                                 <h4 className="text-sm font-medium text-gray-700 mb-2">{t("additionalInfo")}</h4>
                                  <div className="bg-gray-50 rounded-lg p-4 border">
                                     <pre className="text-xs text-gray-600 whitespace-pre-wrap overflow-x-auto">
                                        {typeof selectedNotification.data === "object"
@@ -568,7 +573,7 @@ export default function NotificationsPage() {
                               </div>
                               <div className="flex items-center gap-1 text-green-600">
                                  <CheckCircle2 className="h-4 w-4" />
-                                 <span className="font-medium">Read</span>
+                                 <span className="font-medium">{t("read")}</span>
                               </div>
                            </div>
                         </div>

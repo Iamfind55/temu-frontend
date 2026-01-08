@@ -46,7 +46,6 @@
   "createAddressSuccess": "Tạo địa chỉ thành công!",
   "createAddressFailed": "Không thể tạo địa chỉ. Vui lòng thử lại sau!",
   "unexpectedError": "Lỗi không mong muốn. Vui lòng thử lại sau!",
-
   "home": "Trang chủ",
   "creditBalance": "Số dư tín dụng",
   "deposit": "Nạp tiền",
@@ -84,7 +83,6 @@
   "depositSuccess": "Nạp tiền thành công!",
   "depositFailed": "Nạp tiền thất bại",
   "unexpectedErrorHappened": "Đã xảy ra lỗi không mong muốn!",
-
   "loadingOrders": "Đang tải đơn hàng...",
   "errorLoadingOrders": "Lỗi khi tải đơn hàng. Vui lòng thử lại.",
   "orderNo": "Mã đơn hàng",
@@ -117,7 +115,6 @@
   "orderDeletedSuccess": "Xóa đơn hàng thành công",
   "orderDeleteFailed": "Không thể xóa đơn hàng",
   "errorDeletingOrder": "Đã xảy ra lỗi khi xóa đơn hàng",
-
   "personalInfo": "Thông tin cá nhân",
   "loadingProfile": "Đang tải thông tin hồ sơ...",
   "updateAccountDetails": "Cập nhật thông tin tài khoản và thông tin cá nhân",
@@ -148,5 +145,17 @@
   "saveChanges": "Lưu thay đổi",
   "profileUpdateSuccess": "Cập nhật hồ sơ thành công!",
   "profileUpdateFailed": "Không thể cập nhật hồ sơ. Vui lòng thử lại sau!",
-  "imageUploadFailed": "Không thể tải lên hình ảnh. Vui lòng thử lại!"
+  "imageUploadFailed": "Không thể tải lên hình ảnh. Vui lòng thử lại!",
+  "navOrders": "Orders",
+  "navCredit": "Credit",
+  "navAddress": "Address",
+  "navProfile": "Profile",
+  "navLogout": "Logout",
+  "yourOrders": "Your orders",
+  "allOrders": "All orders",
+  "yourProfile": "Your profile",
+  "packing": "Packing",
+  "shipping": "Shipping",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
 }

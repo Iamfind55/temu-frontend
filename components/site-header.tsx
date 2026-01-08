@@ -4,9 +4,9 @@ import React from "react"
 import Link from "next/link"
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next"
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ShoppingCart, User, ChevronDown, TruckIcon, DollarSign, Undo2, Truck, Smartphone, ChevronRight, ThumbsUp, Star, Logs, MapPin, Wallet, Shield, FileText, LogOut, CreditCard } from "lucide-react"
-import { useTranslation } from "react-i18next"
 
 import { Separator } from "./ui/separator";
 import { Input } from "@/components/ui/input"
@@ -97,7 +97,7 @@ export function SiteHeader({ className }: { className?: string }) {
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="bg-[oklch(0.15_0_0)] text-white">
-        <div className={`container mx-auto flex items-center justify-between px-4 text-sm ${hideOnScroll ? "py-2" : "py-2"}`}>
+        <div className={`container mx-auto flex items-center justify-between px-0 sm:px-4 text-sm ${hideOnScroll ? "py-0 sm:py-2" : "py-0 sm:py-2"}`}>
           <div className="hidden sm:flex items-center gap-2 space-x-2 text-green-300">
             <TruckIcon />
             <div className="flex items-start justify-center flex-col">
@@ -129,11 +129,10 @@ export function SiteHeader({ className }: { className?: string }) {
             <Smartphone />
             <span className="font-bold text-lg">{t('getTheApp')}</span>
           </div>
-          <div></div>
           <div
             className={cn(
-              "flex items-center gap-4 border border-white/50 px-2 py-1 rounded-md bg-cover bg-center bg-no-repeat hover:border-white/80 cursor-pointer transition-all duration-300",
-              hideOnScroll ? "sm:flex hidden" : "flex"
+              "w-full sm:w-auto flex items-center justify-between sm:justify-center gap-4 sm:border sm:border-white/50 px-2 py-1 sm:rounded-md bg-cover bg-center bg-no-repeat hover:border-white/80 cursor-pointer transition-all duration-300",
+              hideOnScroll ? "sm:flex" : "flex"
             )}
             style={{
               backgroundImage:

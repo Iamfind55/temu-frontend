@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useLazyQuery, useMutation, useApolloClient } from "@apollo/client/react"
+import { useTranslation } from "react-i18next"
 import { ShoppingBasket, Package, Truck, Loader, ChevronDown, MoreVertical, Eye, X } from "lucide-react"
 
 // Components
@@ -26,6 +27,7 @@ import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsR
 import { formatDate, formatDateTime, getStatusBadgeStyle, getStatusLabel } from "./functions"
 
 export default function ShopOrdersPage() {
+  const { t } = useTranslation('shop-dashboard')
   const searchParams = useSearchParams()
   const router = useRouter()
   const client = useApolloClient()
@@ -181,14 +183,14 @@ export default function ShopOrdersPage() {
         setOrderDetails(result.data.shopGetOrderDetails.data)
       } else {
         errorMessage({
-          message: result.data?.shopGetOrderDetails?.error?.details || "Failed to load order details",
+          message: result.data?.shopGetOrderDetails?.error?.details || t('errorLoadingOrders'),
           duration: 3000,
         })
       }
     } catch (err) {
       console.error("Error fetching order details:", err)
       errorMessage({
-        message: "Failed to load order details",
+        message: t('errorLoadingOrders'),
         duration: 3000,
       })
     } finally {
@@ -215,7 +217,7 @@ export default function ShopOrdersPage() {
 
       if (result.data?.shopConfirmOrder?.success) {
         successMessage({
-          message: result.data.shopConfirmOrder.message || "Order confirmed successfully",
+          message: result.data.shopConfirmOrder.message || t('orderConfirmedSuccess'),
           duration: 3000,
         })
         setIsConfirmModalOpen(false)
@@ -233,14 +235,14 @@ export default function ShopOrdersPage() {
         fetchTabCounts()
       } else {
         errorMessage({
-          message: result.data?.shopConfirmOrder?.error?.details || "Failed to confirm order",
+          message: result.data?.shopConfirmOrder?.error?.details || t('orderConfirmFailed'),
           duration: 3000,
         })
       }
     } catch (err) {
       console.error("Error confirming order:", err)
       errorMessage({
-        message: "Failed to confirm order",
+        message: t('orderConfirmFailed'),
         duration: 3000,
       })
     } finally {
@@ -267,7 +269,7 @@ export default function ShopOrdersPage() {
 
       if (result.data?.shopCancelOrder?.success) {
         successMessage({
-          message: result.data.shopCancelOrder.message || "Order cancelled successfully",
+          message: result.data.shopCancelOrder.message || t('orderCancelledSuccess'),
           duration: 3000,
         })
         setIsCancelModalOpen(false)
@@ -285,14 +287,14 @@ export default function ShopOrdersPage() {
         fetchTabCounts()
       } else {
         errorMessage({
-          message: result.data?.shopCancelOrder?.error?.details || "Failed to cancel order",
+          message: result.data?.shopCancelOrder?.error?.details || t('orderCancelFailed'),
           duration: 3000,
         })
       }
     } catch (err) {
       console.error("Error cancelling order:", err)
       errorMessage({
-        message: "Failed to cancel order",
+        message: t('orderCancelFailed'),
         duration: 3000,
       })
     } finally {
@@ -344,23 +346,23 @@ export default function ShopOrdersPage() {
           <div className="mb-8">
             <div className="hidden md:grid mb-4 grid-cols-8 gap-4 border-b pb-3 text-sm font-medium text-gray-900">
               <div className="text-center">#</div>
-              <div>Order No</div>
-              <div>Items</div>
-              <div className="text-center">Qty</div>
-              <div>Total</div>
-              <div>Status</div>
-              <div>Date</div>
-              <div className="text-center">Actions</div>
+              <div>{t('orderNo')}</div>
+              <div>{t('items')}</div>
+              <div className="text-center">{t('qty')}</div>
+              <div>{t('totalPayment')}</div>
+              <div>{t('status')}</div>
+              <div>{t('date')}</div>
+              <div className="text-center">{t('actions')}</div>
             </div>
 
             {loading && allOrders.length === 0 ? (
               <div className="py-12 text-center flex items-center justify-center gap-2">
                 <Loader className="h-5 w-5 animate-spin text-orange-500" />
-                <p className="text-gray-600">Loading orders...</p>
+                <p className="text-gray-600">{t('loadingOrders')}</p>
               </div>
             ) : error ? (
               <div className="py-12 text-center">
-                <p className="text-red-600">Error loading orders. Please try again.</p>
+                <p className="text-red-600">{t('errorLoadingOrders')}</p>
               </div>
             ) : filteredOrders.length > 0 ? (
               <>
@@ -395,7 +397,7 @@ export default function ShopOrdersPage() {
                                 className="cursor-pointer"
                               >
                                 <Eye className="h-4 w-4" />
-                                View Details
+                                {t('viewDetails')}
                               </DropdownMenuItem>
                               {order.order_status === "NO_PICKUP" && (
                                 <DropdownMenuItem
@@ -403,7 +405,7 @@ export default function ShopOrdersPage() {
                                   className="cursor-pointer text-green-500"
                                 >
                                   <Truck className="h-4 w-4 text-green-500" />
-                                  Confirm & shipping
+                                  {t('confirmAndShipping')}
                                 </DropdownMenuItem>
                               )}
                               {order.order_status === "NO_PICKUP" && (
@@ -412,7 +414,7 @@ export default function ShopOrdersPage() {
                                   className="cursor-pointer text-red-500"
                                 >
                                   <X className="h-4 w-4 text-red-500" />
-                                  Cancel order
+                                  {t('cancelOrder')}
                                 </DropdownMenuItem>
                               )}
                             </DropdownMenuContent>
@@ -422,15 +424,15 @@ export default function ShopOrdersPage() {
 
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Products</span>
-                          <span className="font-medium">{order.total_products} items ({order.total_quantity} qty)</span>
+                          <span className="text-gray-500">{t('products')}</span>
+                          <span className="font-medium">{order.total_products} {t('items')} ({order.total_quantity} {t('qty')})</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Total</span>
+                          <span className="text-gray-500">{t('totalPayment')}</span>
                           <span className="font-bold text-green-600">${order.total_price.toFixed(2)}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-500">Date</span>
+                          <span className="text-gray-500">{t('date')}</span>
                           <span className="text-gray-600">{formatDate(order.created_at)}</span>
                         </div>
                       </div>
@@ -442,7 +444,7 @@ export default function ShopOrdersPage() {
                         onClick={(e) => handleViewDetails(order, e)}
                       >
                         <Eye className="h-4 w-4" />
-                        View Details
+                        {t('viewDetails')}
                       </Button>
                     </div>
                   ))}
@@ -501,7 +503,7 @@ export default function ShopOrdersPage() {
                               className="cursor-pointer"
                             >
                               <Eye className="h-4 w-4" />
-                              View Details
+                              {t('viewDetails')}
                             </DropdownMenuItem>
                             {order.order_status === "NO_PICKUP" && (
                               <DropdownMenuItem
@@ -509,7 +511,7 @@ export default function ShopOrdersPage() {
                                 className="cursor-pointer text-green-500"
                               >
                                 <Truck className="h-4 w-4 text-green-500" />
-                                Confirm & shipping
+                                {t('confirmAndShipping')}
                               </DropdownMenuItem>
                             )}
                             {order.order_status === "NO_PICKUP" && (
@@ -518,7 +520,7 @@ export default function ShopOrdersPage() {
                                 className="cursor-pointer text-red-500"
                               >
                                 <X className="h-4 w-4 text-red-500" />
-                                Cancel order
+                                {t('cancelOrder')}
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -535,7 +537,7 @@ export default function ShopOrdersPage() {
                   <ShoppingBasket size={56} />
                 </div>
                 <h3 className="mb-8 text-sm sm:text-lg sm:font-semibold text-gray-900">
-                  You don't have any {currentStatus === "all" ? "" : currentStatus} orders
+                  {t('noOrdersStatus', { status: currentStatus === "all" ? "" : currentStatus })}
                 </h3>
               </div>
             )}
@@ -551,11 +553,11 @@ export default function ShopOrdersPage() {
                   {loading ? (
                     <>
                       <Loader className="h-4 w-4 animate-spin" />
-                      Loading...
+                      {t('loadingOrders')}
                     </>
                   ) : (
                     <>
-                      <span>Load More Orders</span>
+                      <span>{t('loadMoreOrders')}</span>
                       <ChevronDown className="ml-2" />
                     </>
                   )}
@@ -565,13 +567,13 @@ export default function ShopOrdersPage() {
 
             {!hasMore && filteredOrders.length > 0 && (
               <div className="text-center text-xs text-gray-400 pt-6">
-                You've reached the end of your orders
+                {t('reachedEndOrders')}
               </div>
             )}
 
             {filteredOrders.length > 0 && (
               <div className="text-center text-xs text-gray-400">
-                Showing {filteredOrders.length} of {totalOrders} orders
+                {t('showingOrdersOf', { current: filteredOrders.length, total: totalOrders })}
               </div>
             )}
           </div>
@@ -583,7 +585,7 @@ export default function ShopOrdersPage() {
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
               <Package className="h-5 w-5 text-orange-500" />
-              Order Details
+              {t('orderDetails')}
             </DialogTitle>
           </DialogHeader>
 
@@ -597,7 +599,7 @@ export default function ShopOrdersPage() {
               {isDetailsLoading ? (
                 <div className="py-8 text-center flex flex-col items-center justify-center gap-2">
                   <Loader className="h-6 w-6 animate-spin text-orange-500" />
-                  <p className="text-sm text-gray-600">Loading order details...</p>
+                  <p className="text-sm text-gray-600">{t('loadingOrderDetails')}</p>
                 </div>
               ) : orderDetails.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -630,7 +632,7 @@ export default function ShopOrdersPage() {
 
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">Payment Status:</span>
+                            <span className="text-sm text-gray-600">{t('paymentStatus')}</span>
                             <Badge className={`text-xs ${item.payment_status === "COMPLETED"
                               ? "bg-green-100 text-green-800"
                               : "bg-yellow-100 text-yellow-800"
@@ -642,7 +644,7 @@ export default function ShopOrdersPage() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">Order Status:</span>
+                            <span className="text-sm text-gray-600">{t('orderStatus')}</span>
                             <Badge className={`text-xs ${item.order_status === "SUCCESS"
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
@@ -654,7 +656,7 @@ export default function ShopOrdersPage() {
                           </div>
 
                           <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">Sign in Status:</span>
+                            <span className="text-sm text-gray-600">{t('signInStatus')}</span>
                             <Badge className={`text-xs ${item.sign_in_status === "DELIVERED"
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
@@ -668,34 +670,34 @@ export default function ShopOrdersPage() {
 
                         <div className="space-y-2 pt-2 border-t">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Order Quantity:</span>
+                            <span className="text-gray-600">{t('orderQuantity')}</span>
                             <span className="font-medium">{item.quantity}</span>
                           </div>
 
                           {item.discount > 0 && (
                             <div className="flex items-center justify-between text-sm">
-                              <span className="text-gray-600">Discount:</span>
+                              <span className="text-gray-600">{t('totalDiscount')}</span>
                               <span className="font-medium text-red-600">{item.discount}%</span>
                             </div>
                           )}
 
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Commodity Payment:</span>
+                            <span className="text-gray-600">{t('commodityPayment')}</span>
                             <span className="font-medium text-green-600">${commodityPayment.toFixed(2)}</span>
                           </div>
 
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Order Payment:</span>
+                            <span className="text-gray-600">{t('orderPayment')}</span>
                             <span className="font-medium text-green-600">${orderPayment.toFixed(2)}</span>
                           </div>
 
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Profit ratio:</span>
+                            <span className="text-gray-600">{t('profitRatio')}</span>
                             <span className="font-medium text-green-600">{item.profit}%</span>
                           </div>
 
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Expected revenue:</span>
+                            <span className="text-gray-600">{t('expectedRevenue')}</span>
                             <span className="font-bold text-green-600">+ {expectedRevenue.toFixed(2)}</span>
                           </div>
                         </div>
@@ -705,21 +707,21 @@ export default function ShopOrdersPage() {
                 </div>
               ) : (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-gray-500">No items found for this order</p>
+                  <p className="text-sm text-gray-500">{t('noItemsFound')}</p>
                 </div>
               )}
 
               <div className="rounded-lg bg-gray-50 p-4 space-y-2 mt-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Total Products:</span>
+                  <span className="text-gray-600">{t('totalProducts')}</span>
                   <span>{selectedOrder.total_products}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Total Quantity:</span>
+                  <span className="text-gray-600">{t('totalQuantity')}</span>
                   <span>{selectedOrder.total_quantity}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
-                  <span>Total Payment:</span>
+                  <span>{t('totalPayment')}</span>
                   <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
                 </div>
               </div>
@@ -729,7 +731,7 @@ export default function ShopOrdersPage() {
                   onClick={() => setIsDetailModalOpen(false)}
                   className="w-auto bg-gray-500 hover:bg-gray-600"
                 >
-                  Close
+                  {t('close')}
                 </Button>
               </div>
             </div>
@@ -742,7 +744,7 @@ export default function ShopOrdersPage() {
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
               <Truck className="h-5 w-5 text-orange-500" />
-              Confirm & Shipping
+              {t('confirmOrderTitle')}
             </DialogTitle>
           </DialogHeader>
 
@@ -750,23 +752,23 @@ export default function ShopOrdersPage() {
             <div className="space-y-4 py-2">
               <div className="rounded-lg bg-gray-50 p-4 space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Order No:</span>
+                  <span className="text-gray-600">{t('orderNo')}:</span>
                   <span className="font-mono font-medium">#{selectedOrder.order_no}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Total Price:</span>
+                  <span className="text-gray-600">{t('totalPrice')}</span>
                   <span className="font-medium">${selectedOrder.total_price.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Total Quantity:</span>
+                  <span className="text-gray-600">{t('totalQuantity')}</span>
                   <span className="font-medium">{selectedOrder.total_quantity}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Total Discount:</span>
+                  <span className="text-gray-600">{t('totalDiscount')}</span>
                   <span className="font-medium text-red-600">{selectedOrder.total_discount}%</span>
                 </div>
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
-                  <span>Total Paid:</span>
+                  <span>{t('totalPaid')}</span>
                   <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
                 </div>
               </div>
@@ -777,7 +779,7 @@ export default function ShopOrdersPage() {
                   onClick={() => setIsConfirmModalOpen(false)}
                   disabled={isConfirmLoading}
                 >
-                  Close
+                  {t('close')}
                 </Button>
                 <Button
                   onClick={handleConfirmShipping}
@@ -787,12 +789,12 @@ export default function ShopOrdersPage() {
                   {isConfirmLoading ? (
                     <>
                       <Loader className="h-4 w-4 animate-spin" />
-                      Confirming...
+                      {t('confirming')}
                     </>
                   ) : (
                     <>
                       <Truck className="h-4 w-4" />
-                      Confirm & Shipping
+                      {t('confirmAndShipping')}
                     </>
                   )}
                 </Button>
@@ -807,7 +809,7 @@ export default function ShopOrdersPage() {
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2">
               <X className="h-5 w-5 text-red-500" />
-              Cancel Order
+              {t('cancelOrderTitle')}
             </DialogTitle>
           </DialogHeader>
 
@@ -815,10 +817,10 @@ export default function ShopOrdersPage() {
             <div className="space-y-4 py-2">
               <div className="rounded-lg bg-red-50 p-4 border border-red-100">
                 <p className="text-sm text-gray-700">
-                  Are you sure you want to cancel order <span className="font-mono font-bold">#{selectedOrder.order_no}</span>?
+                  {t('cancelOrderConfirm')} <span className="font-mono font-bold">#{selectedOrder.order_no}</span>?
                 </p>
                 <p className="text-sm text-gray-500 mt-2">
-                  This action cannot be undone.
+                  {t('actionCannotBeUndone')}
                 </p>
               </div>
 
@@ -828,7 +830,7 @@ export default function ShopOrdersPage() {
                   onClick={() => setIsCancelModalOpen(false)}
                   disabled={isCancelLoading}
                 >
-                  Close
+                  {t('close')}
                 </Button>
                 <Button
                   onClick={handleCancelOrder}
@@ -838,12 +840,12 @@ export default function ShopOrdersPage() {
                   {isCancelLoading ? (
                     <>
                       <Loader className="h-4 w-4 animate-spin" />
-                      Cancelling...
+                      {t('cancelling')}
                     </>
                   ) : (
                     <>
                       <X className="h-4 w-4" />
-                      Cancel
+                      {t('cancelOrder')}
                     </>
                   )}
                 </Button>

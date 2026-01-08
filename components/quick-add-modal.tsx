@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { useCart } from "@/lib/cart-context"
 import { Button } from "@/components/ui/button"
 import type { Product } from "@/lib/product-data"
@@ -14,6 +15,7 @@ interface QuickAddModalProps {
 }
 
 export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) {
+  const { t } = useTranslation("cart")
   const router = useRouter()
   const { addItem } = useCart()
   const { updateQuantity } = useCart()
@@ -96,7 +98,7 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
           <div className="space-y-4">
             <h2 className="text-lg font-medium leading-tight">{product.title}</h2>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>{product.soldCount} sold</span>
+              <span>{product.soldCount} {t("sold")}</span>
             </div>
 
             <div className="flex items-baseline gap-3">
@@ -108,7 +110,7 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
 
             {product.variants.length > 0 && (
               <div className="space-y-3 rounded-lg py-2">
-                <h3 className="font-semibold">Color</h3>
+                <h3 className="font-semibold">{t("color")}</h3>
                 <div className="grid grid-cols-5 gap-3">
                   {product.variants.slice(0, 2).map((variant, index) => (
                     <button
@@ -132,7 +134,7 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
             )}
 
             <div className="flex items-start justify-start gap-3">
-              <p>Qty</p>
+              <p>{t("qty")}</p>
               <select
                 value={100}
                 onChange={(e) => updateQuantity(product.id, Number.parseInt(e.target.value))}
@@ -151,13 +153,13 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
               className="w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold py-6 rounded-full"
               onClick={handleAddToCart}
             >
-              Add to cart!
+              {t("addToCartExclaim")}
             </Button>
             <button
               onClick={() => router.push(`/product/${product.id}`)}
               className="text-sm text-primary hover:underline cursor-pointer"
             >
-              All details ›
+              {t("allDetails")} ›
             </button>
           </div>
         </div>

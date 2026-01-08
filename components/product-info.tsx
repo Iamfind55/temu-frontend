@@ -2,6 +2,7 @@
 
 import { Separator } from "./ui/separator"
 import { useState, useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { SkeletonImage } from "@/components/ui/skeleton-image"
@@ -14,6 +15,7 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product }: ProductInfoProps) {
+  const { t } = useTranslation("product")
   const { addItem } = useCart()
   const [quantity, setQuantity] = useState(1)
   const [timeLeft, setTimeLeft] = useState("")
@@ -28,7 +30,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
       const distance = end - now
 
       if (distance < 0) {
-        setTimeLeft("Expired")
+        setTimeLeft(t("expired"))
         return
       }
 
@@ -69,25 +71,25 @@ export function ProductInfo({ product }: ProductInfoProps) {
         <div className="flex items-center gap-4 p-3 bg-orange-50 rounded-lg text-xs">
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-green-600" />
-            <span className="font-medium">Free shipping</span>
+            <span className="font-medium">{t("freeShippingText")}</span>
           </div>
           <div className="h-4 w-px bg-border" />
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-green-600" />
-            <span className="font-medium">${product.shipping.credit.toFixed(2)} Credit for delay</span>
+            <span className="font-medium">{t("creditForDelay", { amount: product.shipping.credit.toFixed(2) })}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <Zap className="h-5 w-5 text-green-600" />
           <span className="font-semibold text-green-600">
-            Fastest delivery: {product.shipping.deliveryDays} BUSINESS DAYS
+            {t("fastestDelivery", { days: product.shipping.deliveryDays })}
           </span>
         </div>
 
         <h1 className="text-lg leading-tight text-balance">{product.title}</h1>
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          <span className="text-sm text-muted-foreground">{product.soldCount} sold</span>
+          <span className="text-sm text-muted-foreground">{product.soldCount} {t("sold")}</span>
           <div className="flex items-center gap-3">
             <span className="font-semibold">{product.rating}</span>
             <div className="flex gap-1">
@@ -103,7 +105,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
         {product.category && (
           <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">
-            #TOP RATED in {product.category}
+            {t("topRatedIn", { category: product.category })}
           </Badge>
         )}
 
@@ -129,7 +131,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
         {product.variants.length > 0 && (
           <div className="space-y-3">
-            <h3 className="font-semibold">Color</h3>
+            <h3 className="font-semibold">{t("color", { ns: "cart" })}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {product.variants.map((variant) => (
                 <button
@@ -160,7 +162,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
         <div className="space-y-4 my-4">
           <div className="flex items-center justify-start gap-2">
-            <h3 className="text-sm font-semibold">Quantity</h3>
+            <h3 className="text-sm font-semibold">{t("quantity")}</h3>
             <select
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
@@ -182,7 +184,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             onClick={handleAddToCart}
           >
             <Plus />
-            Add to cart
+            {t("addToCart")}
           </Button>
         </div>
 
@@ -190,13 +192,13 @@ export function ProductInfo({ product }: ProductInfoProps) {
           <div className="space-y-3">
             <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold hover:underline transition-colors group">
               <Truck className="h-5 w-5" />
-              <span className="text-md">Free shipping for this item</span>
+              <span className="text-md">{t("freeShippingItem")}</span>
               <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
 
             <div className="space-y-2 pl-0 sm:pl-8">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>Delivery:</span>
+                <span>{t("delivery")}</span>
                 <span className="font-semibold text-foreground">Nov 7-20</span>
                 <button className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-muted text-muted-foreground hover:bg-muted-foreground hover:text-background transition-colors">
                   <span className="text-xs">?</span>
@@ -204,7 +206,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
               </div>
 
               <div className="flex items-center gap-2 text-sm flex-wrap">
-                <span className="text-muted-foreground">Courier company:</span>
+                <span className="text-muted-foreground">{t("courierCompany")}</span>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">📮 USPS</span>
                   <span className="font-semibold">📦 UPS</span>
@@ -217,7 +219,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 <div className="flex items-center justify-center w-4 h-4 rounded-full border border-current">
                   <span className="text-xs">i</span>
                 </div>
-                <span>Temu has certain minimum order value. Learn more.</span>
+                <span>{t("minimumOrderValue")}</span>
                 <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
@@ -226,46 +228,46 @@ export function ProductInfo({ product }: ProductInfoProps) {
           <div className="space-y-3">
             <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold hover:underline transition-colors group">
               <ShieldCheck className="h-5 w-5" />
-              <span className="text-md">Why choose Temu?</span>
+              <span className="text-md">{t("whyChooseTemu")}</span>
               <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
 
             <div className="flex items-center justfy-start gap-2 overflow-x-scroll">
               <div className="bg-muted/50 p-2 rounded-lg space-y-2">
-                <h4 className="font-semibold text-sm">Security & Privacy</h4>
+                <h4 className="font-semibold text-sm">{t("securityPrivacy")}</h4>
                 <div className="space-y-1 text-sm text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    <span>Safe payments</span>
+                    <span>{t("safePayments")}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    <span>Secure privacy</span>
+                    <span>{t("securePrivacy", { ns: "header" })}</span>
                   </div>
                 </div>
               </div>
 
               <div className="bg-muted/50 p-2 rounded-lg space-y-2">
-                <h4 className="font-semibold text-sm">Delivery guarantee</h4>
+                <h4 className="font-semibold text-sm">{t("deliveryGuarantee")}</h4>
                 <div className="grid grid-cols-2 gap-3 space-y-1 text-sm text-muted-foreground">
                   <div>
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                      <span>$5.00 Credit for delay</span>
+                      <span>{t("delayCredit")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                      <span>15-day no update refund</span>
+                      <span>{t("noUpdateRefund")}</span>
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                      <span>Return if item damaged</span>
+                      <span>{t("returnIfDamaged")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                      <span>30-day no delivery refund</span>
+                      <span>{t("noDeliveryRefund")}</span>
                     </div>
                   </div>
                 </div>
@@ -275,7 +277,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
           <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold transition-colors group w-full hover:underline">
             <RotateCcw className="h-5 w-5" />
-            <span className="text-sm sm:text-md">Free returns · Price adjustment</span>
+            <span className="text-sm sm:text-md">{t("freeReturnsPriceAdjustment")}</span>
             <ChevronRight className="h-5 w-5 ml-auto group-hover:translate-x-1 transition-transform" />
           </button>
 
@@ -283,15 +285,15 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <div className="flex items-center justify-center w-6 h-6 bg-green-700 text-white rounded font-bold">
               <span className="text-[7px]">Plant</span>
             </div>
-            <span className="text-sm sm:text-md">Temu's Tree Planting Program (22M+ trees)</span>
+            <span className="text-sm sm:text-md">{t("treePlantingProgram")}</span>
             <ChevronRight className="h-5 w-5 ml-auto group-hover:translate-x-1 transition-transform" />
           </button>
 
           <Separator />
           <div className="flex items-center gap-2 text-sm text-gray-600 pt-2 font-bold">
-            <span>Sourced from</span>
+            <span>{t("sourcedFrom")}</span>
             <Factory className="h-4 w-4" />
-            <span>, procured by Temu</span>
+            <span>{t("procuredByTemu")}</span>
           </div>
         </div>
       </div>

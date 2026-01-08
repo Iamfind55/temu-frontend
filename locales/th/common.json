@@ -35,5 +35,20 @@
   "state": "จังหวัด",
   "city": "เมือง",
   "postalCode": "รหัสไปรษณีย์",
-  "language": "ภาษา"
+  "language": "ภาษา",
+  "installTemuApp": "Install Temu App",
+  "temuShopping": "Temu Shopping",
+  "shopLikeBillionaire": "Shop Like a Billionaire",
+  "whyInstallApp": "Why install our app?",
+  "fasterBrowsing": "Faster browsing experience",
+  "worksOffline": "Works offline",
+  "easyAccess": "Easy access from home screen",
+  "getNotifications": "Get notifications for deals",
+  "howToInstallIos": "How to install on iOS:",
+  "tapShare": "Tap the Share button in Safari",
+  "scrollAddHome": "Scroll down and tap \"Add to Home Screen\"",
+  "tapAddConfirm": "Tap \"Add\" to confirm",
+  "maybeLater": "Maybe Later",
+  "installNow": "Install Now",
+  "gotIt": "Got it"
 }

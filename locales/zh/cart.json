@@ -80,5 +80,14 @@
   "errorOccurred": "发生错误",
   "orderProcessingError": "订单处理时发生错误",
   "lightningDeal": "闪购",
-  "color": "颜色"
+  "color": "颜色",
+  "shoppingCart": "Shopping Cart",
+  "yourCartEmpty": "Your cart is empty",
+  "addItemsGetStarted": "Add items to get started",
+  "continueShopping": "Continue Shopping",
+  "outOfStock": "Out of stock",
+  "proceedToCheckout": "Proceed to Checkout",
+  "addToCartExclaim": "Add to cart!",
+  "allDetails": "All details",
+  "sold": "sold"
 }

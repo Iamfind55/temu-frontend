@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useQuery } from "@apollo/client/react"
 import { ChevronRight, Loader } from "lucide-react"
 import { SkeletonNextImage } from "@/components/ui/skeleton-image"
@@ -9,6 +10,7 @@ import { QUERY_GET_ALL_CATEGORIES } from "@/app/api/category"
 import { IGetCategoriesResponse, ICategory } from "@/app/interface/category"
 
 export function MegaMenu() {
+  const { t } = useTranslation("header")
   const { data, loading, error } = useQuery<IGetCategoriesResponse>(QUERY_GET_ALL_CATEGORIES, {
     variables: {
       limit: 100,
@@ -64,7 +66,7 @@ export function MegaMenu() {
         <div className="flex-1 px-8 py-6 bg-white overflow-y-auto">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-black text-lg font-semibold">
-              All {hoveredCategory.name} <ChevronRight className="inline h-5 w-5" />
+              {t("allCategory", { category: hoveredCategory.name })} <ChevronRight className="inline h-5 w-5" />
             </h3>
           </div>
 
@@ -113,7 +115,7 @@ export function MegaMenu() {
             </div>
           ) : (
             <div className="text-center text-gray-500 py-8">
-              No subcategories available
+              {t("noSubcategoriesAvailable")}
             </div>
           )}
         </div>
