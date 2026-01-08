@@ -51,8 +51,10 @@ export default function CartPage() {
    const [telephone, setTelephone] = useState("")
    const [postalCode, setPostalCode] = useState("")
    const [countryId, setCountryId] = useState("")
+   const [countryName, setCountryName] = useState("")
    const [stateId, setStateId] = useState("")
-   const [cityId, setCityId] = useState("")
+   const [stateName, setStateName] = useState("")
+   const [cityName, setCityName] = useState("")
 
    // Queries
    const [getAddresses, { data: addressesData, refetch: refetchAddresses }] = useLazyQuery<GetCustomerAddressesResponse>(
@@ -118,7 +120,7 @@ export default function CartPage() {
    }
 
    const handleCreateAddress = async () => {
-      if (!email || !address || !telephone || !postalCode || !countryId || !cityId) {
+      if (!email || !address || !telephone || !postalCode || !countryName || !cityName) {
          errorMessage({ message: t('fillRequiredFields'), duration: 3000 })
          return
       }
@@ -127,7 +129,15 @@ export default function CartPage() {
       try {
          const res: any = await createAddress({
             variables: {
-               data: { email, address, phone_number: telephone, postal_code: postalCode, country_id: countryId, state_id: stateId || null, city: cityId },
+               data: {
+                  country: { country: countryName },
+                  state: { state: stateName },
+                  city: { city: cityName },
+                  address: address,
+                  postal_code: postalCode,
+                  email: email,
+                  phone_number: telephone,
+               },
             },
          })
 
@@ -139,8 +149,10 @@ export default function CartPage() {
             setTelephone("")
             setPostalCode("")
             setCountryId("")
+            setCountryName("")
             setStateId("")
-            setCityId("")
+            setStateName("")
+            setCityName("")
          }
       } catch (error) {
          errorMessage({ message: t('errorOccurred'), duration: 3000 })
@@ -622,7 +634,15 @@ export default function CartPage() {
                               </div>
                               <div className="space-y-1.5">
                                  <Label>{t('country')} <span className="text-rose-500">*</span></Label>
-                                 <Select value={countryId} onValueChange={(val) => { setCountryId(val); getStates({ variables: { countryId: val } }) }}>
+                                 <Select value={countryId} onValueChange={(val) => {
+                                    const selected = countries.find((c) => c.value === val)
+                                    setCountryId(val)
+                                    setCountryName(selected?.label || "")
+                                    setStateId("")
+                                    setStateName("")
+                                    setCityName("")
+                                    getStates({ variables: { countryId: val } })
+                                 }}>
                                     <SelectTrigger className="w-full"><SelectValue placeholder={t('selectCountry')} /></SelectTrigger>
                                     <SelectContent>
                                        {countries.map((c) => (
@@ -633,7 +653,13 @@ export default function CartPage() {
                               </div>
                               <div className="space-y-1.5">
                                  <Label>{t('state')}</Label>
-                                 <Select value={stateId} onValueChange={(val) => { setStateId(val); getCities({ variables: { countryId, stateId: val } }) }}>
+                                 <Select value={stateId} onValueChange={(val) => {
+                                    const selected = states.find((s) => s.value === val)
+                                    setStateId(val)
+                                    setStateName(selected?.label || "")
+                                    setCityName("")
+                                    getCities({ variables: { countryId, stateId: val } })
+                                 }}>
                                     <SelectTrigger className="w-full"><SelectValue placeholder={t('selectState')} /></SelectTrigger>
                                     <SelectContent>
                                        {states.map((s) => (
@@ -644,7 +670,7 @@ export default function CartPage() {
                               </div>
                               <div className="space-y-1.5">
                                  <Label>{t('city')} <span className="text-rose-500">*</span></Label>
-                                 <Select value={cityId} onValueChange={setCityId}>
+                                 <Select value={cityName} onValueChange={setCityName}>
                                     <SelectTrigger className="w-full"><SelectValue placeholder={t('selectCity')} /></SelectTrigger>
                                     <SelectContent>
                                        {cities.map((c) => (

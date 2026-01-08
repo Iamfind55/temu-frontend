@@ -205,10 +205,8 @@ export function SiteHeader({ className }: { className?: string }) {
             </div>
 
             {showMegaMenu && (
-              <div className="fixed left-1/2 top-[70px] z-50 w-[60vw] -translate-x-1/2">
-                <div className="mx-auto max-w-7xl px-6 py-4 mt-4">
-                  <MegaMenu />
-                </div>
+              <div className="absolute left-0 sm:left-1/2 top-full z-50 w-screen sm:w-[60vw] sm:-translate-x-1/2 pt-0">
+                <MegaMenu onClose={() => setShowMegaMenu(false)} />
               </div>
             )}
           </div>
