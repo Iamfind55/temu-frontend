@@ -26,13 +26,13 @@ const getAuthToken = (): string => {
 const createApolloClient = () => {
   // HTTP link for queries and mutations
   const httpLink = new HttpLink({
-    uri: "https://temu.tiktokshop.online/graphql",
+    uri: "https://api.temushop.online/graphql",
   });
 
   // WebSocket link for subscriptions
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "wss://temu.tiktokshop.online/graphql",
+      url: "wss://api.temushop.online/graphql",
       connectionParams: () => ({
         Authorization: getAuthToken(),
       }),
@@ -55,7 +55,7 @@ const createApolloClient = () => {
     if (operation.query) {
       operation.query = visit(operation.query, {
         Field(node) {
-          if (node.name.value === '__typename') {
+          if (node.name.value === "__typename") {
             return null;
           }
         },
@@ -84,10 +84,10 @@ const createApolloClient = () => {
     }),
     defaultOptions: {
       watchQuery: {
-        fetchPolicy: 'network-only',
+        fetchPolicy: "network-only",
       },
       query: {
-        fetchPolicy: 'network-only',
+        fetchPolicy: "network-only",
       },
     },
   });
