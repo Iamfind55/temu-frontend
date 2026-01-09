@@ -26,6 +26,10 @@ export interface ShopOrderDetail {
   delivery_type: string
   product_id: string
   sign_in_status: string
+  product: {
+    id: string
+    origin_image_url: string | null
+  }
 }
 
 export interface ApiError {

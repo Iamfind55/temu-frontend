@@ -3,9 +3,31 @@
 import { Button } from "@/components/ui/button"
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react"
 import { useTranslation } from "react-i18next"
+import Image from "next/image"
 
 export function SiteFooter() {
   const { t } = useTranslation('footer')
+
+  const walletImages = [
+    "binance.jpg",
+    "Trust-wallet.png",
+    "cash-app.webp",
+    "coinbase.png",
+    "crypto-com.png",
+    "gemini.png",
+    "kraken-crypto.png",
+    "robinhood.png",
+    "uphold.png"
+  ]
+
+  const certImages = [
+    "certificate-01.png",
+    "certificate-02.png",
+    "certificate-03.png",
+    "certificate-05.png",
+    "certificate-06.png",
+    "certificate.png"
+  ]
 
   return (
     <footer className="bg-[oklch(0.15_0_0)] text-white">
@@ -215,9 +237,15 @@ export function SiteFooter() {
               <div className="flex flex-wrap items-start justify-center gap-4 flex-col">
                 <span className="text-sm text-white font-bold">{t('securityCertification')}</span>
                 <div className="flex flex-wrap gap-3">
-                  {["Visa", "Mastercard", "Amex", "Discover"].map((method) => (
-                    <div key={method} className="bg-white rounded px-3 py-1 text-xs font-semibold text-foreground">
-                      {method}
+                  {certImages.map((image) => (
+                    <div key={image} className="bg-white rounded px-1 py-0 flex items-center justify-center">
+                      <Image
+                        src={`/certs/${image}`}
+                        alt={image.split('.')[0]}
+                        width={50}
+                        height={30}
+                        className="object-contain"
+                      />
                     </div>
                   ))}
                 </div>
@@ -227,9 +255,15 @@ export function SiteFooter() {
             <div className="flex flex-wrap items-start justify-center gap-4 flex-col">
               <span className="text-sm text-white font-bold">{t('weAccept')}</span>
               <div className="flex flex-wrap gap-3">
-                {["Visa", "Mastercard", "Amex", "Discover", "PayPal", "Apple Pay", "Google Pay"].map((method) => (
-                  <div key={method} className="bg-white rounded px-3 py-1 text-xs font-semibold text-foreground">
-                    {method}
+                {walletImages.map((image) => (
+                  <div key={image} className="bg-white rounded px-1 py-0 flex items-center justify-center">
+                    <Image
+                      src={`/wallet-images/${image}`}
+                      alt={image.split('.')[0]}
+                      width={50}
+                      height={30}
+                      className="object-contain"
+                    />
                   </div>
                 ))}
               </div>

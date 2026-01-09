@@ -613,9 +613,9 @@ export default function ShopOrdersPage() {
                       <div key={item.id} className="rounded-lg border border-gray-200 p-4 space-y-4">
                         <div className="flex gap-4">
                           <div className="w-20 h-20 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-                            {item.product_cover_image ? (
+                            {item.product?.origin_image_url ? (
                               <img
-                                src={item.product_cover_image}
+                                src={item.product.origin_image_url}
                                 alt={item.product_name}
                                 className="w-full h-full object-cover"
                               />

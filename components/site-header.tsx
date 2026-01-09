@@ -270,7 +270,7 @@ export function SiteHeader({ className }: { className?: string }) {
               </div>
             ) : (
               <Link href="/login">
-                <div className="flex items-center justify-center cursor-pointer rounded-full font-bold hover:text-white p-0 gap-2">
+                <div className="flex items-center justify-center cursor-pointer rounded-full font-bold p-0 gap-2">
                   <User className="mr-0 h-5 w-5" />
                   <div className="hidden sm:block text-left text-xs">
                     <div>{t('signInRegister')}</div>

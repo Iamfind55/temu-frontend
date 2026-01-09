@@ -66,6 +66,10 @@ export const QUERY_SHOP_ORDER_DETAILS = gql`
         delivery_type
         product_id
         sign_in_status
+        product {
+          id
+          origin_image_url
+        }
       }
       error {
         message

@@ -32,7 +32,7 @@ export default function CreditPage() {
   const [amount, setAmount] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
   const [copySuccess, setCopySuccess] = useState(false)
-  const [cryptoType, setCryptoType] = useState("ERC20")
+  const [cryptoType, setCryptoType] = useState("ETH")
   const [transactionId, setTransactionId] = useState("")
   const [voucherFile, setVoucherFile] = useState<File | null>(null)
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
@@ -368,7 +368,7 @@ export default function CreditPage() {
 
       {/* Deposit Modal */}
       <Dialog open={isDepositModalOpen} onOpenChange={setIsDepositModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">{t('topUpWallet')}</DialogTitle>
           </DialogHeader>
@@ -380,12 +380,12 @@ export default function CreditPage() {
                 {t('selectType')}
               </Label>
               <Select value={cryptoType} onValueChange={setCryptoType}>
-                <SelectTrigger id="crypto-type">
+                <SelectTrigger id="crypto-type" className="w-full">
                   <SelectValue placeholder={t('selectCryptoType')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="ERC20">ERC20</SelectItem>
-                  <SelectItem value="TRC20">TRC20</SelectItem>
+                  <SelectItem value="ETH">ETH</SelectItem>
+                  <SelectItem value="TRX/USDT">TRX/USDT</SelectItem>
                   <SelectItem value="BTC">BTC</SelectItem>
                 </SelectContent>
               </Select>
