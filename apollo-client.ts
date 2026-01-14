@@ -26,7 +26,8 @@ const getAuthToken = (): string => {
 const createApolloClient = () => {
   // HTTP link for queries and mutations
   const httpLink = new HttpLink({
-    uri: "https://api.temu-shop.online/graphql",
+    uri:
+      process.env.NEXT_PUBLIC_API_URL || "https://api.temu-shop.online/graphql",
   });
 
   // WebSocket link for subscriptions

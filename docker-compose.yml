@@ -1,0 +1,16 @@
+services:
+  admin-nextjs:
+    build:
+      context: .
+    restart: always
+    networks:
+      - share-network
+    env_file:
+      - .env
+    volumes:
+      - ./public:/app/public
+    ports:
+      - "3000:3000"
+networks:
+  share-network:
+    external: true
