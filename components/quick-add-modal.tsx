@@ -103,9 +103,9 @@ export function QuickAddModal({ product, isOpen, onClose }: QuickAddModalProps) 
 
             <div className="flex items-baseline gap-3">
               <span className="text-lg font-bold line-through text-muted-foreground">
-                ${product.originalPrice.toFixed(2)}
+                ${product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
-              <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
+              <span className="text-2xl font-bold text-primary">${product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
 
             {product.variants.length > 0 && (

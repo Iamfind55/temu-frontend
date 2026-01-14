@@ -351,10 +351,10 @@ export default function CartPage() {
                                           <div className="flex items-baseline gap-2">
                                              {item.originalPrice && (
                                                 <span className="text-xs text-muted-foreground line-through">
-                                                   ${item.originalPrice.toFixed(2)}
+                                                   ${item.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                 </span>
                                              )}
-                                             <span className="text-lg font-bold text-primary">${item.price.toFixed(2)}</span>
+                                             <span className="text-lg font-bold text-primary">${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                                              {item.originalPrice && (
                                                 <span className="text-xs text-green-600 font-medium">
                                                    -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
@@ -405,11 +405,11 @@ export default function CartPage() {
                         <div className="space-y-2 text-sm">
                            <div className="flex justify-between">
                               <span>{t('itemsTotal')}:</span>
-                              <span className="line-through ">${selectedOriginalTotal.toFixed(2)}</span>
+                              <span className="line-through ">${selectedOriginalTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                            </div>
                            <div className="flex justify-between">
                               <span>{t('itemsDiscount')}:</span>
-                              <span className="text-destructive font-medium">-${discount.toFixed(2)}</span>
+                              <span className="text-destructive font-medium">-${discount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                            </div>
                            <hr />
                            <div className="flex justify-between">
@@ -418,7 +418,7 @@ export default function CartPage() {
                            </div>
                            <div className="pt-2 flex justify-between text-base">
                               <span className="font-bold text-sm">{t('estimatedTotal')}</span>
-                              <span className="text-xl font-bold text-green-600">${selectedSubtotal.toFixed(2)}</span>
+                              <span className="text-xl font-bold text-green-600">${selectedSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                            </div>
                         </div>
 
@@ -537,7 +537,7 @@ export default function CartPage() {
                   </div>
                   <div className="text-right">
                      <p className="text-xs text-muted-foreground">{t('total')}</p>
-                     <p className="text-lg font-bold text-orange-600">${selectedSubtotal.toFixed(2)}</p>
+                     <p className="text-lg font-bold text-orange-600">${selectedSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   </div>
                </div>
                <Button
@@ -739,7 +739,7 @@ export default function CartPage() {
                                  <Wallet size={20} />
                                  <span className="text-sm opacity-90">{t('availableBalance')}</span>
                               </div>
-                              <p className="text-xl font-bold">${walletBalance.toFixed(2)}</p>
+                              <p className="text-xl font-bold">${walletBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                            </div>
 
                            {walletBalance < selectedSubtotal && (
@@ -781,7 +781,7 @@ export default function CartPage() {
                                     <div className="flex-1">
                                        <p className="text-sm font-medium line-clamp-2">{item.name}</p>
                                        <p className="text-xs text-gray-500">{t('qty')}: {item.quantity}</p>
-                                       <p className="text-sm font-bold text-orange-600">${item.price.toFixed(2)}</p>
+                                       <p className="text-sm font-bold text-orange-600">${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                                     </div>
                                  </div>
                               ))}
@@ -790,7 +790,7 @@ export default function CartPage() {
                            <div className="border-t pt-3 space-y-2">
                               <div className="flex justify-between text-sm">
                                  <span>{t('subtotal')}:</span>
-                                 <span>${selectedSubtotal.toFixed(2)}</span>
+                                 <span>${selectedSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                               </div>
                               <div className="flex justify-between text-sm">
                                  <span>{t('shipping')}:</span>
@@ -798,7 +798,7 @@ export default function CartPage() {
                               </div>
                               <div className="flex justify-between text-lg font-bold pt-2 border-t">
                                  <span>{t('total')}:</span>
-                                 <span className="text-orange-600">${selectedSubtotal.toFixed(2)}</span>
+                                 <span className="text-orange-600">${selectedSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                               </div>
                            </div>
                         </div>

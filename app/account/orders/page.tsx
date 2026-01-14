@@ -261,7 +261,7 @@ export default function OrdersPage() {
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-500">{t('total')}</span>
-                          <span className="font-bold text-green-600">${order.total_price.toFixed(2)}</span>
+                          <span className="font-bold text-green-600">${order.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-500">{t('date')}</span>
@@ -307,7 +307,7 @@ export default function OrdersPage() {
                         </span>
                       </div>
                       <div className="flex items-center font-medium text-green-600">
-                        ${order.total_price.toFixed(2)}
+                        ${order.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div className="flex items-center">
                         <Badge className={`text-xs ${getStatusBadgeStyle(order.order_status)}`}>
@@ -497,11 +497,11 @@ export default function OrdersPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium text-green-600">
-                          ${detail.price.toFixed(2)}
+                          ${detail.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
                         {detail.discount > 0 && (
                           <p className="text-xs text-gray-500">
-                            -${detail.discount.toFixed(2)}
+                            -${detail.discount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </p>
                         )}
                       </div>
@@ -518,12 +518,12 @@ export default function OrdersPage() {
                 {selectedOrder.total_discount > 0 && (
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">{t('discount')}</span>
-                    <span className="text-red-600">-${selectedOrder.total_discount.toFixed(2)}</span>
+                    <span className="text-red-600">-${selectedOrder.total_discount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 )}
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
                   <span>{t('total')}:</span>
-                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
+                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
 

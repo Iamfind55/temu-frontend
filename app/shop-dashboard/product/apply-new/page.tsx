@@ -4,6 +4,7 @@ import { useState, useMemo } from "react"
 import { useQuery, useMutation } from "@apollo/client/react"
 import { useTranslation } from "react-i18next"
 import { Star, Package, ChevronLeft, ChevronRight, Check, Loader } from "lucide-react"
+import { formatCurrency } from "@/lib/utils"
 
 // Components
 import { Badge } from "@/components/ui/badge"
@@ -91,9 +92,9 @@ function ApplyProductCard({
             <h3 className="text-sm line-clamp-2 min-h-[2rem] text-foreground leading-tight">{product.name}</h3>
 
             <div className="flex items-baseline gap-2">
-               <span className="text-xl font-bold text-primary">${product.price.toFixed(2)}</span>
+               <span className="text-xl font-bold text-primary">${formatCurrency(product.price)}</span>
                {product.market_price && product.market_price > product.price && (
-                  <span className="text-xs text-muted-foreground line-through">${product.market_price.toFixed(2)}</span>
+                  <span className="text-xs text-muted-foreground line-through">${formatCurrency(product.market_price)}</span>
                )}
             </div>
 

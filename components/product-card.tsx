@@ -56,8 +56,8 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
             <h3 className="text-sm line-clamp-2 min-h-[2rem] text-foreground leading-tight">{product.title}</h3>
 
             <div className="flex items-baseline gap-2">
-              <span className="text-xl font-bold text-primary">${product.price.toFixed(2)}</span>
-              <span className="text-xs text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
+              <span className="text-xl font-bold text-primary">${product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="text-xs text-muted-foreground line-through">${product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               <span className="text-xs text-muted-foreground">{product.soldCount} {t("sold")}</span>
             </div>
 

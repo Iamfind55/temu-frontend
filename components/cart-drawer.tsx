@@ -92,10 +92,10 @@ export function CartDrawer() {
                         <div className="text-right">
                           {item.originalPrice && (
                             <p className="text-xs text-muted-foreground line-through">
-                              ${item.originalPrice.toFixed(2)}
+                              ${item.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </p>
                           )}
-                          <p className="text-lg font-bold text-primary">${item.price.toFixed(2)}</p>
+                          <p className="text-lg font-bold text-primary">${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         </div>
                       </div>
                     </div>
@@ -109,7 +109,7 @@ export function CartDrawer() {
             <div className="border-t px-6 py-4">
               <div className="mb-4 flex items-center justify-between">
                 <span className="text-sm font-medium">{t("subtotal")} ({itemCount} {t("itemsTotal")})</span>
-                <span className="text-lg font-bold text-primary">${subtotal.toFixed(2)}</span>
+                <span className="text-lg font-bold text-primary">${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
               <Button
                 onClick={() => {

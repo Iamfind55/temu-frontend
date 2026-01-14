@@ -76,7 +76,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           <div className="h-4 w-px bg-border" />
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-green-600" />
-            <span className="font-medium">{t("creditForDelay", { amount: product.shipping.credit.toFixed(2) })}</span>
+            <span className="font-medium">{t("creditForDelay", { amount: product.shipping.credit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })}</span>
           </div>
         </div>
 
@@ -111,9 +111,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
         <div className="space-y-3">
           <div className="flex items-baseline gap-3">
-            <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
+            <span className="text-2xl font-bold text-primary">${product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             {product.originalPrice > 0 && (
-              <span className="text-md text-muted-foreground line-through">${product.originalPrice.toFixed(2)}</span>
+              <span className="text-md text-muted-foreground line-through">${product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             )}
           </div>
           {product.promotion && (

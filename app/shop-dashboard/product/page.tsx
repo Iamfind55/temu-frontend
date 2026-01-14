@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useQuery } from "@apollo/client/react"
 import { useTranslation } from "react-i18next"
 import { Search, Eye, Star, Package, ChevronLeft, ChevronRight, Loader } from "lucide-react"
+import { formatCurrency } from "@/lib/utils"
 
 // Components
 import { Badge } from "@/components/ui/badge"
@@ -51,9 +52,9 @@ function ShopProductCard({ product, onView, t }: { product: ShopProduct; onView:
             <h3 className="text-sm line-clamp-2 min-h-[2rem] text-foreground leading-tight">{productData.name}</h3>
 
             <div className="flex items-baseline gap-2">
-               <span className="text-xl font-bold text-primary">${productData.price.toFixed(2)}</span>
+               <span className="text-xl font-bold text-primary">${formatCurrency(productData.price)}</span>
                {productData.market_price > productData.price && (
-                  <span className="text-xs text-muted-foreground line-through">${productData.market_price.toFixed(2)}</span>
+                  <span className="text-xs text-muted-foreground line-through">${formatCurrency(productData.market_price)}</span>
                )}
                <span className="text-xs text-muted-foreground">{product.sell_count}+ {t('sold')}</span>
             </div>
@@ -352,11 +353,11 @@ export default function ProductsPage() {
                            </h3>
                            <div className="flex items-baseline gap-3">
                               <span className="text-2xl font-bold text-orange-600">
-                                 ${selectedProduct.productData.price.toFixed(2)}
+                                 ${formatCurrency(selectedProduct.productData.price)}
                               </span>
                               {selectedProduct.productData.market_price > selectedProduct.productData.price && (
                                  <span className="text-sm text-gray-400 line-through">
-                                    ${selectedProduct.productData.market_price.toFixed(2)}
+                                    ${formatCurrency(selectedProduct.productData.market_price)}
                                  </span>
                               )}
                               {selectedProduct.productData.discount > 0 && (

@@ -429,7 +429,7 @@ export default function ShopOrdersPage() {
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-500">{t('totalPayment')}</span>
-                          <span className="font-bold text-green-600">${order.total_price.toFixed(2)}</span>
+                          <span className="font-bold text-green-600">${order.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-500">{t('date')}</span>
@@ -475,7 +475,7 @@ export default function ShopOrdersPage() {
                         </span>
                       </div>
                       <div className="flex items-center font-medium text-green-600">
-                        ${order.total_price.toFixed(2)}
+                        ${order.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div className="flex items-center">
                         <Badge className={`text-xs ${getStatusBadgeStyle(order.order_status)}`}>
@@ -683,12 +683,12 @@ export default function ShopOrdersPage() {
 
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">{t('commodityPayment')}</span>
-                            <span className="font-medium text-green-600">${commodityPayment.toFixed(2)}</span>
+                            <span className="font-medium text-green-600">${commodityPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                           </div>
 
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">{t('orderPayment')}</span>
-                            <span className="font-medium text-green-600">${orderPayment.toFixed(2)}</span>
+                            <span className="font-medium text-green-600">${orderPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                           </div>
 
                           <div className="flex items-center justify-between text-sm">
@@ -698,7 +698,7 @@ export default function ShopOrdersPage() {
 
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">{t('expectedRevenue')}</span>
-                            <span className="font-bold text-green-600">+ {expectedRevenue.toFixed(2)}</span>
+                            <span className="font-bold text-green-600">+ {expectedRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                           </div>
                         </div>
                       </div>
@@ -722,7 +722,7 @@ export default function ShopOrdersPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
                   <span>{t('totalPayment')}</span>
-                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
+                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
 
@@ -757,7 +757,7 @@ export default function ShopOrdersPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">{t('totalPrice')}</span>
-                  <span className="font-medium">${selectedOrder.total_price.toFixed(2)}</span>
+                  <span className="font-medium">${selectedOrder.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">{t('totalQuantity')}</span>
@@ -769,7 +769,7 @@ export default function ShopOrdersPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
                   <span>{t('totalPaid')}</span>
-                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toFixed(2)}</span>
+                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
 

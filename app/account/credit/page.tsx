@@ -198,14 +198,14 @@ export default function CreditPage() {
             <div className="mb-8">
               <p className="mb-2 text-sm text-gray-600">{t('totalUsd')}</p>
               <p className="text-3xl font-bold text-gray-900">
-                {walletLoading ? "..." : `$${(wallet?.total_balance || 0).toFixed(2)}`}
+                {walletLoading ? "..." : `$${(wallet?.total_balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </p>
             </div>
 
             <div className="mb-8">
               <p className="mb-2 text-sm text-gray-600">{t('pendingUsd')}</p>
               <p className="text-3xl font-bold text-gray-900">
-                {walletLoading ? "..." : `$${(wallet?.total_frozen_balance || 0).toFixed(2)}`}
+                {walletLoading ? "..." : `$${(wallet?.total_frozen_balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
               </p>
             </div>
           </div>
@@ -261,7 +261,7 @@ export default function CreditPage() {
                           </span>
                         </div>
                         <div className="font-medium whitespace-nowrap">
-                          ${transaction.amount.toFixed(2)}
+                          ${transaction.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </div>
                         <div>
                           <span className="inline-block px-2 py-1 text-xs bg-gray-100 rounded whitespace-nowrap">
@@ -471,7 +471,7 @@ export default function CreditPage() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('amount')}:</span>
-                  <span className="font-medium">${amount.toFixed(2)}</span>
+                  <span className="font-medium">${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
 
                 <div className="flex justify-between">
