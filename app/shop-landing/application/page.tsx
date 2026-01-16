@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/lib/toast"
 import { useTranslation } from "react-i18next"
@@ -18,6 +19,7 @@ import { MUTATION_SHOP_UPDATE_INFORMATION } from "@/app/api/shop/auth"
 import { useShopStore } from "@/store/shop-store"
 
 export default function ApplicationPage() {
+   const router = useRouter()
    const { t } = useTranslation('shop-landing')
    const { successMessage, errorMessage } = useToast()
    const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION)
@@ -29,12 +31,16 @@ export default function ApplicationPage() {
    const [storeName, setStoreName] = useState("")
    const [currentStep, setCurrentStep] = useState(1)
 
-   // Check shop status on load - if APPROVED, show step 3 (application under review)
+   // Check shop status on load and redirect accordingly
    useEffect(() => {
-      if (shop?.status === "APPROVED") {
+      if (shop?.status === "ACTIVE") {
+         // ACTIVE users should go to dashboard
+         router.replace("/shop-dashboard")
+      } else if (shop?.status === "APPROVED") {
+         // APPROVED users see step 3 (under review)
          setCurrentStep(3)
       }
-   }, [shop?.status])
+   }, [shop?.status, router])
 
    const [dateOfBirth, setDateOfBirth] = useState("")
    const [phoneNumber, setPhoneNumber] = useState("")

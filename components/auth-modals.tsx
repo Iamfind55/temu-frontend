@@ -37,6 +37,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
    // Shop store
    const setShop = useShopStore((state) => state.setShop)
+   const clearShop = useShopStore((state) => state.clearShop)
 
    // Shop mutations
    const [shopRegister, { loading: registerLoading }] = useMutation(MUTATION_SHOP_REGISTER)
@@ -140,6 +141,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       }
 
       try {
+         // Clear any existing shop data before attempting new login
+         clearShop()
+         Cookies.remove("shop_auth_token")
+
          const response = await shopLogin({
             variables: {
                where: {
