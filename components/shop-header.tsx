@@ -44,7 +44,7 @@ export function ShopHeader({ className }: { className?: string }) {
 
                   <div className="flex items-center justify-start gap-4">
                      <LanguageSelector />
-                     {mounted && isAuthenticated ? (
+                     {mounted && isAuthenticated && shop?.status === "ACTIVE" ? (
                         <Link href="/shop-dashboard">
                            <Button
                               variant="ghost"

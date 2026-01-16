@@ -8,6 +8,7 @@ import { ShopHeader } from "@/components/shop-header"
 import { ShopFooter } from "@/components/shop-footer"
 import { ShopBottomNav } from "@/components/shop-bottom-nav"
 import { ShopLiveChat } from "@/components/shop-live-chat"
+import { ShopDashboardGuard } from "@/components/shop-dashboard-guard"
 
 export default function AccountLayout({
   children,
@@ -23,7 +24,9 @@ export default function AccountLayout({
             <div className="w-1/5 hidden sm:block">
               <ShopDashboardSidebar />
             </div>
-            <main className="w-full sm:w-4/5 pb-20 sm:pb-0">{children}</main>
+            <main className="w-full sm:w-4/5 pb-20 sm:pb-0">
+              <ShopDashboardGuard>{children}</ShopDashboardGuard>
+            </main>
           </div>
         </div>
       </div>

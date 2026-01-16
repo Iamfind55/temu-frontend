@@ -193,5 +193,6 @@
   "verificationCodeFailed": "Failed to send verification code. Please try again.",
   "genericError": "An error occurred. Please try again.",
   "passwordResetSuccess": "Password reset successfully! Please sign in.",
-  "passwordResetFailed": "Failed to reset password. Please try again."
+  "passwordResetFailed": "Failed to reset password. Please try again.",
+  "accountUnderReview": "บัญชีของคุณอยู่ระหว่างการตรวจสอบโดยผู้ดูแลระบบ กรุณาลองอีกครั้งหลังจาก 24 ชั่วโมง"
 }

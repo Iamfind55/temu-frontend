@@ -152,6 +152,26 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          if (response.data?.shopLogin?.success && response.data.shopLogin.data) {
             const { token, data } = response.data.shopLogin.data
 
+            // Check shop status before setting token
+            if (data.status === "PENDING") {
+               // Shop has not provided all data yet, redirect to application page
+               // Set token temporarily for application form
+               Cookies.set("shop_auth_token", token)
+               setShop(data)
+               onModalChange(null)
+               router.push("/shop-landing/application")
+               return
+            }
+
+            if (data.status === "APPROVED") {
+               // Shop is under review by admin, redirect to application page to show status
+               Cookies.set("shop_auth_token", token)
+               setShop(data)
+               onModalChange(null)
+               router.push("/shop-landing/application")
+               return
+            }
+
             // Save token to cookie (shop uses separate token key from customer)
             Cookies.set("shop_auth_token", token)
 

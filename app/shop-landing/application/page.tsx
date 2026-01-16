@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { useToast } from "@/lib/toast"
 import { useTranslation } from "react-i18next"
@@ -15,17 +15,27 @@ import { Button } from "@/components/ui/button"
 import { useMutation } from "@apollo/client/react"
 import { businessTypes, faqItems, steps } from "./constants"
 import { MUTATION_SHOP_UPDATE_INFORMATION } from "@/app/api/shop/auth"
+import { useShopStore } from "@/store/shop-store"
 
 export default function ApplicationPage() {
    const { t } = useTranslation('shop-landing')
    const { successMessage, errorMessage } = useToast()
    const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION)
+   const { shop } = useShopStore()
 
    const [remark, setRemark] = useState("")
    const [fullName, setFullName] = useState("")
    const [username, setUsername] = useState("")
    const [storeName, setStoreName] = useState("")
    const [currentStep, setCurrentStep] = useState(1)
+
+   // Check shop status on load - if APPROVED, show step 3 (application under review)
+   useEffect(() => {
+      if (shop?.status === "APPROVED") {
+         setCurrentStep(3)
+      }
+   }, [shop?.status])
+
    const [dateOfBirth, setDateOfBirth] = useState("")
    const [phoneNumber, setPhoneNumber] = useState("")
    const [businessType, setBusinessType] = useState("")

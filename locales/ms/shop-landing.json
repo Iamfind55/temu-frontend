@@ -193,5 +193,6 @@
   "verificationCodeFailed": "Failed to send verification code. Please try again.",
   "genericError": "An error occurred. Please try again.",
   "passwordResetSuccess": "Password reset successfully! Please sign in.",
-  "passwordResetFailed": "Failed to reset password. Please try again."
+  "passwordResetFailed": "Failed to reset password. Please try again.",
+  "accountUnderReview": "Akaun anda sedang disemak oleh admin. Sila cuba lagi selepas 24 jam."
 }
