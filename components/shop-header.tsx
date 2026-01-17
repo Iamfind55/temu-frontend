@@ -58,7 +58,7 @@ export function ShopHeader({ className }: { className?: string }) {
                         <>
                            <Button
                               variant="ghost"
-                              className="bg-black hover:bg-black sm:flex hover:border hover:border-orange-500 cursor-pointer rounded-sm font-bold text-white"
+                              className="bg-black hover:bg-black sm:flex hover:border hover:border-orange-500 cursor-pointer rounded-sm font-bold text-white hover:text-white"
                               onClick={() => setActiveModal("signin")}
                            >
                               Sign in

@@ -104,6 +104,7 @@ export const MUTATION_SHOP_LOGIN = gql`
             bank_account_number
             bank_account_name
           }
+          isOtpEnable
         }
       }
       error {

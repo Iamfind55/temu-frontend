@@ -159,17 +159,37 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
             // Check shop status before setting token
             if (data.status === "PENDING") {
-               // Shop has not provided all data yet, redirect to application page
-               // Set token temporarily for application form
-               Cookies.set("shop_auth_token", token)
-               setShop(data)
-               onModalChange(null)
-               router.push("/shop-landing/application")
+               if (data.isOtpEnable) {
+                  // OTP is verified, redirect to application page step 1
+                  Cookies.set("shop_auth_token", token)
+                  setShop(data)
+                  onModalChange(null)
+                  router.push("/shop-landing/application")
+               } else {
+                  // OTP not verified yet, send OTP and show verification modal
+                  setForgotPasswordEmail(data.email)
+                  try {
+                     await resendShopOTP({
+                        variables: {
+                           data: {
+                              email: data.email,
+                           },
+                        },
+                     })
+                     successMessage({ message: t("verificationCodeSent") })
+                  } catch {
+                     // Continue to show modal even if resend fails
+                  }
+                  setResendCountdown(60)
+                  setCanResend(false)
+                  setOtpDigits(["", "", "", "", "", ""])
+                  onModalChange("signup-verification")
+               }
                return
             }
 
             if (data.status === "APPROVED") {
-               // Shop is under review by admin, redirect to application page to show status
+               // Shop is under review by admin, redirect to application page to show status (step 3)
                Cookies.set("shop_auth_token", token)
                setShop(data)
                onModalChange(null)
@@ -177,7 +197,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                return
             }
 
-            // Save token to cookie (shop uses separate token key from customer)
+            // ACTIVE status - Save token to cookie (shop uses separate token key from customer)
             Cookies.set("shop_auth_token", token)
 
             // Save shop data to store
@@ -380,6 +400,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       const otp = otpDigits.join("")
 
       try {
+         // Clear any existing shop data before verification
+         clearShop()
+         Cookies.remove("shop_auth_token")
+
          const response = await verifyShopEmail({
             variables: {
                data: {
@@ -392,10 +416,14 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopVerifyOTP?.success) {
+            const verifyData = result?.shopVerifyOTP?.data
             // Save token to cookie for shop update mutation
-            const token = result?.shopVerifyOTP?.data?.token
-            if (token) {
-               Cookies.set("shop_auth_token", token)
+            if (verifyData?.token) {
+               Cookies.set("shop_auth_token", verifyData.token)
+            }
+            // Set shop data to store if available
+            if (verifyData?.data) {
+               setShop(verifyData.data)
             }
             successMessage({ message: t("emailVerified") })
             onModalChange(null)

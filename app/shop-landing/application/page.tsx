@@ -23,7 +23,7 @@ export default function ApplicationPage() {
    const { t } = useTranslation('shop-landing')
    const { successMessage, errorMessage } = useToast()
    const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION)
-   const { shop } = useShopStore()
+   const { shop, setShop } = useShopStore()
 
    const [remark, setRemark] = useState("")
    const [fullName, setFullName] = useState("")
@@ -131,6 +131,23 @@ export default function ApplicationPage() {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.updateShopInformation?.success) {
+            // Update shop data in store with new status and submitted data
+            if (shop) {
+               setShop({
+                  ...shop,
+                  status: "APPROVED",
+                  fullname: fullName,
+                  username: username,
+                  store_name: storeName,
+                  phone_number: phoneNumber,
+                  dob: dateOfBirth,
+                  remark: remark || "",
+                  id_card_info: {
+                     id_card_image_front: frontUpload.url || "",
+                     id_card_image_back: backUpload.url || "",
+                  },
+               })
+            }
             successMessage({ message: t('applicationSubmitted') })
             setCurrentStep(3)
          } else {

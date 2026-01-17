@@ -1,5 +1,6 @@
 "use client"
 
+import Cookies from "js-cookie"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader } from "lucide-react"
@@ -26,8 +27,16 @@ export function ShopDashboardGuard({ children }: ShopDashboardGuardProps) {
    useEffect(() => {
       if (isChecking) return
 
+      const token = Cookies.get("shop_auth_token")
+
+      // If no shop data or no token, redirect to application page
+      if (!shop || !token) {
+         router.replace("/shop-landing/application")
+         return
+      }
+
       // If shop status is PENDING or APPROVED, redirect to application page
-      if (shop && (shop.status === "PENDING" || shop.status === "APPROVED")) {
+      if (shop.status === "PENDING" || shop.status === "APPROVED") {
          router.replace("/shop-landing/application")
       }
    }, [shop, isChecking, router])
@@ -41,8 +50,10 @@ export function ShopDashboardGuard({ children }: ShopDashboardGuardProps) {
       )
    }
 
-   // If shop status is PENDING or APPROVED, show loading (will redirect)
-   if (shop && (shop.status === "PENDING" || shop.status === "APPROVED")) {
+   const token = Cookies.get("shop_auth_token")
+
+   // If no shop data, no token, or status is PENDING/APPROVED, show loading (will redirect)
+   if (!shop || !token || shop.status === "PENDING" || shop.status === "APPROVED") {
       return (
          <div className="flex items-center justify-center min-h-[400px]">
             <Loader className="h-8 w-8 animate-spin text-orange-500" />

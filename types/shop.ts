@@ -35,6 +35,7 @@ export interface ShopData {
   totalProduct: number;
   username: string;
   payment_method: PaymentMethod | null;
+  isOtpEnable: boolean;
 }
 
 export interface ShopLoginData {
