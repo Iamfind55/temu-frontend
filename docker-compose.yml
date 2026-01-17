@@ -2,6 +2,10 @@ services:
   admin-nextjs:
     build:
       context: .
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_CLOUDINARY_URL=${NEXT_PUBLIC_CLOUDINARY_URL}
+        - NEXT_PUBLIC_UPLOAD_PRESET=${NEXT_PUBLIC_UPLOAD_PRESET}
     restart: always
     networks:
       - share-network
