@@ -155,7 +155,7 @@ export default function VIPAccessPage() {
                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
                         <TrendingUp className="h-4 w-4 text-green-600" />
                      </div>
-                     <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">35%</p>
+                     <p className="text-lg sm:text-xl font-bold text-gray-900 mb-1">45%</p>
                      <p className="text-xs text-gray-500">{t('maxProfitPoint')}</p>
                   </div>
                   <div className="bg-white rounded-md p-4 border border-gray-200 text-center">

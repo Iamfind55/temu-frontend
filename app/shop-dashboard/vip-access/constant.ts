@@ -15,7 +15,7 @@ export const vipLevels: VIPLevel[] = [
     isLightHeader: true,
     deposit: "15,000 USDT",
     reward: "1,500 USDT",
-    profitPoint: "25%",
+    profitPoint: "35%",
     dailyTraffic: "3,000-5,000",
     featureKeys: [
       "vip1Feature1",
@@ -34,7 +34,7 @@ export const vipLevels: VIPLevel[] = [
     iconColor: "text-purple-500",
     deposit: "30,000 USDT",
     reward: "3,000 USDT",
-    profitPoint: "30%",
+    profitPoint: "40%",
     dailyTraffic: "5,000-8,000",
     featureKeys: [
       "vip2Feature1",
@@ -54,7 +54,7 @@ export const vipLevels: VIPLevel[] = [
     iconColor: "text-orange-500",
     deposit: "45,000 USDT",
     reward: "4,500 USDT",
-    profitPoint: "35%",
+    profitPoint: "45%",
     dailyTraffic: "8,000-11,000",
     featureKeys: [
       "vip3Feature1",
