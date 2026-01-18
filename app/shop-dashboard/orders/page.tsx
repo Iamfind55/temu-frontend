@@ -25,6 +25,21 @@ import { QUERY_SHOP_ORDERS, QUERY_SHOP_ORDER_DETAILS, MUTATION_SHOP_CONFIRM_ORDE
 // Types
 import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsResponse, ShopConfirmOrderResponse, ShopCancelOrderResponse } from "@/types/shopOrder"
 import { formatDate, formatDateTime, getStatusBadgeStyle, getStatusLabelKey } from "./functions"
+import { useShopStore } from "@/store/shop-store"
+
+// Get profit percentage based on VIP level
+const getProfitByVipLevel = (shopVip: string | undefined): number => {
+  switch (shopVip) {
+    case "VIP 1":
+      return 35
+    case "VIP 2":
+      return 40
+    case "VIP 3":
+      return 45
+    default:
+      return 25 // Normal user or VIP 0
+  }
+}
 
 export default function ShopOrdersPage() {
   const { t } = useTranslation('shop-dashboard')
@@ -32,6 +47,7 @@ export default function ShopOrdersPage() {
   const router = useRouter()
   const client = useApolloClient()
   const { errorMessage, successMessage } = useToast()
+  const { shop } = useShopStore()
 
   const currentStatus = searchParams.get("status") || "no_pickup"
   const [searchQuery, setSearchQuery] = useState("")
@@ -604,7 +620,8 @@ export default function ShopOrdersPage() {
               ) : orderDetails.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {orderDetails.map((item) => {
-                    const profitRatio = item.profit / 100
+                    const profitPercent = getProfitByVipLevel(shop?.shop_vip)
+                    const profitRatio = profitPercent / 100
                     const orderPayment = item.price * item.quantity
                     const commodityPayment = orderPayment * (1 - profitRatio)
                     const expectedRevenue = orderPayment * profitRatio
@@ -674,13 +691,6 @@ export default function ShopOrdersPage() {
                             <span className="font-medium">{item.quantity}</span>
                           </div>
 
-                          {item.discount > 0 && (
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="text-gray-600">{t('totalDiscount')}</span>
-                              <span className="font-medium text-red-600">{item.discount}%</span>
-                            </div>
-                          )}
-
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">{t('commodityPayment')}</span>
                             <span className="font-medium text-green-600">${commodityPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
@@ -693,7 +703,7 @@ export default function ShopOrdersPage() {
 
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">{t('profitRatio')}</span>
-                            <span className="font-medium text-green-600">{item.profit}%</span>
+                            <span className="font-medium text-green-600">{profitPercent}%</span>
                           </div>
 
                           <div className="flex items-center justify-between text-sm">
@@ -762,10 +772,6 @@ export default function ShopOrdersPage() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-600">{t('totalQuantity')}</span>
                   <span className="font-medium">{selectedOrder.total_quantity}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">{t('totalDiscount')}</span>
-                  <span className="font-medium text-red-600">{selectedOrder.total_discount}%</span>
                 </div>
                 <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
                   <span>{t('totalPaid')}</span>
