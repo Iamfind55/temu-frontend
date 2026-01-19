@@ -106,6 +106,17 @@ export default function CreditPage() {
           }
         )
         data = (await response.json()) as CloudinaryResponse
+
+        // Check if upload failed
+        if (!data.secure_url) {
+          console.error("Cloudinary upload failed:", data)
+          errorMessage({
+            message: (data as any)?.error?.message || t('depositFailed'),
+            duration: 5000,
+          })
+          setIsLoading(false)
+          return
+        }
       }
 
       // Call deposit mutation

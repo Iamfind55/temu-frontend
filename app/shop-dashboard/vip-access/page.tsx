@@ -118,7 +118,6 @@ export default function VIPAccessPage() {
 
             // Fetch latest shop profile and update store
             const profileResult = await fetchShopProfile()
-            console.log("DDDDDDD:::", profileResult);
             if (profileResult.data?.getShopProfile?.success && profileResult.data.getShopProfile.data) {
                setShop(profileResult.data.getShopProfile.data)
             }

@@ -30,14 +30,14 @@ import { useShopStore } from "@/store/shop-store"
 // Get profit percentage based on VIP level
 const getProfitByVipLevel = (shopVip: string | undefined): number => {
   switch (shopVip) {
-    case "VIP 1":
+    case "1":
       return 35
-    case "VIP 2":
+    case "2":
       return 40
-    case "VIP 3":
+    case "3":
       return 45
     default:
-      return 25 // Normal user or VIP 0
+      return 25 // Normal user (VIP 0) or undefined
   }
 }
 
