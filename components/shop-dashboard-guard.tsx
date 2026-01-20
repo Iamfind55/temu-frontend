@@ -1,10 +1,26 @@
 "use client"
 
 import Cookies from "js-cookie"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
+import { useLazyQuery } from "@apollo/client/react"
 import { Loader } from "lucide-react"
 import { useShopStore } from "@/store/shop-store"
+import { QUERY_GET_SHOP_PROFILE } from "@/app/api/shop/auth"
+import { ShopData } from "@/types/shop"
+
+// Shop profile response type
+interface ShopProfileResponse {
+   getShopInformation: {
+      success: boolean
+      data: ShopData | null
+      error?: {
+         message: string
+         code: string
+         details: string
+      }
+   }
+}
 
 interface ShopDashboardGuardProps {
    children: React.ReactNode
@@ -12,8 +28,14 @@ interface ShopDashboardGuardProps {
 
 export function ShopDashboardGuard({ children }: ShopDashboardGuardProps) {
    const router = useRouter()
-   const { shop } = useShopStore()
+   const { shop, setShop } = useShopStore()
    const [isChecking, setIsChecking] = useState(true)
+   const hasFetchedRef = useRef(false)
+
+   // Lazy query to fetch fresh shop profile
+   const [fetchShopProfile] = useLazyQuery<ShopProfileResponse>(QUERY_GET_SHOP_PROFILE, {
+      fetchPolicy: "network-only",
+   })
 
    useEffect(() => {
       // Small delay to ensure hydration is complete
@@ -23,6 +45,25 @@ export function ShopDashboardGuard({ children }: ShopDashboardGuardProps) {
 
       return () => clearTimeout(timer)
    }, [])
+
+   // Fetch fresh shop profile when dashboard loads
+   useEffect(() => {
+      const token = Cookies.get("shop_auth_token")
+
+      // Only fetch if we have a token and haven't fetched yet
+      if (!isChecking && token && !hasFetchedRef.current) {
+         hasFetchedRef.current = true
+
+         fetchShopProfile().then((result) => {
+            if (result.data?.getShopInformation?.success && result.data.getShopInformation.data) {
+               // Update store with fresh data
+               setShop(result.data.getShopInformation.data)
+            }
+         }).catch((error) => {
+            console.error("Failed to fetch shop profile:", error)
+         })
+      }
+   }, [isChecking, fetchShopProfile, setShop])
 
    useEffect(() => {
       if (isChecking) return

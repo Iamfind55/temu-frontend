@@ -8,9 +8,10 @@ import { TFunction } from "i18next"
 
 interface VIPCarouselProps {
    t: TFunction
+   currentVIP?: string
 }
 
-export function VIPCarousel({ t }: VIPCarouselProps) {
+export function VIPCarousel({ t, currentVIP }: VIPCarouselProps) {
    const [currentIndex, setCurrentIndex] = useState(0)
    const [touchEnd, setTouchEnd] = useState<number | null>(null)
    const [touchStart, setTouchStart] = useState<number | null>(null)
@@ -57,7 +58,7 @@ export function VIPCarousel({ t }: VIPCarouselProps) {
             >
                {vipLevels.map((level) => (
                   <div key={level.id} className="w-full flex-shrink-0 px-1">
-                     <VIPCard level={level} t={t} />
+                     <VIPCard level={level} t={t} currentVIP={currentVIP} />
                   </div>
                ))}
             </div>

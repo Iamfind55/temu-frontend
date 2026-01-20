@@ -5,15 +5,26 @@ import { TFunction } from "i18next"
 interface VIPCardProps {
    level: VIPLevel
    t: TFunction
+   currentVIP?: string
 }
 
-export function VIPCard({ level, t }: VIPCardProps) {
+export function VIPCard({ level, t, currentVIP }: VIPCardProps) {
    const isLight = level.isLightHeader
+   // Check if this card is the current VIP level (e.g., level.id = "vip1" and currentVIP = "1")
+   const isCurrentLevel = currentVIP === level.id.replace("vip", "")
 
    return (
       <div
-         className={`cursor-pointer relative bg-white rounded-lg border ${level.borderColor} overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
+         className={`cursor-pointer relative bg-white rounded-lg border ${isCurrentLevel ? "border-orange-500 ring-2 ring-orange-500" : level.borderColor} overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
       >
+         {/* Current Plan Badge */}
+         {isCurrentLevel && (
+            <div className="absolute top-3 right-3 z-10">
+               <span className="bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                  {t('currentPlan')}
+               </span>
+            </div>
+         )}
          <div className={`${isLight ? level.color : `bg-gradient-to-r ${level.color}`} p-6`}>
             <div className="flex items-center gap-3 mb-2">
                <div className={`w-10 h-10 ${isLight ? level.headerIconBg : "bg-white/20"} rounded-full flex items-center justify-center`}>

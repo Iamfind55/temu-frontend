@@ -36,7 +36,7 @@ import { ShopData } from "@/types/shop"
 
 // Shop profile response type
 interface ShopProfileResponse {
-   getShopProfile: {
+   getShopInformation: {
       success: boolean
       data: ShopData | null
       error?: {
@@ -69,12 +69,16 @@ interface VIPRequestResponse {
 export default function VIPAccessPage() {
    const { t } = useTranslation('shop-dashboard')
    const { successMessage } = useToast()
-   const setShop = useShopStore((state) => state.setShop)
+   const { shop, setShop } = useShopStore()
    const [openFaq, setOpenFaq] = useState<string | null>("offer")
    const [isDialogOpen, setIsDialogOpen] = useState(false)
    const [selectedVIP, setSelectedVIP] = useState<"1" | "2" | "3">("1")
    const [isApplying, setIsApplying] = useState(false)
    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+   // Get current VIP level from shop (e.g., "0", "1", "2", "3")
+   // Convert to string to handle both number and string types from API
+   const currentVIP = String(shop?.shop_vip || "0")
 
    // VIP request mutation
    const [requestVIP] = useMutation<VIPRequestResponse>(MUTATION_SHOP_REQUEST_VIP)
@@ -90,7 +94,9 @@ export default function VIPAccessPage() {
 
    const handleOpenDialog = () => {
       setIsDialogOpen(true)
-      setSelectedVIP("1")
+      // Auto-select current VIP level (default to "1" if not VIP yet or invalid)
+      const vipLevel = currentVIP as "1" | "2" | "3"
+      setSelectedVIP(["1", "2", "3"].includes(currentVIP) ? vipLevel : "1")
       setErrorMessage(null)
    }
 
@@ -118,8 +124,8 @@ export default function VIPAccessPage() {
 
             // Fetch latest shop profile and update store
             const profileResult = await fetchShopProfile()
-            if (profileResult.data?.getShopProfile?.success && profileResult.data.getShopProfile.data) {
-               setShop(profileResult.data.getShopProfile.data)
+            if (profileResult.data?.getShopInformation?.success && profileResult.data.getShopInformation.data) {
+               setShop(profileResult.data.getShopInformation.data)
             }
          } else {
             const error = result.data?.shopRequestVIP?.error
@@ -188,12 +194,12 @@ export default function VIPAccessPage() {
 
                   <div className="hidden md:grid md:grid-cols-3 gap-3">
                      {vipLevels.map((level) => (
-                        <VIPCard key={level.id} level={level} t={t} />
+                        <VIPCard key={level.id} level={level} t={t} currentVIP={currentVIP} />
                      ))}
                   </div>
 
                   <div className="md:hidden">
-                     <VIPCarousel t={t} />
+                     <VIPCarousel t={t} currentVIP={currentVIP} />
                   </div>
                </div>
 

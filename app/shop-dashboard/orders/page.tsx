@@ -25,21 +25,6 @@ import { QUERY_SHOP_ORDERS, QUERY_SHOP_ORDER_DETAILS, MUTATION_SHOP_CONFIRM_ORDE
 // Types
 import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsResponse, ShopConfirmOrderResponse, ShopCancelOrderResponse } from "@/types/shopOrder"
 import { formatDate, formatDateTime, getStatusBadgeStyle, getStatusLabelKey } from "./functions"
-import { useShopStore } from "@/store/shop-store"
-
-// Get profit percentage based on VIP level
-const getProfitByVipLevel = (shopVip: string | undefined): number => {
-  switch (shopVip) {
-    case "1":
-      return 35
-    case "2":
-      return 40
-    case "3":
-      return 45
-    default:
-      return 25 // Normal user (VIP 0) or undefined
-  }
-}
 
 export default function ShopOrdersPage() {
   const { t } = useTranslation('shop-dashboard')
@@ -47,7 +32,6 @@ export default function ShopOrdersPage() {
   const router = useRouter()
   const client = useApolloClient()
   const { errorMessage, successMessage } = useToast()
-  const { shop } = useShopStore()
 
   const currentStatus = searchParams.get("status") || "no_pickup"
   const [searchQuery, setSearchQuery] = useState("")
@@ -620,7 +604,8 @@ export default function ShopOrdersPage() {
               ) : orderDetails.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {orderDetails.map((item) => {
-                    const profitPercent = getProfitByVipLevel(shop?.shop_vip)
+                    // const profitPercent = getProfitByVipLevel(shop?.shop_vip)
+                    const profitPercent = item.profit
                     const profitRatio = profitPercent / 100
                     const orderPayment = item.price * item.quantity
                     const commodityPayment = orderPayment * (1 - profitRatio)
@@ -721,20 +706,33 @@ export default function ShopOrdersPage() {
                 </div>
               )}
 
-              <div className="rounded-lg bg-gray-50 p-4 space-y-2 mt-4">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">{t('totalProducts')}</span>
-                  <span>{selectedOrder.total_products}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">{t('totalQuantity')}</span>
-                  <span>{selectedOrder.total_quantity}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
-                  <span>{t('totalPayment')}</span>
-                  <span className="text-green-600 text-lg">${selectedOrder.total_price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </div>
-              </div>
+              {(() => {
+                // Calculate total commodity payment from all order details
+                // Each item has its own profit value, so we calculate per item
+                const totalCommodityPayment = orderDetails.reduce((sum, item) => {
+                  const profitRatio = item.profit / 100
+                  const orderPayment = item.price * item.quantity
+                  const commodityPayment = orderPayment * (1 - profitRatio)
+                  return sum + commodityPayment
+                }, 0)
+
+                return (
+                  <div className="rounded-lg bg-gray-50 p-4 space-y-2 mt-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">{t('totalProducts')}</span>
+                      <span>{selectedOrder.total_products}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-600">{t('totalQuantity')}</span>
+                      <span>{selectedOrder.total_quantity}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm font-bold pt-2 border-t">
+                      <span>{t('totalPayment')}</span>
+                      <span className="text-green-600 text-lg">${totalCommodityPayment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                    </div>
+                  </div>
+                )
+              })()}
 
               <div className="flex items-center justify-end gap-4">
                 <Button
