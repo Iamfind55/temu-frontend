@@ -29,8 +29,5 @@ RUN npm run build
 # Expose the correct port
 EXPOSE 3000
 
-# Clear any default entrypoint from base image
-ENTRYPOINT []
-
-# Start Next.js in production mode
-CMD ["npm", "start"]
+# Start Next.js in production mode using full path
+CMD ["/usr/local/bin/npm", "start"]
