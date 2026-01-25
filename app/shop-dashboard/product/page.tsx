@@ -53,9 +53,6 @@ function ShopProductCard({ product, onView, t }: { product: ShopProduct; onView:
 
             <div className="flex items-baseline gap-2">
                <span className="text-xl font-bold text-primary">${formatCurrency(productData.price)}</span>
-               {productData.market_price > productData.price && (
-                  <span className="text-xs text-muted-foreground line-through">${formatCurrency(productData.market_price)}</span>
-               )}
                <span className="text-xs text-muted-foreground">{product.sell_count}+ {t('sold')}</span>
             </div>
 
@@ -85,11 +82,6 @@ function ShopProductCard({ product, onView, t }: { product: ShopProduct; onView:
                <Badge className="bg-green-100 text-green-800">
                   {t('alreadyOnShelf')}
                </Badge>
-               {productData.discount > 0 && (
-                  <Badge className="bg-red-100 text-red-800">
-                     -{productData.discount}%
-                  </Badge>
-               )}
             </div>
          </div>
       </div>
@@ -355,16 +347,6 @@ export default function ProductsPage() {
                               <span className="text-2xl font-bold text-orange-600">
                                  ${formatCurrency(selectedProduct.productData.price)}
                               </span>
-                              {selectedProduct.productData.market_price > selectedProduct.productData.price && (
-                                 <span className="text-sm text-gray-400 line-through">
-                                    ${formatCurrency(selectedProduct.productData.market_price)}
-                                 </span>
-                              )}
-                              {selectedProduct.productData.discount > 0 && (
-                                 <Badge className="bg-red-100 text-red-800">
-                                    -{selectedProduct.productData.discount}%
-                                 </Badge>
-                              )}
                            </div>
                            <div className="flex items-center gap-1">
                               {[...Array(5)].map((_, i) => (

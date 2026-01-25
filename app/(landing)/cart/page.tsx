@@ -349,17 +349,7 @@ export default function CartPage() {
                                              <Badge className="bg-gray-800 text-white text-xs mb-2">ALMOST SOLD OUT</Badge>
                                           )}
                                           <div className="flex items-baseline gap-2">
-                                             {item.originalPrice && (
-                                                <span className="text-xs text-muted-foreground line-through">
-                                                   ${item.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                                </span>
-                                             )}
                                              <span className="text-lg font-bold text-primary">${item.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                                             {item.originalPrice && (
-                                                <span className="text-xs text-green-600 font-medium">
-                                                   -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
-                                                </span>
-                                             )}
                                           </div>
                                           {item.name.includes("Hello Kitty") && (
                                              <div className="text-xs text-muted-foreground mt-1">
@@ -403,15 +393,6 @@ export default function CartPage() {
                      <div className="space-y-2">
                         <h2 className="text-lg font-bold">{t('orderSummary')}</h2>
                         <div className="space-y-2 text-sm">
-                           <div className="flex justify-between">
-                              <span>{t('itemsTotal')}:</span>
-                              <span className="line-through ">${selectedOriginalTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                           </div>
-                           <div className="flex justify-between">
-                              <span>{t('itemsDiscount')}:</span>
-                              <span className="text-destructive font-medium">-${discount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                           </div>
-                           <hr />
                            <div className="flex justify-between">
                               <span className="text-md font-bold text-green-600">{t('shipping')}:</span>
                               <span className="text-xl text-green-600 font-bold">{t('free')}</span>

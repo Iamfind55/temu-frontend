@@ -97,9 +97,6 @@ function VIPProductCard({
 
             <div className="flex items-baseline gap-2">
                <span className="text-xl font-bold text-primary">${formatCurrency(product.price)}</span>
-               {product.market_price && product.market_price > product.price && (
-                  <span className="text-xs text-muted-foreground line-through">${formatCurrency(product.market_price)}</span>
-               )}
             </div>
 
             <div className="flex items-center gap-1">
@@ -127,16 +124,10 @@ function VIPProductCard({
             )}
 
             <div className="flex items-center justify-between pt-2">
-               {isOnShelf ? (
+               {isOnShelf && (
                   <Badge className="bg-green-100 text-green-800">
                      {t("alreadyOnShelf")}
                   </Badge>
-               ) : (
-                  product.discount > 0 && (
-                     <Badge className="bg-red-100 text-red-800 border border-red-300 text-xs">
-                        -{product.discount}%
-                     </Badge>
-                  )
                )}
             </div>
          </div>

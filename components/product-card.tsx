@@ -57,15 +57,8 @@ export function ProductCard({ product, bestSellingRank, showTopRated }: ProductC
 
             <div className="flex items-baseline gap-2">
               <span className="text-xl font-bold text-primary">${product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              <span className="text-xs text-muted-foreground line-through">${product.originalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               <span className="text-xs text-muted-foreground">{product.soldCount} {t("sold")}</span>
             </div>
-
-            {product.promotion && (
-              <Badge className="bg-orange-500 text-white text-xs font-medium px-2 py-0.5 w-fit">
-                🔥 {product.promotion.text}
-              </Badge>
-            )}
 
             {bestSellingRank && (
               <div className="text-xs font-semibold text-green-600">
