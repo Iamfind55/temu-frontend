@@ -24,7 +24,7 @@ export function ShopHeader({ className }: { className?: string }) {
          <header className="sticky top-0 z-50 w-full">
             <div className={cn("bg-black text-white", className)}>
                <div className="container mx-auto flex items-center justify-between gap-4 px-4 py-1 sm:py-3">
-                  <Link href="/" className="hidden sm:flex items-center gap-2">
+                  <Link href="/" className="flex items-center gap-2">
                      <span className="bg-orange-500 text-white font-semibold text-xl px-2 py-3 rounded-xl tracking-wider">
                         TAMU
                      </span>
