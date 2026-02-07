@@ -9,14 +9,14 @@ export default function IntellectualPropertyPolicyPage() {
                <div className="flex items-center gap-2 text-xs text-gray-600">
                   <a href="/" className="hover:text-orange-500">Home</a>
                   <span>›</span>
-                  <span className="text-gray-900">Temu | Intellectual Property Policy</span>
+                  <span className="text-gray-900">Tamu | Intellectual Property Policy</span>
                </div>
             </div>
          </div>
 
          {/* Title */}
          <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
-            <h1 className="text-lg sm:text-2xl font-bold text-gray-900 text-center">Temu | Intellectual Property Policy</h1>
+            <h1 className="text-lg sm:text-2xl font-bold text-gray-900 text-center">Tamu | Intellectual Property Policy</h1>
             <p className="text-xs text-gray-500 text-center mt-2">Last updated: March 2nd, 2025</p>
          </div>
 
@@ -92,7 +92,7 @@ export default function IntellectualPropertyPolicyPage() {
                      </p>
 
                      <p>
-                        (5) We encourage you to use the Temu IP Portal for submission of DMCA notices of infringement, which allows us to process notices with greater efficiency and provides a streamlined experience for authorized parties. If you are unable to use the Temu IP Portal, you can submit the same information described in Section 2(1) above to our DMCA Designated Agent <a href="#" className="text-orange-500 underline">here</a>.
+                        (5) We encourage you to use the Tamu IP Portal for submission of DMCA notices of infringement, which allows us to process notices with greater efficiency and provides a streamlined experience for authorized parties. If you are unable to use the Tamu IP Portal, you can submit the same information described in Section 2(1) above to our DMCA Designated Agent <a href="#" className="text-orange-500 underline">here</a>.
                      </p>
                   </div>
                </section>

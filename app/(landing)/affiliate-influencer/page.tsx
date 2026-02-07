@@ -26,7 +26,7 @@ const affiliateFeatures = [
    { icon: "wallet", label: "Cashback and Loyalty" },
    { icon: "creditcard", label: "Payment Platforms" },
    { icon: "shopping", label: "Shopping Guide and Review Platforms" },
-   { icon: "trending", label: "Platforms Leveraging Temu Offer for Growth" },
+   { icon: "trending", label: "Platforms Leveraging Tamu Offer for Growth" },
 ]
 
 // Stats data
@@ -44,8 +44,8 @@ const testimonials = [
       platform: "instagram",
       commission: "Earn 1000+USD commission",
       avatar: "/images/influencer-profile-01.webp",
-      quote: `My name is Katharina, I'm 39 years old and I'm so happy to be part of the temu team.
-Temu is a good platform for making money. My efforts have been rewarded. My content has been seen by more people and can be rewarded. I hope that this platform can be known by more people. Welcome more people to join Temu influencer program. My redemption codes are used frequently and are very popular in the community!
+      quote: `My name is Katharina, I'm 39 years old and I'm so happy to be part of the tamu team.
+Tamu is a good platform for making money. My efforts have been rewarded. My content has been seen by more people and can be rewarded. I hope that this platform can be known by more people. Welcome more people to join Tamu influencer program. My redemption codes are used frequently and are very popular in the community!
 On this website, you can find everything you need, from fashion to home! We shop a lot ourselves and I'm happy to share with you!`,
    },
    {
@@ -54,7 +54,7 @@ On this website, you can find everything you need, from fashion to home! We shop
       platform: "tiktok",
       commission: "Earn 1000+USD commission",
       avatar: "/images/influencer-profile-02.webp",
-      quote: `I am incredibly grateful for the success I've experienced in affiliate marketing. Starting from scratch, I've been able to build an impressive following and generate millions of views on my videos. I owe a huge thanks to Temu and their amazing team for their continuous support throughout this journey. The Temu website itself has been an absolute game-changer, making it easy and seamless to promote their products. This incredible opportunity has truly exceeded my expectations, and I'm excited to continue growing, reaching more viewers, driving sales, and enjoying the process every step of the way.`,
+      quote: `I am incredibly grateful for the success I've experienced in affiliate marketing. Starting from scratch, I've been able to build an impressive following and generate millions of views on my videos. I owe a huge thanks to Tamu and their amazing team for their continuous support throughout this journey. The Tamu website itself has been an absolute game-changer, making it easy and seamless to promote their products. This incredible opportunity has truly exceeded my expectations, and I'm excited to continue growing, reaching more viewers, driving sales, and enjoying the process every step of the way.`,
    },
    {
       name: "itx_kizz",
@@ -62,10 +62,10 @@ On this website, you can find everything you need, from fashion to home! We shop
       platform: "tiktok",
       commission: "Earn 1000+USD commission",
       avatar: "/images/influencer-profile-03.webp",
-      quote: `I'm genuinely proud to be part of the TEMU Influencer and Affiliate Program.
+      quote: `I'm genuinely proud to be part of the TAMU Influencer and Affiliate Program.
 
 Through my social accounts, I have already earned over $10,000, and this is just the beginning.
-One of the best things about working with TEMU is their amazing marketing team—they always support me, guide me, and help resolve any influencer page issues I face.
+One of the best things about working with TAMU is their amazing marketing team—they always support me, guide me, and help resolve any influencer page issues I face.
 Their cooperation has made my journey smooth and professional.`,
    },
    {
@@ -75,8 +75,8 @@ Their cooperation has made my journey smooth and professional.`,
       commission: "Earn 1000+USD commission",
       avatar: "/images/influencer-profile-04.webp",
       quote: `I'm Mohammed Al-Humaiqani, a social media content creator with over 500,000 followers. One day, I decided to join Timo's influencer program because I could earn money from my phone while at home.
-I advise all content creators to join Temu's influencer program to earn commissions, rewards, and generous profits. I consider Temu's influencer program one of the best free profit-making programs.
-- During my participation in Temu's influencer program, I earned profits of 81,400 Saudi riyals.`,
+I advise all content creators to join Tamu's influencer program to earn commissions, rewards, and generous profits. I consider Tamu's influencer program one of the best free profit-making programs.
+- During my participation in Tamu's influencer program, I earned profits of 81,400 Saudi riyals.`,
    },
    {
       name: "George Tavadze",
@@ -84,10 +84,10 @@ I advise all content creators to join Temu's influencer program to earn commissi
       platform: "youtube",
       commission: "Earn 1000+USD commission",
       avatar: "/images/influencer-profile-05.webp",
-      quote: `I joined the TEMU influencer program since 2024 from Georgia. I really appreciate this program because I earned over $13,000.
-In addition, the TEMU influencer program helped me boost my video views and increase my number of followers very quickly.
-I highly recommend this program to anyone who wants to grow on social media and make extra income at the same time. TEMU made it possible for me to reach a wider audience and improve my content engagement.
-Thank you, TEMU, for this amazing opportunity!`,
+      quote: `I joined the TAMU influencer program since 2024 from Georgia. I really appreciate this program because I earned over $13,000.
+In addition, the TAMU influencer program helped me boost my video views and increase my number of followers very quickly.
+I highly recommend this program to anyone who wants to grow on social media and make extra income at the same time. TAMU made it possible for me to reach a wider audience and improve my content engagement.
+Thank you, TAMU, for this amazing opportunity!`,
    },
 ]
 
@@ -211,10 +211,10 @@ export default function AffiliateInfluencerPage() {
          <section className="bg-gradient-to-b from-orange-50 to-white pt-12 pb-2 sm:pb-10 px-4">
             <div className="max-w-6xl mx-auto text-center">
                <p className="text-orange-500 font-semibold italic text-lg mb-2">
-                  TEMU Affiliate & Influencer Program
+                  TAMU Affiliate & Influencer Program
                </p>
                <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-6">
-                  Boost Your Earnings with TEMU
+                  Boost Your Earnings with TAMU
                </h1>
 
                {/* Badge pills */}
@@ -240,10 +240,10 @@ export default function AffiliateInfluencerPage() {
                   {/* Influencer Program Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 shadow-sm relative overflow-hidden">
                      <h3 className="text-xl md:text-2xl font-bold text-green-600 mb-3">
-                        Temu Influencer Program
+                        Tamu Influencer Program
                      </h3>
                      <p className="text-gray-600 text-sm md:text-base mb-6">
-                        Get free products and create captivating Temu content across social media &
+                        Get free products and create captivating Tamu content across social media &
                         content platforms. Turn your creativity and influence into opportunities to earn.
                      </p>
 
@@ -273,7 +273,7 @@ export default function AffiliateInfluencerPage() {
                   {/* Affiliate Program Card */}
                   <div className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 shadow-sm relative overflow-hidden">
                      <h3 className="text-xl md:text-2xl font-bold text-orange-500 mb-3">
-                        Temu Affiliate Program
+                        Tamu Affiliate Program
                      </h3>
                      <p className="text-gray-600 text-sm md:text-base mb-6">
                         Welcome platforms with traffic or reach—whether established affiliate

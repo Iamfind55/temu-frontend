@@ -12,7 +12,7 @@ export function TrustBar() {
         <div className="bg-green-700 flex items-center justify-between p-2 text-white rounded-sm">
           <div className="flex items-center gap-2">
             <ShieldCheck size={18} />
-            <span className="text-sm font-semibold">{t("whyChooseTemu")}</span>
+            <span className="text-sm font-semibold">{t("whyChooseTamu")}</span>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm">
             <div className="flex items-center gap-2">

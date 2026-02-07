@@ -131,7 +131,7 @@ export function PWAInstallPrompt() {
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Smartphone className="h-5 w-5 text-orange-500" />
-              {t("installTemuApp")}
+              {t("installTamuApp")}
             </DialogTitle>
             <button
               onClick={handleDismiss}
@@ -147,12 +147,12 @@ export function PWAInstallPrompt() {
             <div className="h-16 w-16 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0">
               <img
                 src="/logo/icon.png"
-                alt="Temu"
+                alt="Tamu"
                 className="h-12 w-12 object-contain"
               />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{t("temuShopping")}</h3>
+              <h3 className="font-semibold text-gray-900">{t("tamuShopping")}</h3>
               <p className="text-sm text-gray-500">{t("shopLikeBillionaire")}</p>
             </div>
           </div>

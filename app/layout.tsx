@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Temu - Shop Like a Billionaire",
+  title: "Tamu - Shop Like a Billionaire",
   description: "Discover amazing deals on millions of products",
   generator: 'v0.app',
   manifest: '/manifest.json',
@@ -30,15 +30,15 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Temu',
+    title: 'Tamu',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: 'website',
-    siteName: 'Temu',
-    title: 'Temu - Shop Like a Billionaire',
+    siteName: 'Tamu',
+    title: 'Tamu - Shop Like a Billionaire',
     description: 'Discover amazing deals on millions of products',
   },
   icons: {

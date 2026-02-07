@@ -4,7 +4,7 @@ export default function AdChoicesPage() {
          {/* Header */}
          <div className="max-w-7xl mx-auto px-4 pt-12 pb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-               Temu | U.S. | Cookie and Similar Technologies Policy
+               Tamu | U.S. | Cookie and Similar Technologies Policy
             </h1>
             <p className="text-gray-500 text-center text-sm">
                Last updated: May 12, 2025
@@ -24,12 +24,12 @@ export default function AdChoicesPage() {
                </p>
 
                <p className="mb-8">
-                  This Cookie and Similar Technologies Policy (the &quot;Cookie Policy&quot;) supplements the Temu{" "}
+                  This Cookie and Similar Technologies Policy (the &quot;Cookie Policy&quot;) supplements the Tamu{" "}
                   <a href="/privacy-policy" className="text-orange-500 hover:underline">
                      Privacy Policy
                   </a>{" "}
                   (&quot;Privacy Policy&quot;) and describes how we handle personal information that we collect through our digital
-                  properties that link to this Cookie Policy, including our website (www.temu.com), and Temu&apos;s mobile application
+                  properties that link to this Cookie Policy, including our website (www.tamu.com), and Tamu&apos;s mobile application
                   (collectively, the &quot;Service&quot;), and through social media, our marketing activities, and other activities as
                   described in this Cookie Policy.
                </p>
@@ -68,14 +68,14 @@ export default function AdChoicesPage() {
                   <p className="mb-4">
                      <strong>Security and Authentication</strong>. Some cookies and similar technologies are necessary and vital to
                      ensure the security of your use of our Service, such as in maintaining the security and integrity of the
-                     website, authentication and logging into Temu, and ensuring the ability to securely complete transactions.
+                     website, authentication and logging into Tamu, and ensuring the ability to securely complete transactions.
                   </p>
 
                   <p className="mb-4">
-                     <strong>Remembering Your Preferences</strong>. We need to remember the settings you choose on Temu so that they
+                     <strong>Remembering Your Preferences</strong>. We need to remember the settings you choose on Tamu so that they
                      work the way you want them to. This includes remembering your choices and preferences, such as language and
-                     currency, when browsing the website, staying logged in when returning to Temu, and maintaining your choices on
-                     Temu features.
+                     currency, when browsing the website, staying logged in when returning to Tamu, and maintaining your choices on
+                     Tamu features.
                   </p>
 
                   <p className="mb-4">
@@ -95,7 +95,7 @@ export default function AdChoicesPage() {
                   <p className="mb-4">
                      <strong>Interest-based Advertising</strong>. We, our service providers, and our third-party advertising partners
                      may collect and use your personal information for advertising purposes. Please note, however, that we do not
-                     allow our third-party advertising partners to collect this personal information from the Temu mobile application
+                     allow our third-party advertising partners to collect this personal information from the Tamu mobile application
                      for iOS devices. Our third-party advertising partners may use cookies and similar technologies to collect
                      information about your interaction including data described in the{" "}
                      <a href="#" className="text-orange-500 hover:underline">
@@ -138,7 +138,7 @@ export default function AdChoicesPage() {
                         <a href="#" className="text-orange-500 hover:underline">
                            Your Privacy Choices
                         </a>
-                        &quot; in the footer of Temu website or &quot;Privacy&quot; in the setting of Temu app.
+                        &quot; in the footer of Tamu website or &quot;Privacy&quot; in the setting of Tamu app.
                      </li>
                      <li>
                         Opt out of Google Analytics Advertising Features. You can opt out of Google Analytics Advertising Features

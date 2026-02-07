@@ -50,7 +50,7 @@ export default function ConsumerHealthPrivacyPolicyPage() {
          {/* Header */}
          <div className="max-w-7xl mx-auto px-4 pt-12 pb-8">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-2">
-               Temu | U.S. | Consumer Health Data Privacy Policy
+               Tamu | U.S. | Consumer Health Data Privacy Policy
             </h1>
             <p className="text-gray-500 text-center text-sm">
                Last Updated: November 14, 2025
@@ -86,7 +86,7 @@ export default function ConsumerHealthPrivacyPolicyPage() {
                <main className="flex-1 min-w-0">
                   {/* Introduction */}
                   <p className="text-sm text-gray-700 mb-8 leading-relaxed">
-                     This Consumer Health Data Privacy Policy provides information regarding how Whaleco Inc. (&quot;Temu,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) processes &quot;consumer health data&quot; as defined by applicable consumer health privacy laws. In the event of a conflict between Temu&apos;s{" "}
+                     This Consumer Health Data Privacy Policy provides information regarding how Whaleco Inc. (&quot;Tamu,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) processes &quot;consumer health data&quot; as defined by applicable consumer health privacy laws. In the event of a conflict between Tamu&apos;s{" "}
                      <Link href="/privacy-policy" className="text-orange-500 hover:underline">
                         Privacy Policy
                      </Link>{" "}
@@ -164,14 +164,14 @@ export default function ConsumerHealthPrivacyPolicyPage() {
                         <div>
                            <h3 className="font-bold text-gray-900 mb-2">Service providers</h3>
                            <p>
-                              Third parties that provide services on our behalf or help us operate our services or our business (such as customer support). These third-party service providers have access to only the consumer health data needed to perform their functions and services but shall not use such data for other purposes. Some of these service providers may be Temu affiliates.
+                              Third parties that provide services on our behalf or help us operate our services or our business (such as customer support). These third-party service providers have access to only the consumer health data needed to perform their functions and services but shall not use such data for other purposes. Some of these service providers may be Tamu affiliates.
                            </p>
                         </div>
 
                         <div>
                            <h3 className="font-bold text-gray-900 mb-2">Professional advisors, authorities, and regulators</h3>
                            <p>
-                              We may disclose your consumer health data to our professional advisors (e.g., lawyers, auditors, bankers, and insurers), in response to legal processes (e.g., responding to subpoenas or requests from U.S. government or law enforcement authorities), and with other parties in order to enforce our agreements or policies, protect the rights, property and safety of Temu, users and others, and to detect, prevent and address actual or suspected fraud, violations of Temu&apos;s{" "}
+                              We may disclose your consumer health data to our professional advisors (e.g., lawyers, auditors, bankers, and insurers), in response to legal processes (e.g., responding to subpoenas or requests from U.S. government or law enforcement authorities), and with other parties in order to enforce our agreements or policies, protect the rights, property and safety of Tamu, users and others, and to detect, prevent and address actual or suspected fraud, violations of Tamu&apos;s{" "}
                               <Link href="/terms-of-use" className="text-orange-500 hover:underline">
                                  Terms of Use
                               </Link>
@@ -182,7 +182,7 @@ export default function ConsumerHealthPrivacyPolicyPage() {
                         <div>
                            <h3 className="font-bold text-gray-900 mb-2">Business transferees</h3>
                            <p>
-                              We may disclose your consumer health data to acquirers and other relevant participants in the rare event of business transactions such as a merger, acquisition, or reorganization. If Temu intends to transfer information about you, Temu will inform you by email or by putting up a notice on the Temu app and on Temu.com.
+                              We may disclose your consumer health data to acquirers and other relevant participants in the rare event of business transactions such as a merger, acquisition, or reorganization. If Tamu intends to transfer information about you, Tamu will inform you by email or by putting up a notice on the Tamu app and on tamu.com.
                            </p>
                         </div>
 
@@ -218,7 +218,7 @@ export default function ConsumerHealthPrivacyPolicyPage() {
                         </p>
 
                         <p>
-                           If your request to exercise a right under applicable law is denied, you may appeal that decision by contacting us as described below. If you have questions or would like to communicate with us about this Consumer Health Data Privacy Policy, please email us at privacy@temu.com or contact us by mail at the following address:
+                           If your request to exercise a right under applicable law is denied, you may appeal that decision by contacting us as described below. If you have questions or would like to communicate with us about this Consumer Health Data Privacy Policy, please email us at privacy@tamu.com or contact us by mail at the following address:
                         </p>
 
                         <div className="mt-4">

@@ -228,7 +228,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           <div className="space-y-3">
             <button className="cursor-pointer flex items-center gap-2 text-green-700 font-semibold hover:underline transition-colors group">
               <ShieldCheck className="h-5 w-5" />
-              <span className="text-md">{t("whyChooseTemu")}</span>
+              <span className="text-md">{t("whyChooseTamu")}</span>
               <ChevronRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
 
@@ -293,7 +293,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
           <div className="flex items-center gap-2 text-sm text-gray-600 pt-2 font-bold">
             <span>{t("sourcedFrom")}</span>
             <Factory className="h-4 w-4" />
-            <span>{t("procuredByTemu")}</span>
+            <span>{t("procuredByTamu")}</span>
           </div>
         </div>
       </div>

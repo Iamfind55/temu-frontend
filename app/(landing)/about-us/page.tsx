@@ -9,17 +9,17 @@ export default function AboutUsPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-12 max-w-5xl">
-        {/* What is Temu? */}
+        {/* What is Tamu? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
-            {t('whatIsTemu')}
+            {t('whatIsTamu')}
           </h2>
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="relative flex-shrink-0">
               <div className="w-32 h-32 rounded-2xl flex items-center justify-center">
                 <Image
                   src="/images/about-01.webp"
-                  alt="Temu Logo"
+                  alt="Tamu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -27,27 +27,27 @@ export default function AboutUsPage() {
               </div>
             </div>
             <p className="text-gray-700 leading-relaxed">
-              {t('temuDescription')}
+              {t('tamuDescription')}
             </p>
           </div>
         </section>
 
-        {/* What does Temu mean? */}
+        {/* What does Tamu mean? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
-            {t('whatDoesTemuMean')}
+            {t('whatDoesTamuMean')}
           </h2>
           <div className="space-y-2">
             <p className="text-gray-900 font-medium">
-              {t('temuSlogan')}
+              {t('tamuSlogan')}
             </p>
             <p className="text-gray-700 leading-relaxed">
-              {t('temuMeaningDesc')}
+              {t('tamuMeaningDesc')}
             </p>
           </div>
         </section>
 
-        {/* Where are the products sold on Temu shipped from? */}
+        {/* Where are the products sold on Tamu shipped from? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
             {t('whereShippedFrom')}
@@ -57,13 +57,13 @@ export default function AboutUsPage() {
           </p>
         </section>
 
-        {/* Temu's strengths */}
+        {/* Tamu's strengths */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
-            {t('temuStrengths')}
+            {t('tamuStrengths')}
           </h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            {t('temuStrengthsDesc')}
+            {t('tamuStrengthsDesc')}
           </p>
           <ul className="list-disc list-inside space-y-2 text-gray-700">
             <li>
@@ -89,7 +89,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-02.webp"
-                  alt="Temu Logo"
+                  alt="Tamu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -110,7 +110,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-03.webp"
-                  alt="Temu Logo"
+                  alt="Tamu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -131,7 +131,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-04.webp"
-                  alt="Temu Logo"
+                  alt="Tamu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -152,7 +152,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-05.webp"
-                  alt="Temu Logo"
+                  alt="Tamu Logo"
                   width={120}
                   height={120}
                   className="object-contain"

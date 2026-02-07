@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
 
          {/* Header */}
          <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center">Temu | U.S. | Privacy Policy</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center">Tamu | U.S. | Privacy Policy</h1>
             <p className="text-sm text-gray-500 text-center mt-2">Last Updated: November 14, 2025</p>
          </div>
 
@@ -101,7 +101,7 @@ export default function PrivacyPolicyPage() {
                         Click <a href="/ad-choices" className="text-orange-500 hover:underline">here</a> for information about interest based advertising and your available choices.
                      </p>
                      <p>
-                        This Privacy Policy describes how, Whaleco Inc., a Delaware company (&quot;Temu&quot;, &quot;we&quot;, &quot;us&quot; or &quot;our&quot;) handles personal information that we collect through our digital properties that link to this Privacy Policy, including our website (www.temu.com) and mobile application (collectively, the &quot;Service&quot;), and other activities as described in this Privacy Policy. At Temu, we care deeply about privacy. We strive to be transparent about our privacy practices, including how we treat your personal information. This Privacy Policy explains how we collect, use, share, and otherwise process the personal information of users in connection with our Service. If you are a resident of a U.S. state that has enacted comprehensive privacy legislation, please see our <a href="#us-residents" className="text-orange-500 hover:underline">Privacy Policy Addendum for U.S. Residents</a> for additional information. To learn more about how we handle health data, please see our <a href="/consumer-health-privacy-policy" className="text-orange-500 hover:underline">Consumer Health Data Privacy Policy</a>.
+                        This Privacy Policy describes how, Whaleco Inc., a Delaware company (&quot;Tamu&quot;, &quot;we&quot;, &quot;us&quot; or &quot;our&quot;) handles personal information that we collect through our digital properties that link to this Privacy Policy, including our website (www.tamu.com) and mobile application (collectively, the &quot;Service&quot;), and other activities as described in this Privacy Policy. At Tamu, we care deeply about privacy. We strive to be transparent about our privacy practices, including how we treat your personal information. This Privacy Policy explains how we collect, use, share, and otherwise process the personal information of users in connection with our Service. If you are a resident of a U.S. state that has enacted comprehensive privacy legislation, please see our <a href="#us-residents" className="text-orange-500 hover:underline">Privacy Policy Addendum for U.S. Residents</a> for additional information. To learn more about how we handle health data, please see our <a href="/consumer-health-privacy-policy" className="text-orange-500 hover:underline">Consumer Health Data Privacy Policy</a>.
                      </p>
                      <p>
                         Please read this Privacy Policy before accessing or using our Service. By continuing to use our Service, you acknowledge and agree to the practices described in this Privacy Policy.
@@ -127,7 +127,7 @@ export default function PrivacyPolicyPage() {
 
                         <div className="space-y-4">
                            <InfoCard title="Account and profile">
-                              <p>We collect your mobile phone number and/or email address as the login credentials for your account and assign a user identification number to your account. If you choose to register or log in via external third-party services, such as Facebook or Google, you agree we may collect your profile photo, username, and/or email address associated with the relevant third-party service provider. We also collect information in your profile, account settings and preferences in your Temu account. We also collect your country/region.</p>
+                              <p>We collect your mobile phone number and/or email address as the login credentials for your account and assign a user identification number to your account. If you choose to register or log in via external third-party services, such as Facebook or Google, you agree we may collect your profile photo, username, and/or email address associated with the relevant third-party service provider. We also collect information in your profile, account settings and preferences in your Tamu account. We also collect your country/region.</p>
                            </InfoCard>
 
                            <InfoCard title="Purchases">
@@ -143,7 +143,7 @@ export default function PrivacyPolicyPage() {
                            </InfoCard>
 
                            <InfoCard title="Chats with merchandise partners">
-                              <p>When you chat with merchandise partners on Temu, we collect your chat communications and other related information.</p>
+                              <p>When you chat with merchandise partners on Tamu, we collect your chat communications and other related information.</p>
                            </InfoCard>
 
                            <InfoCard title="User-generated content">
@@ -285,7 +285,7 @@ export default function PrivacyPolicyPage() {
 
                            <div>
                               <h4 className="font-semibold text-gray-900 mb-2">Fraud prevention and security</h4>
-                              <p>We use your personal information to prevent, detect, investigate, and respond to fraud, unauthorized access to or use of the Service, violations of the <a href="#" className="text-orange-500 hover:underline">Terms of Use</a> and other Temu policies, or other misconduct.</p>
+                              <p>We use your personal information to prevent, detect, investigate, and respond to fraud, unauthorized access to or use of the Service, violations of the <a href="#" className="text-orange-500 hover:underline">Terms of Use</a> and other Tamu policies, or other misconduct.</p>
                            </div>
 
                            <div>
@@ -315,13 +315,13 @@ export default function PrivacyPolicyPage() {
                      <SectionHeader title="How and Why We Share Your Information" />
                      <div className="text-sm text-gray-700 mt-4">
                         <p className="mb-6">
-                           At Temu, we care deeply about privacy. While Temu shares your personal information for the purposes of targeted advertising, which may be considered a &quot;sale&quot; under applicable U.S. state privacy laws (as described further in the <a href="#us-residents" className="text-orange-500 hover:underline">Privacy Policy Addendum for U.S. Residents</a>), Temu does not &quot;sell&quot; personal information in the traditional sense. We may share your personal information with the following parties for the purposes outlined below:
+                           At Tamu, we care deeply about privacy. While Tamu shares your personal information for the purposes of targeted advertising, which may be considered a &quot;sale&quot; under applicable U.S. state privacy laws (as described further in the <a href="#us-residents" className="text-orange-500 hover:underline">Privacy Policy Addendum for U.S. Residents</a>), Tamu does not &quot;sell&quot; personal information in the traditional sense. We may share your personal information with the following parties for the purposes outlined below:
                         </p>
 
                         <div className="space-y-4">
                            <div>
                               <h4 className="font-semibold text-gray-900 mb-2">Affiliates</h4>
-                              <p>As a global company, our Service is supported by entities within our corporate group. We share some of your personal information with Temu subsidiaries and affiliates as necessary to provide organizational, technical, legal and compliance support for the Service, including for the purposes of order fulfilment, and other core platform functions. Such personal information includes shipping address, and contact information. These subsidiaries and affiliates either follow the same practices described in this Privacy Policy or follow practices at least as protective as those described in this Privacy Policy.</p>
+                              <p>As a global company, our Service is supported by entities within our corporate group. We share some of your personal information with Tamu subsidiaries and affiliates as necessary to provide organizational, technical, legal and compliance support for the Service, including for the purposes of order fulfilment, and other core platform functions. Such personal information includes shipping address, and contact information. These subsidiaries and affiliates either follow the same practices described in this Privacy Policy or follow practices at least as protective as those described in this Privacy Policy.</p>
                            </div>
 
                            <div>
@@ -341,7 +341,7 @@ export default function PrivacyPolicyPage() {
 
                            <div>
                               <h4 className="font-semibold text-gray-900 mb-2">Third parties designated by you</h4>
-                              <p>We may share your personal information with third parties where you have instructed us or provided your consent to do so. We may share the personal information required for the services you request with third parties designated by you, for example, where you choose to share a link to a Temu product listing via a third-party social media service. Please be aware that when you use third-party sites or services, their own terms and privacy policies will govern your use of those sites or services.</p>
+                              <p>We may share your personal information with third parties where you have instructed us or provided your consent to do so. We may share the personal information required for the services you request with third parties designated by you, for example, where you choose to share a link to a Tamu product listing via a third-party social media service. Please be aware that when you use third-party sites or services, their own terms and privacy policies will govern your use of those sites or services.</p>
                            </div>
 
                            <div>
@@ -351,7 +351,7 @@ export default function PrivacyPolicyPage() {
 
                            <div>
                               <h4 className="font-semibold text-gray-900 mb-2">Professional advisors, U.S. public authorities, institutions, and regulators</h4>
-                              <p>We may share your personal information with our professional advisors (e.g., lawyers, auditors, bankers and insurers); U.S. public authorities, such as law enforcement authorities in response to legal processes (e.g., responding to subpoenas or requests from U.S. law enforcement requests); and with other parties (e.g., financial institutions) in order to enforce our agreements or policies, protect the rights, property and safety of Temu, users and others, and to detect, prevent and address actual or suspected fraud, violations of Temu&apos;s <a href="#" className="text-orange-500 hover:underline">Terms of Use</a>, other illegal activities, security issues or when it is required by law.</p>
+                              <p>We may share your personal information with our professional advisors (e.g., lawyers, auditors, bankers and insurers); U.S. public authorities, such as law enforcement authorities in response to legal processes (e.g., responding to subpoenas or requests from U.S. law enforcement requests); and with other parties (e.g., financial institutions) in order to enforce our agreements or policies, protect the rights, property and safety of Tamu, users and others, and to detect, prevent and address actual or suspected fraud, violations of Tamu&apos;s <a href="#" className="text-orange-500 hover:underline">Terms of Use</a>, other illegal activities, security issues or when it is required by law.</p>
                            </div>
 
                            <div>
@@ -392,11 +392,11 @@ export default function PrivacyPolicyPage() {
 
                            <div>
                               <h4 className="font-semibold text-gray-900 mb-2">Opt-out from marketing communications</h4>
-                              <p className="mb-2">To manage your preferences or opt-out of marketing communications, you can take any of the following actions. Rest assured that you can continue to use Temu even if you opt out of marketing communications.</p>
+                              <p className="mb-2">To manage your preferences or opt-out of marketing communications, you can take any of the following actions. Rest assured that you can continue to use Tamu even if you opt out of marketing communications.</p>
                               <ul className="list-disc list-inside space-y-2">
                                  <li><strong>Email promotional offers:</strong> When you provide us with your email address, we may send you certain marketing emails subject to the requirements of applicable laws. Standard data rates may apply. If you do not want to receive any marketing emails from us, you may follow the unsubscribe options at the bottom of each email to stop receiving such emails. You may also opt-out of receiving marketing emails in the &quot;<a href="#" className="text-orange-500 hover:underline">Notifications</a>&quot; menu.</li>
                                  <li><strong>Mobile promotional offers:</strong> When you provide us with your mobile phone number, we may send you certain marketing text messages subject to the requirements of applicable laws. Standard data and messaging rates may apply. If you no longer wish to receive any marketing text messages from us, you can follow the instructions provided in these messages. You may also opt-out of receiving marketing text messages in the &quot;<a href="#" className="text-orange-500 hover:underline">Notifications</a>&quot; menu.</li>
-                                 <li><strong>Push notifications:</strong> You may receive push notifications sent by Temu mobile application subject to the requirements of applicable laws. Standard data rates may apply. If you no longer wish to receive marketing push notifications from us, you may adjust push notification settings on your device and/or turn them off in the &quot;<a href="#" className="text-orange-500 hover:underline">Notifications</a>&quot; menu.</li>
+                                 <li><strong>Push notifications:</strong> You may receive push notifications sent by Tamu mobile application subject to the requirements of applicable laws. Standard data rates may apply. If you no longer wish to receive marketing push notifications from us, you may adjust push notification settings on your device and/or turn them off in the &quot;<a href="#" className="text-orange-500 hover:underline">Notifications</a>&quot; menu.</li>
                               </ul>
                            </div>
 
@@ -427,7 +427,7 @@ export default function PrivacyPolicyPage() {
                      <SectionHeader title="Children" />
                      <div className="text-sm text-gray-700 mt-4 space-y-4">
                         <p>
-                           To register an account and use the Service, you represent that you are at least eighteen (18) years old and of legal age to form a binding contract. The Service is neither intended for, nor aimed at, children. Individuals under 18 and at least 13 years of age are only permitted to use our Service through an account owned by a parent or legal guardian with their appropriate permission and under their direct supervision. Individuals under 13 years of age are not permitted to use Temu or the Service. If you would like to report a concern, you may reach out to our Customer Service or contact us using the details set out in the &quot;<a href="#contact-us" className="text-orange-500 hover:underline">Contact Us</a>&quot; section of this Privacy Policy.
+                           To register an account and use the Service, you represent that you are at least eighteen (18) years old and of legal age to form a binding contract. The Service is neither intended for, nor aimed at, children. Individuals under 18 and at least 13 years of age are only permitted to use our Service through an account owned by a parent or legal guardian with their appropriate permission and under their direct supervision. Individuals under 13 years of age are not permitted to use Tamu or the Service. If you would like to report a concern, you may reach out to our Customer Service or contact us using the details set out in the &quot;<a href="#contact-us" className="text-orange-500 hover:underline">Contact Us</a>&quot; section of this Privacy Policy.
                         </p>
                         <p>
                            We do not knowingly collect personal information from users who are under 18 years of age through the Service. If we become aware that we have unintentionally collected personal information from an individual under 18 years of age through the Service, we will promptly delete the information from our records. If you are a parent or guardian of an individual under 13 about whom you believe we have collected personal information, or of an individual between 13 and 18 about whom you believe we have collected personal information without your appropriate permission and/or direct supervision, please contact us as specified in the &quot;<a href="#contact-us" className="text-orange-500 hover:underline">Contact Us</a>&quot; section of this Privacy Policy or through our <a href="#" className="text-orange-500 hover:underline">online reporting form</a>. In addition, you may request deletion of your account through our privacy options.
@@ -450,7 +450,7 @@ export default function PrivacyPolicyPage() {
                            We generally retain personal information as long as necessary to fulfill the purposes for which we collected it, as well as for the purposes of satisfying any applicable U.S. legal, accounting, or reporting requirements, to establish, exercise or defend legal claims, or for fraud prevention purposes. To determine the appropriate retention period for personal information, we may consider factors such as the amount, nature, and sensitivity of the personal information, the potential risk of harm from unauthorized use or disclosure of your personal information, the purposes for which we process your personal information and whether we can achieve those purposes through other means, and the applicable U.S. legal requirements.
                         </p>
                         <p>
-                           Data of Temu&apos;s U.S. users will be stored in the infrastructure of cloud service providers in the U.S. As a global one-stop shopping destination, Temu may need to engage and share your personal information to various parties, including our service providers, as described in the &quot;<a href="#how-we-share" className="text-orange-500 hover:underline">How and Why We Share Your Information</a>&quot; section. These parties may be located in countries or jurisdictions that have data protection laws that are different in some aspects from the laws of the country or jurisdiction in which you reside. When we transfer your personal information outside the country or jurisdiction in which you reside, we implement appropriate measures to ensure that your personal information will remain protected in accordance with this Privacy Policy and applicable laws.
+                           Data of Tamu&apos;s U.S. users will be stored in the infrastructure of cloud service providers in the U.S. As a global one-stop shopping destination, Tamu may need to engage and share your personal information to various parties, including our service providers, as described in the &quot;<a href="#how-we-share" className="text-orange-500 hover:underline">How and Why We Share Your Information</a>&quot; section. These parties may be located in countries or jurisdictions that have data protection laws that are different in some aspects from the laws of the country or jurisdiction in which you reside. When we transfer your personal information outside the country or jurisdiction in which you reside, we implement appropriate measures to ensure that your personal information will remain protected in accordance with this Privacy Policy and applicable laws.
                         </p>
                      </div>
                   </section>
@@ -495,7 +495,7 @@ export default function PrivacyPolicyPage() {
                            If you have any questions or comments about our Privacy Policy or the terms mentioned, you may contact us at any time:
                         </p>
                         <ul className="list-disc list-inside space-y-2">
-                           <li>send an email to Temu&apos;s Data Protection Officer - privacy@temu.com; or</li>
+                           <li>send an email to Tamu&apos;s Data Protection Officer - privacy@tamu.com; or</li>
                            <li>send mail to our postal address - Whaleco Inc., Suite 355, 31 St. James Avenue, Boston, Massachusetts 02116, USA.</li>
                         </ul>
                      </div>

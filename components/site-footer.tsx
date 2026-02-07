@@ -15,7 +15,7 @@ export function SiteFooter() {
             <ul className="space-y-3 text-sm text-white/80">
               <li className="hover:text-white hover:underline">
                 <a href="/about-us" className="hover:text-white">
-                  {t('aboutTemu')}
+                  {t('aboutTamu')}
                 </a>
               </li>
               <li className="hover:text-white hover:underline">

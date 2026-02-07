@@ -63,7 +63,7 @@ export default function RecallProductSafetyAlertPage() {
             <div className="text-xs text-gray-700 space-y-4">
                {/* Introduction */}
                <p className="leading-relaxed">
-                  At Temu, consumer safety is one of our top priorities. We fully recognize the importance of product safety and compliance, and remain highly vigilant to potential safety risks.
+                  At Tamu, consumer safety is one of our top priorities. We fully recognize the importance of product safety and compliance, and remain highly vigilant to potential safety risks.
                </p>
 
                <p className="leading-relaxed">

@@ -510,7 +510,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "signin"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle className="text-md sm:text-xl">{t("signInToTemuSeller")}</DialogTitle>
+                  <DialogTitle className="text-md sm:text-xl">{t("signInToTamuSeller")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="p-6 sm:p-8">
@@ -604,11 +604,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          <Dialog open={activeModal === "signup"} onOpenChange={(open) => !open && handleModalClose()}>
             <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
                <VisuallyHidden>
-                  <DialogTitle>{t("signUpToSellOnTemu")}</DialogTitle>
+                  <DialogTitle>{t("signUpToSellOnTamu")}</DialogTitle>
                </VisuallyHidden>
                <div className="relative py-4 sm:py-0">
                   <div className="bg-orange-50 p-6 sm:p-8 pb-4">
-                     <h2 className="text-xl font-bold text-center text-gray-900 mb-4">{t("signUpToSellOnTemu")}</h2>
+                     <h2 className="text-xl font-bold text-center text-gray-900 mb-4">{t("signUpToSellOnTamu")}</h2>
 
                      <div className="flex items-center justify-center gap-3">
                         <div className="flex items-baseline gap-1">

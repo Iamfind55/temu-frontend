@@ -414,7 +414,7 @@ export function ShopLiveChat() {
                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
                               <MessageCircle className="h-3 w-3 text-white" />
                            </div>
-                           <span className="text-sm font-semibold text-gray-800">{t("temuSupport")}</span>
+                           <span className="text-sm font-semibold text-gray-800">{t("tamuSupport")}</span>
                         </div>
                      </div>
                   </div>
@@ -450,7 +450,7 @@ export function ShopLiveChat() {
                                     {msg.sender_type === "ADMIN" ? (
                                        <div className="flex flex-col gap-1">
                                           <span className="text-xs text-gray-500 ml-1">
-                                             {t("temuSupport")} {formatTime(msg.created_at)}
+                                             {t("tamuSupport")} {formatTime(msg.created_at)}
                                           </span>
                                           <div className="flex items-start gap-2">
                                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
@@ -599,7 +599,7 @@ export function ShopLiveChat() {
                         <div className="text-center mt-2">
                            <span className="text-xs text-gray-400">
                               {t("poweredBy")}{" "}
-                              <span className="font-semibold text-orange-500">Temu</span>
+                              <span className="font-semibold text-orange-500">Tamu</span>
                            </span>
                         </div>
                      </div>

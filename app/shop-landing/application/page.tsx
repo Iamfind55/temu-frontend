@@ -574,7 +574,7 @@ export default function ApplicationPage() {
                                  <span className="text-white text-xs font-bold">T</span>
                               </div>
                               <div>
-                                 <p className="text-sm font-semibold text-gray-900">Temu</p>
+                                 <p className="text-sm font-semibold text-gray-900">Tamu</p>
                                  <p className="text-xs text-gray-500">{t('sellerService')}</p>
                               </div>
                            </div>

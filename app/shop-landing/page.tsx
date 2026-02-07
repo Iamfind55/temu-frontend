@@ -476,7 +476,7 @@ export default function ShopLandingPage() {
          <section className="flex items-center justify-center bg-orange-50 py-12 sm:py-24">
             <div className="container px-4 sm:px-6 lg:px-8">
                <h2 className="text-xl sm:text-3xl font-bold text-center text-gray-900 mb-8 sm:mb-16">
-                  {t('whySellOnTemu')}
+                  {t('whySellOnTamu')}
                </h2>
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 lg:gap-14">

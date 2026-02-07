@@ -71,13 +71,13 @@ export default function ReturnRefundPolicyPage() {
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <a href="/" className="hover:text-orange-500">Home</a>
             <span>›</span>
-            <span className="text-gray-900">Temu | Return and Refund Policy</span>
+            <span className="text-gray-900">Tamu | Return and Refund Policy</span>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 pt-8 pb-4">
-        <h1 className="text-lg sm:text-2xl font-bold text-gray-900 text-center">Temu | Return and Refund Policy</h1>
+        <h1 className="text-lg sm:text-2xl font-bold text-gray-900 text-center">Tamu | Return and Refund Policy</h1>
         <p className="text-xs text-gray-500 text-center mt-2">Last Updated: Aug 27, 2025 PDT</p>
       </div>
 
@@ -110,7 +110,7 @@ export default function ReturnRefundPolicyPage() {
           <main className="text-xs flex-1 min-w-0">
             {/* Introduction */}
             <p className="text-gray-700 mb-8 leading-relaxed">
-              If you are not satisfied with what you bought on Temu, you may be eligible to return it and get a refund by following the simple procedure set out in this Return and Refund Policy.
+              If you are not satisfied with what you bought on Tamu, you may be eligible to return it and get a refund by following the simple procedure set out in this Return and Refund Policy.
             </p>
 
             {/* Section 1: How do I make a return? */}
@@ -125,7 +125,7 @@ export default function ReturnRefundPolicyPage() {
               <p className="text-gray-700 my-4">You can make a return by following these steps:</p>
               <div className="space-y-3 text-gray-700">
                 <p>
-                  <span className="font-medium">I.</span> Please go to your Temu account on Temu.com or on the app to request a refund. If you do not have a Temu account, please click on "Save your Order" in your Temu order email to make a return.
+                  <span className="font-medium">I.</span> Please go to your Tamu account on Temu.com or on the app to request a refund. If you do not have a Tamu account, please click on "Save your Order" in your Tamu order email to make a return.
                 </p>
                 <p>
                   <span className="font-medium">II.</span> Find the relevant order in "Your Orders" and click on the "Return/Refund" button.
@@ -134,7 +134,7 @@ export default function ReturnRefundPolicyPage() {
                   <span className="font-medium">III.</span> Select the items you would like to return and the reason for the return. Depending on the reason you selected, you may be required to provide further information related to the order. After you provide the required information, click the "Next Step" button to proceed.
                 </p>
                 <p>
-                  <span className="font-medium">IV.</span> If there is no need to return your items, then your final step is simply to select your refund method. You may choose to receive your refund as a Temu credit balance or be credited back via your original payment method. Make your selection and click "Submit".
+                  <span className="font-medium">IV.</span> If there is no need to return your items, then your final step is simply to select your refund method. You may choose to receive your refund as a Tamu credit balance or be credited back via your original payment method. Make your selection and click "Submit".
                 </p>
                 <p>
                   <span className="font-medium">V.</span> If you need to return your items, you will have the option to choose your return and refund methods. After you submit the request, we will provide you with a return label so that you can return the items. <span className="text-orange-500">Return shipping is free on your first return of one or multiple returnable items for EVERY order within 90 days from the date of purchase</span> with <a href="#" className="text-orange-500 underline">some exceptions</a>. <span className="text-orange-500">Pickup return method may charge for an additional fee.</span>
@@ -159,7 +159,7 @@ export default function ReturnRefundPolicyPage() {
                 </p>
 
                 <p>
-                  <span className="font-medium">VIII.</span> You can check the refund status of your items on your order details page or through Temu's SMS/Email/Push notifications.
+                  <span className="font-medium">VIII.</span> You can check the refund status of your items on your order details page or through Tamu's SMS/Email/Push notifications.
                 </p>
               </div>
               <img src="/images/refund-02.webp" alt="image-02" className="mt-6" />
@@ -223,7 +223,7 @@ export default function ReturnRefundPolicyPage() {
               </ul>
 
               <p className="text-gray-700 mb-4">
-                Sellers may indicate that certain items are not eligible for returns, <a href="#" className="text-orange-500 underline">subject to Temu Return and Refund Policy</a>. Please check product detail pages for more information.
+                Sellers may indicate that certain items are not eligible for returns, <a href="#" className="text-orange-500 underline">subject to Tamu Return and Refund Policy</a>. Please check product detail pages for more information.
               </p>
 
               <p className="text-gray-700 mb-4">II. The return window for most electronics is 45, 60, or 90 days from the date of purchase depending on the seller.</p>
@@ -252,13 +252,13 @@ export default function ReturnRefundPolicyPage() {
                   <span className="font-medium">III.</span> For refunds of returned items, <span className="text-orange-500">we will process your refund after the items are received and pass quality inspection.</span>
                 </p>
                 <p>
-                  <span className="font-medium">IV.</span> If the returned item is used or damaged, has missing parts/accessories, or damaged due to improper packaging during return shipping, and this is not due to Temu or the seller, the refund will be reduced to compensate for the lost value of the item.
+                  <span className="font-medium">IV.</span> If the returned item is used or damaged, has missing parts/accessories, or damaged due to improper packaging during return shipping, and this is not due to Tamu or the seller, the refund will be reduced to compensate for the lost value of the item.
                 </p>
                 <p className="font-medium">iPhone refund instructions:</p>
                 <ul className="list-disc list-inside space-y-2">
                   <li>The iPhone should be returned in new, unused, and unactivated condition with all original accessories and product packaging.</li>
                   <li>If the iPhone arrived damaged or malfunctioning, and it is confirmed not to be due to the user's actions, a full refund will be issued.</li>
-                  <li>If the iPhone shows signs of use, is damaged, or is missing parts or accessories, not due to Temu's or the seller's error, the refund will be adjusted based on the quality inspection.</li>
+                  <li>If the iPhone shows signs of use, is damaged, or is missing parts or accessories, not due to Tamu's or the seller's error, the refund will be adjusted based on the quality inspection.</li>
                   <li>The returned iPhone must match the original order's serial number. Mismatching serial numbers will result in a denied refund request.</li>
                   <li>Note: Please ensure that all personal information is completely deleted from the device before returning it.</li>
                 </ul>
@@ -269,21 +269,21 @@ export default function ReturnRefundPolicyPage() {
                   <span className="font-medium">VI.</span> Refunds of a package showing as delivered but not received: Find the corresponding order in the support center, then select "package shows delivered but not received" to apply for a refund, or contact customer service/the seller for help.
                 </p>
                 <p>
-                  <span className="font-medium">VII.</span> <span className="text-orange-500">Depending on your financial institution, refunds can take 5-14 business days (up to 30 days) to be credited to your original payment account.</span> The original shipping fee and import tax are not refundable if your return is not a result of Temu's or the seller's fault. The insurance costs, if any, are also non-refundable. The sign on delivery fee, if any, is not refundable if the items have been delivered successfully.
+                  <span className="font-medium">VII.</span> <span className="text-orange-500">Depending on your financial institution, refunds can take 5-14 business days (up to 30 days) to be credited to your original payment account.</span> The original shipping fee and import tax are not refundable if your return is not a result of Tamu's or the seller's fault. The insurance costs, if any, are also non-refundable. The sign on delivery fee, if any, is not refundable if the items have been delivered successfully.
                 </p>
                 <p>
-                  <span className="font-medium">VIII.</span> You can choose to accept Temu credits instead of a refund to the original payment method.
+                  <span className="font-medium">VIII.</span> You can choose to accept Tamu credits instead of a refund to the original payment method.
                 </p>
                 <ul className="list-disc list-inside space-y-2 text-orange-500">
-                  <li>Refunds to Temu credits are faster than your original payment method.</li>
+                  <li>Refunds to Tamu credits are faster than your original payment method.</li>
                 </ul>
                 <ul className="list-disc list-inside space-y-2">
-                  <li>Temu credits have no expiration date.</li>
-                  <li>Refunds to Temu credit typically cannot be reversed once they are processed.</li>
-                  <li>Typically, Temu credits cannot be redeemed for cash and can only be used for purchases on Temu.</li>
+                  <li>Tamu credits have no expiration date.</li>
+                  <li>Refunds to Tamu credit typically cannot be reversed once they are processed.</li>
+                  <li>Typically, Tamu credits cannot be redeemed for cash and can only be used for purchases on Tamu.</li>
                 </ul>
                 <p>
-                  For more information about Temu credits, please visit: <a href="#" className="text-orange-500 underline">About credit balance.</a>
+                  For more information about Tamu credits, please visit: <a href="#" className="text-orange-500 underline">About credit balance.</a>
                 </p>
               </div>
             </section>
