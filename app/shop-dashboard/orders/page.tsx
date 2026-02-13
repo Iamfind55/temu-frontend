@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useLazyQuery, useMutation, useApolloClient } from "@apollo/client/react"
 import { useTranslation } from "react-i18next"
-import { ShoppingBasket, Package, Truck, Loader, ChevronDown, MoreVertical, Eye, X } from "lucide-react"
+import { ShoppingBasket, Package, Truck, Loader, ChevronDown, MoreVertical, Eye } from "lucide-react"
 
 // Components
 import {
@@ -20,10 +20,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 // API & Utils
 import { useToast } from "@/lib/toast"
 import { orderTabs } from "./constants"
-import { QUERY_SHOP_ORDERS, QUERY_SHOP_ORDER_DETAILS, MUTATION_SHOP_CONFIRM_ORDER, MUTATION_SHOP_CANCEL_ORDER } from "@/app/api/shop/order"
+import { QUERY_SHOP_ORDERS, QUERY_SHOP_ORDER_DETAILS, MUTATION_SHOP_CONFIRM_ORDER } from "@/app/api/shop/order"
 
 // Types
-import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsResponse, ShopConfirmOrderResponse, ShopCancelOrderResponse } from "@/types/shopOrder"
+import { ShopOrder, ShopOrderDetail, ShopGetOrdersResponse, ShopGetOrderDetailsResponse, ShopConfirmOrderResponse } from "@/types/shopOrder"
 import { formatDate, formatDateTime, getStatusBadgeStyle, getStatusLabelKey } from "./functions"
 
 export default function ShopOrdersPage() {
@@ -43,8 +43,6 @@ export default function ShopOrdersPage() {
   const [isDetailsLoading, setIsDetailsLoading] = useState(false)
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false)
   const [isConfirmLoading, setIsConfirmLoading] = useState(false)
-  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
-  const [isCancelLoading, setIsCancelLoading] = useState(false)
   const [tabCounts, setTabCounts] = useState<Record<string, number>>({})
   const limit = 20
 
@@ -62,9 +60,6 @@ export default function ShopOrdersPage() {
 
   // Confirm order mutation
   const [confirmOrder] = useMutation<ShopConfirmOrderResponse>(MUTATION_SHOP_CONFIRM_ORDER)
-
-  // Cancel order mutation
-  const [cancelOrder] = useMutation<ShopCancelOrderResponse>(MUTATION_SHOP_CANCEL_ORDER)
 
   // Get status filter based on current tab
   const getStatusFilter = () => {
@@ -250,58 +245,6 @@ export default function ShopOrdersPage() {
     }
   }
 
-  const handleOpenCancelModal = (order: ShopOrder, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setSelectedOrder(order)
-    setIsCancelModalOpen(true)
-  }
-
-  const handleCancelOrder = async () => {
-    if (!selectedOrder) return
-
-    setIsCancelLoading(true)
-    try {
-      const result = await cancelOrder({
-        variables: {
-          shopCancelOrderId: selectedOrder.id,
-        },
-      })
-
-      if (result.data?.shopCancelOrder?.success) {
-        successMessage({
-          message: result.data.shopCancelOrder.message || t('orderCancelledSuccess'),
-          duration: 3000,
-        })
-        setIsCancelModalOpen(false)
-
-        // Refresh orders list and tab counts
-        const statusFilter = getStatusFilter()
-        getOrders({
-          variables: {
-            page: 1,
-            limit: limit,
-            sortedBy: "created_at_DESC",
-            where: statusFilter ? { order_status: statusFilter } : null,
-          },
-        })
-        fetchTabCounts()
-      } else {
-        errorMessage({
-          message: result.data?.shopCancelOrder?.error?.details || t('orderCancelFailed'),
-          duration: 3000,
-        })
-      }
-    } catch (err) {
-      console.error("Error cancelling order:", err)
-      errorMessage({
-        message: t('orderCancelFailed'),
-        duration: 3000,
-      })
-    } finally {
-      setIsCancelLoading(false)
-    }
-  }
-
   // Filter orders by search query
   const filteredOrders = allOrders.filter(order => {
     if (!searchQuery) return true
@@ -408,15 +351,6 @@ export default function ShopOrdersPage() {
                                   {t('confirmAndShipping')}
                                 </DropdownMenuItem>
                               )}
-                              {order.order_status === "NO_PICKUP" && (
-                                <DropdownMenuItem
-                                  onClick={(e) => handleOpenCancelModal(order, e)}
-                                  className="cursor-pointer text-red-500"
-                                >
-                                  <X className="h-4 w-4 text-red-500" />
-                                  {t('cancelOrder')}
-                                </DropdownMenuItem>
-                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>
@@ -512,15 +446,6 @@ export default function ShopOrdersPage() {
                               >
                                 <Truck className="h-4 w-4 text-green-500" />
                                 {t('confirmAndShipping')}
-                              </DropdownMenuItem>
-                            )}
-                            {order.order_status === "NO_PICKUP" && (
-                              <DropdownMenuItem
-                                onClick={(e) => handleOpenCancelModal(order, e)}
-                                className="cursor-pointer text-red-500"
-                              >
-                                <X className="h-4 w-4 text-red-500" />
-                                {t('cancelOrder')}
                               </DropdownMenuItem>
                             )}
                           </DropdownMenuContent>
@@ -808,56 +733,6 @@ export default function ShopOrdersPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isCancelModalOpen} onOpenChange={setIsCancelModalOpen}>
-        <DialogContent className="sm:!max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle className="text-lg font-bold flex items-center gap-2">
-              <X className="h-5 w-5 text-red-500" />
-              {t('cancelOrderTitle')}
-            </DialogTitle>
-          </DialogHeader>
-
-          {selectedOrder && (
-            <div className="space-y-4 py-2">
-              <div className="rounded-lg bg-red-50 p-4 border border-red-100">
-                <p className="text-sm text-gray-700">
-                  {t('cancelOrderConfirm')} <span className="font-mono font-bold">#{selectedOrder.order_no}</span>?
-                </p>
-                <p className="text-sm text-gray-500 mt-2">
-                  {t('actionCannotBeUndone')}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsCancelModalOpen(false)}
-                  disabled={isCancelLoading}
-                >
-                  {t('close')}
-                </Button>
-                <Button
-                  onClick={handleCancelOrder}
-                  disabled={isCancelLoading}
-                  className="bg-red-500 hover:bg-red-600"
-                >
-                  {isCancelLoading ? (
-                    <>
-                      <Loader className="h-4 w-4 animate-spin" />
-                      {t('cancelling')}
-                    </>
-                  ) : (
-                    <>
-                      <X className="h-4 w-4" />
-                      {t('cancelOrder')}
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
