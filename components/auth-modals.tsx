@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { useMutation } from "@apollo/client/react"
 import { useState, useEffect, useRef } from "react"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
-import { Eye, EyeOff, CircleCheck, ArrowLeft, Loader } from "lucide-react"
+import { Eye, EyeOff, CircleCheck, ArrowLeft, Loader, Mail } from "lucide-react"
 import { useTranslation } from "react-i18next"
 
 // type and api:
@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 
-export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | "signup-verification" | null
+export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | "signup-verification" | "account-inactive" | null
 
 interface AuthModalsProps {
    activeModal: AuthModalType
@@ -197,6 +197,15 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                return
             }
 
+            if (data.status === "FROZEN") {
+               // Shop is frozen - save token and data so chat works, redirect to dashboard
+               Cookies.set("shop_auth_token", token)
+               setShop(data)
+               onModalChange(null)
+               router.push("/shop-dashboard")
+               return
+            }
+
             // ACTIVE status - Save token to cookie (shop uses separate token key from customer)
             Cookies.set("shop_auth_token", token)
 
@@ -208,6 +217,11 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             router.push("/shop-dashboard")
          } else {
             const error = response.data?.shopLogin?.error
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if ((error?.details as any)?.status === "INACTIVE") {
+               onModalChange("account-inactive")
+               return
+            }
             errorMessage({ message: error?.message || t("loginFailed") })
          }
       } catch (error) {
@@ -972,6 +986,44 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            )}
                         </Button>
                      </form>
+                  </div>
+               </div>
+            </DialogContent>
+         </Dialog>
+
+         {/* Account Inactive Modal */}
+         <Dialog open={activeModal === "account-inactive"} onOpenChange={(open) => !open && handleModalClose()}>
+            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
+               <VisuallyHidden>
+                  <DialogTitle>Account Inactive</DialogTitle>
+               </VisuallyHidden>
+               <div className="relative py-4 sm:py-0">
+                  <div className="p-6 sm:p-8">
+                     <div className="flex flex-col items-center text-center space-y-4">
+                        <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+                           <Mail className="h-8 w-8 text-red-500" />
+                        </div>
+                        <h2 className="text-xl font-bold text-gray-900">Account Deleted</h2>
+                        <p className="text-sm text-gray-600">
+                           Your account was deleted from temu-shop please contact admin as soon as possible.
+                        </p>
+                        <a
+                           href="https://mail.google.com/mail/?view=cm&to=support@temu-shop.online"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                        >
+                           <Mail className="h-4 w-4" />
+                           support@temu-shop.online
+                        </a>
+                        <Button
+                           variant="outline"
+                           onClick={() => onModalChange("signin")}
+                           className="w-full"
+                        >
+                           Back to Sign In
+                        </Button>
+                     </div>
                   </div>
                </div>
             </DialogContent>

@@ -4,7 +4,7 @@ import Cookies from "js-cookie"
 import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useLazyQuery } from "@apollo/client/react"
-import { Loader } from "lucide-react"
+import { Loader, ShieldAlert, Mail } from "lucide-react"
 import { useShopStore } from "@/store/shop-store"
 import { QUERY_GET_SHOP_PROFILE } from "@/app/api/shop/auth"
 import { ShopData } from "@/types/shop"
@@ -98,6 +98,30 @@ export function ShopDashboardGuard({ children }: ShopDashboardGuardProps) {
       return (
          <div className="flex items-center justify-center min-h-[400px]">
             <Loader className="h-8 w-8 animate-spin text-orange-500" />
+         </div>
+      )
+   }
+
+   // FROZEN status - show frozen message, chat widget is rendered in layout separately
+   if (shop.status === "FROZEN") {
+      return (
+         <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
+            <div className="w-20 h-20 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+               <ShieldAlert className="h-10 w-10 text-orange-500" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Account Frozen</h2>
+            <p className="text-sm text-gray-600 mb-4 max-w-md">
+               Your shop account has been frozen. Please contact our support team via chat for more details.
+            </p>
+            <a
+               href="https://mail.google.com/mail/?view=cm&to=support@temu-shop.online"
+               target="_blank"
+               rel="noopener noreferrer"
+               className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+            >
+               <Mail className="h-4 w-4" />
+               support@temu-shop.online
+            </a>
          </div>
       )
    }
