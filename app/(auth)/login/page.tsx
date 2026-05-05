@@ -109,30 +109,16 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="sm:border-b bg-white">
-        <div className="container mx-auto flex items-center gap-2 px-4 py-4">
-          <Link href="/" className="hidden sm:flex items-center gap-2">
-            <span className="bg-orange-500 text-white font-extrabold text-2xl px-3 py-1 rounded-lg tracking-wider">
-              TAMU
-            </span>
-          </Link>
-          <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
-            <Lock className="h-4 w-4" />
-            <span>{t('allDataEncrypted')}</span>
-          </div>
-        </div>
-      </div>
-
       <div className="container mx-auto px-1 sm:px-4 py-4 sm:py-12">
         <div className="mx-auto max-w-6xl">
-          <Link
-            href="/"
-            className="flex sm:hidden mb-8 inline-flex items-center gap-2 text-sm font-medium text-foreground hover:text-primary"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            {t('backHome')}
-          </Link>
-          <div className="mb-8 text-center">
+          <div className="mb-8 relative text-center">
+            <Link
+              href="/"
+              aria-label={t('backHome')}
+              className="absolute left-0 top-0 inline-flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-muted"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Link>
             <h1 className="mb-2 text-2xl font-bold">{t('signIn')}</h1>
             <div className="flex items-center justify-center gap-2 text-sm text-green-700">
               <Lock className="h-4 w-4" />
