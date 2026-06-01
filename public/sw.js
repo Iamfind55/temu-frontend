@@ -1,8 +1,7 @@
-const CACHE_NAME = 'temu-cache-v1';
+const CACHE_NAME = 'app-cache-v1';
 const urlsToCache = [
   '/',
-  '/logo/icon.png',
-  '/logo/temu-logo.webp'
+  '/logo/icon.png'
 ];
 
 // Check if caches API is available

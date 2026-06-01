@@ -22,24 +22,23 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Tamu - Shop Like a Billionaire",
-  description: "Discover amazing deals on millions of products",
-  generator: 'v0.app',
+  title: "Tamu Stores - Online Shopping",
+  description: "Online marketplace for everyday products at affordable prices.",
   manifest: '/manifest.json',
   themeColor: '#f97316',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Tamu',
+    title: 'Tamu Stores',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: 'website',
-    siteName: 'Tamu',
-    title: 'Tamu - Shop Like a Billionaire',
-    description: 'Discover amazing deals on millions of products',
+    siteName: 'Tamu Stores',
+    title: 'Tamu Stores - Online Shopping',
+    description: 'Online marketplace for everyday products at affordable prices.',
   },
   icons: {
     icon: '/logo/icon.png',

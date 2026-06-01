@@ -1,7 +1,7 @@
 {
-  "name": "Tamu - Shop Like a Billionaire",
-  "short_name": "Tamu",
-  "description": "Discover amazing deals on millions of products",
+  "name": "Tamu Stores",
+  "short_name": "Tamu Stores",
+  "description": "Online marketplace for everyday products at affordable prices.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

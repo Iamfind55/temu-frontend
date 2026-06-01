@@ -294,11 +294,11 @@ export default function LoginPage() {
           <div className="mt-8 text-center text-sm text-muted-foreground space-y-2">
             <span>{t('bySigningIn')}{" "}</span>
             <div>
-              <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
+              <Link href="/terms-of-use" className="text-blue-600 font-bold hover:underline cursor-pointer">
                 {t('termsOfUse')}
               </Link>{" "}
               {t('and')}{" "}
-              <Link href="#" className="text-blue-600 font-bold hover:underline cursor-pointer">
+              <Link href="/privacy-policy" className="text-blue-600 font-bold hover:underline cursor-pointer">
                 {t('privacyPolicy')}.
               </Link>
             </div>

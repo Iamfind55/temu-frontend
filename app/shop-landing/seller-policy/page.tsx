@@ -43,14 +43,7 @@ export default function SellerPrivacyPolicyPage() {
                      This Privacy Policy explains how we collect, use, share, and otherwise process the personal information of Sellers in connection with our Service. For Sellers governed by certain specific jurisdictions, please see the &quot;<a href="#additional_terms_for_certain_jurisdictions" className="text-orange-500 hover:underline">Additional Terms for Certain Jurisdictions</a>&quot; section for additional information that apply to you.
                   </p>
 
-                  <p>Different Tamu entities handle your personal information based on the country/region where you choose to use the Service:</p>
-
-                  <ul className="list-disc list-inside space-y-2 ml-4">
-                     <li>If you use the Service for the European Economic Area (&quot;EEA&quot;), United Kingdom (&quot;UK&quot;), or Switzerland, Whaleco Technology Limited, an Irish company, is the controller responsible for your personal information.</li>
-                     <li>If you use the Service for the United States (&quot;U.S.&quot;), Whaleco Inc. is responsible for the processing of your personal information.</li>
-                     <li>If you use the Service for Canada, Whaleco Canada Inc. is responsible for the processing of your personal information.</li>
-                     <li>If you use the Service for any country/region other than the EEA, UK, Switzerland, U.S., or Canada, Elementary Innovation Pte. Ltd., a Singaporean company, is responsible for the processing of your personal information.</li>
-                  </ul>
+                  <p>Tamu Stores ([FILL IN YOUR REGISTERED BUSINESS NAME]) is responsible for the processing of your personal information in connection with the Service.</p>
 
                   {/* What Information We Collect */}
                   <h2 id="what_information_we_collect" className="text-xl font-bold text-gray-900 pt-6">What Information We Collect</h2>

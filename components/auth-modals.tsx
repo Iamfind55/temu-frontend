@@ -1005,16 +1005,16 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                         </div>
                         <h2 className="text-xl font-bold text-gray-900">Account Deleted</h2>
                         <p className="text-sm text-gray-600">
-                           Your account was deleted from temu-shop please contact admin as soon as possible.
+                           Your account has been deleted. Please contact support as soon as possible.
                         </p>
                         <a
-                           href="https://mail.google.com/mail/?view=cm&to=support@temu-shop.online"
+                           href="mailto:support@temustores.com"
                            target="_blank"
                            rel="noopener noreferrer"
                            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                         >
                            <Mail className="h-4 w-4" />
-                           support@temu-shop.online
+                           support@temustores.com
                         </a>
                         <Button
                            variant="outline"

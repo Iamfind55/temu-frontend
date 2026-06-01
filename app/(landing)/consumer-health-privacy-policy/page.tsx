@@ -86,7 +86,7 @@ export default function ConsumerHealthPrivacyPolicyPage() {
                <main className="flex-1 min-w-0">
                   {/* Introduction */}
                   <p className="text-sm text-gray-700 mb-8 leading-relaxed">
-                     This Consumer Health Data Privacy Policy provides information regarding how Whaleco Inc. (&quot;Tamu,&quot; &quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) processes &quot;consumer health data&quot; as defined by applicable consumer health privacy laws. In the event of a conflict between Tamu&apos;s{" "}
+                     This Consumer Health Data Privacy Policy provides information regarding how Tamu Stores (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;) processes &quot;consumer health data&quot; as defined by applicable consumer health privacy laws. In the event of a conflict between our{" "}
                      <Link href="/privacy-policy" className="text-orange-500 hover:underline">
                         Privacy Policy
                      </Link>{" "}
@@ -218,14 +218,12 @@ export default function ConsumerHealthPrivacyPolicyPage() {
                         </p>
 
                         <p>
-                           If your request to exercise a right under applicable law is denied, you may appeal that decision by contacting us as described below. If you have questions or would like to communicate with us about this Consumer Health Data Privacy Policy, please email us at privacy@tamu.com or contact us by mail at the following address:
+                           If your request to exercise a right under applicable law is denied, you may appeal that decision by contacting us as described below. If you have questions or would like to communicate with us about this Consumer Health Data Privacy Policy, please email us at support@temustores.com or contact us by mail at the following address:
                         </p>
 
                         <div className="mt-4">
-                           <p>Whaleco Inc.</p>
-                           <p>Suite 355</p>
-                           <p>31 St. James Avenue</p>
-                           <p>Boston, Massachusetts 02116, USA</p>
+                           <p><strong>[FILL IN YOUR REGISTERED BUSINESS NAME]</strong></p>
+                           <p><strong>[FILL IN YOUR REGISTERED BUSINESS ADDRESS]</strong></p>
                         </div>
                      </div>
                   </section>

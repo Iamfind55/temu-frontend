@@ -110,7 +110,7 @@ export default function IntellectualPropertyPolicyPage() {
                         <li>A physical or electronic signature of the content provider.</li>
                         <li>Identification of the material that has been removed or to which access has been disabled and the location at which the material appeared before it was removed or disabled.</li>
                         <li>A statement under penalty of perjury that the content provider has a good faith belief that the material was removed or disabled as a result of mistake or misidentification of the material.</li>
-                        <li>Content provider's name, address, telephone number and email address, and a statement that such person or entity consents to the jurisdiction of the Federal District Court for the judicial district in which the content provider's address is located, or, if the content provider's address is located outside the United States, for any judicial district in which Whaleco Inc. may be found, and that such person or entity will accept service of process from the person who provided notification of the alleged infringement.</li>
+                        <li>Content provider's name, address, telephone number and email address, and a statement that such person or entity consents to the jurisdiction of the Federal District Court for the judicial district in which the content provider's address is located, or, if the content provider's address is located outside the United States, for any judicial district in which we may be found, and that such person or entity will accept service of process from the person who provided notification of the alleged infringement.</li>
                      </ul>
 
                      <p>

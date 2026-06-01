@@ -52,10 +52,10 @@ export default function ContactUsPage() {
                               {t('canContactService')}
                            </p>
                            <Link
-                              href="https://t.me/Tiktokshop24h_online"
+                              href="mailto:support@temustores.com"
                               className="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors"
                            >
-                              {t('contactUs')}
+                              support@temustores.com
                               <ChevronRight className="w-4 h-4 ml-1" />
                            </Link>
                         </div>
