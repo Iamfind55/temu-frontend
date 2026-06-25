@@ -180,7 +180,7 @@ export function ShopLiveChat() {
             variables: {
                page: 1,
                limit: 100,
-               sortedBy: "created_at_ASC",
+               sortedBy: "created_at_DESC",
                where: { conversation_id: conversationId },
             },
          })
