@@ -125,7 +125,7 @@ export default function ReturnRefundPolicyPage() {
               <p className="text-gray-700 my-4">You can make a return by following these steps:</p>
               <div className="space-y-3 text-gray-700">
                 <p>
-                  <span className="font-medium">I.</span> Sign in to your account on temustores.com or in the app to request a refund. If you don&apos;t have an account, click &quot;Save your Order&quot; in your order confirmation email to make a return.
+                  <span className="font-medium">I.</span> Sign in to your account on temustores.shop or in the app to request a refund. If you don&apos;t have an account, click &quot;Save your Order&quot; in your order confirmation email to make a return.
                 </p>
                 <p>
                   <span className="font-medium">II.</span> Find the relevant order in "Your Orders" and click on the "Return/Refund" button.

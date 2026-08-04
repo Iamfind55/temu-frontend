@@ -91,7 +91,7 @@ export default function PrivacyPolicyPage() {
             <div className="mb-8 text-sm text-gray-700 leading-relaxed space-y-4">
               <p>
                 This Privacy Policy describes how Tamu Stores (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and shares
-                information about you when you use our website at temustores.com and related services (the &quot;Service&quot;).
+                information about you when you use our website at temustores.shop and related services (the &quot;Service&quot;).
               </p>
               <p>
                 By using the Service, you agree to the practices described in this Privacy Policy. If you do not agree, please do not use the Service.
@@ -223,7 +223,7 @@ export default function PrivacyPolicyPage() {
               <div className="text-sm text-gray-700 mt-4 space-y-3">
                 <p>If you have questions about this Privacy Policy or how we handle your information, contact us:</p>
                 <ul className="list-disc list-inside space-y-2">
-                  <li>Email: <a href="mailto:support@temustores.com" className="text-orange-500 hover:underline">support@temustores.com</a></li>
+                  <li>Email: <a href="mailto:support@temustores.shop" className="text-orange-500 hover:underline">support@temustores.shop</a></li>
                   <li>Business name: <strong>[FILL IN YOUR REGISTERED BUSINESS NAME]</strong></li>
                   <li>Business address: <strong>[FILL IN YOUR REGISTERED BUSINESS ADDRESS]</strong></li>
                 </ul>

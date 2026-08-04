@@ -52,10 +52,10 @@ export default function ContactUsPage() {
                               {t('canContactService')}
                            </p>
                            <Link
-                              href="mailto:support@temustores.com"
+                              href="mailto:support@temustores.shop"
                               className="inline-flex items-center text-orange-500 hover:text-orange-600 font-medium transition-colors"
                            >
-                              support@temustores.com
+                              support@temustores.shop
                               <ChevronRight className="w-4 h-4 ml-1" />
                            </Link>
                         </div>

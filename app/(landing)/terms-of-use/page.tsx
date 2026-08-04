@@ -24,7 +24,7 @@ export default function TermsOfUsePage() {
         <main className="max-w-4xl mx-auto">
           <div className="mb-8 text-sm text-gray-700 leading-relaxed space-y-4">
             <p>
-              These Terms of Use (&quot;Terms&quot;) govern your access to and use of the website at temustores.com,
+              These Terms of Use (&quot;Terms&quot;) govern your access to and use of the website at temustores.shop,
               our mobile applications, and related services (collectively, the &quot;Service&quot;) operated by Tamu Stores
               (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;).
             </p>
@@ -125,7 +125,7 @@ export default function TermsOfUsePage() {
             <div className="text-sm text-gray-700 mt-4 space-y-3">
               <p>If you have questions about these Terms, contact us:</p>
               <ul className="list-disc list-inside space-y-2">
-                <li>Email: <a href="mailto:support@temustores.com" className="text-orange-500 hover:underline">support@temustores.com</a></li>
+                <li>Email: <a href="mailto:support@temustores.shop" className="text-orange-500 hover:underline">support@temustores.shop</a></li>
                 <li>Business name: <strong>[FILL IN YOUR REGISTERED BUSINESS NAME]</strong></li>
                 <li>Business address: <strong>[FILL IN YOUR REGISTERED BUSINESS ADDRESS]</strong></li>
               </ul>

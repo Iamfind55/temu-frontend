@@ -218,7 +218,7 @@ export default function ConsumerHealthPrivacyPolicyPage() {
                         </p>
 
                         <p>
-                           If your request to exercise a right under applicable law is denied, you may appeal that decision by contacting us as described below. If you have questions or would like to communicate with us about this Consumer Health Data Privacy Policy, please email us at support@temustores.com or contact us by mail at the following address:
+                           If your request to exercise a right under applicable law is denied, you may appeal that decision by contacting us as described below. If you have questions or would like to communicate with us about this Consumer Health Data Privacy Policy, please email us at support@temustores.shop or contact us by mail at the following address:
                         </p>
 
                         <div className="mt-4">

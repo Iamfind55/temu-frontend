@@ -1008,13 +1008,13 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            Your account has been deleted. Please contact support as soon as possible.
                         </p>
                         <a
-                           href="mailto:support@temustores.com"
+                           href="mailto:support@temustores.shop"
                            target="_blank"
                            rel="noopener noreferrer"
                            className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
                         >
                            <Mail className="h-4 w-4" />
-                           support@temustores.com
+                           support@temustores.shop
                         </a>
                         <Button
                            variant="outline"
