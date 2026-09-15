@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 
-export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | "signup-verification" | "account-inactive" | null
+export type AuthModalType = "signin" | "signup" | "forgot-password" | "verification" | "reset-password" | "account-inactive" | null
 
 interface AuthModalsProps {
    activeModal: AuthModalType
@@ -118,7 +118,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
    // Countdown timer for resend code
    useEffect(() => {
       let timer: NodeJS.Timeout
-      if ((activeModal === "verification" || activeModal === "signup-verification") && resendCountdown > 0) {
+      if (activeModal === "verification" && resendCountdown > 0) {
          timer = setInterval(() => {
             setResendCountdown((prev) => {
                if (prev <= 1) {
@@ -157,37 +157,6 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          if (response.data?.shopLogin?.success && response.data.shopLogin.data) {
             const { token, data } = response.data.shopLogin.data
 
-            // Check shop status before setting token
-            if (data.status === "PENDING") {
-               if (data.isOtpEnable) {
-                  // OTP is verified, redirect to application page step 1
-                  Cookies.set("shop_auth_token", token)
-                  setShop(data)
-                  onModalChange(null)
-                  router.push("/shop-landing/application")
-               } else {
-                  // OTP not verified yet, send OTP and show verification modal
-                  setForgotPasswordEmail(data.email)
-                  try {
-                     await resendShopOTP({
-                        variables: {
-                           data: {
-                              email: data.email,
-                           },
-                        },
-                     })
-                     successMessage({ message: t("verificationCodeSent") })
-                  } catch {
-                     // Continue to show modal even if resend fails
-                  }
-                  setResendCountdown(60)
-                  setCanResend(false)
-                  setOtpDigits(["", "", "", "", "", ""])
-                  onModalChange("signup-verification")
-               }
-               return
-            }
-
             if (data.status === "APPROVED") {
                // Shop is under review by admin, redirect to application page to show status (step 3)
                Cookies.set("shop_auth_token", token)
@@ -218,8 +187,14 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          } else {
             const error = response.data?.shopLogin?.error
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if ((error?.details as any)?.status === "INACTIVE") {
+            const errorStatus = (error?.details as any)?.status
+            if (errorStatus === "INACTIVE") {
                onModalChange("account-inactive")
+               return
+            }
+            // Registered but not approved by an admin yet.
+            if (errorStatus === "PENDING") {
+               errorMessage({ message: error?.message || t("loginFailed") })
                return
             }
             errorMessage({ message: error?.message || t("loginFailed") })
@@ -264,13 +239,18 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
          if (result?.shopRegister?.success) {
+            const registerData = result?.shopRegister?.data
             successMessage({ message: t("registrationSuccess") })
-            // After sign up, show verification modal
-            setForgotPasswordEmail(signUpEmail)
-            setResendCountdown(60)
-            setCanResend(false)
-            setOtpDigits(["", "", "", "", "", ""])
-            onModalChange("signup-verification")
+            // Registration issues an application-scoped token: it only allows
+            // submitting the application, not signing in to the dashboard.
+            if (registerData?.token) {
+               Cookies.set("shop_auth_token", registerData.token)
+            }
+            if (registerData?.data) {
+               setShop(registerData.data)
+            }
+            onModalChange(null)
+            router.push("/shop-landing/application")
          } else {
             const error = result?.shopRegister?.error
             errorMessage({ message: error?.message || t("registrationFailed") })
@@ -399,49 +379,6 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             setNewPassword("")
             setConfirmNewPassword("")
             onModalChange("reset-password")
-         } else {
-            const error = result?.shopVerifyOTP?.error
-            errorMessage({ message: error?.message || t("verificationFailed") })
-         }
-      } catch (error) {
-         console.error("Verification error:", error)
-         errorMessage({ message: t("verificationError") })
-      }
-   }
-
-   const handleSignupVerificationSubmit = async (e: React.FormEvent) => {
-      e.preventDefault()
-      const otp = otpDigits.join("")
-
-      try {
-         // Clear any existing shop data before verification
-         clearShop()
-         Cookies.remove("shop_auth_token")
-
-         const response = await verifyShopEmail({
-            variables: {
-               data: {
-                  email: forgotPasswordEmail,
-                  otp: otp,
-               },
-            },
-         })
-
-         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-         const result = response.data as any
-         if (result?.shopVerifyOTP?.success) {
-            const verifyData = result?.shopVerifyOTP?.data
-            // Save token to cookie for shop update mutation
-            if (verifyData?.token) {
-               Cookies.set("shop_auth_token", verifyData.token)
-            }
-            // Set shop data to store if available
-            if (verifyData?.data) {
-               setShop(verifyData.data)
-            }
-            successMessage({ message: t("emailVerified") })
-            onModalChange(null)
-            router.push("/shop-landing/application")
          } else {
             const error = result?.shopVerifyOTP?.error
             errorMessage({ message: error?.message || t("verificationFailed") })
@@ -1024,80 +961,6 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                            Back to Sign In
                         </Button>
                      </div>
-                  </div>
-               </div>
-            </DialogContent>
-         </Dialog>
-
-         {/* Sign Up Verification Modal */}
-         <Dialog open={activeModal === "signup-verification"} onOpenChange={(open) => !open && handleModalClose()}>
-            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
-               <VisuallyHidden>
-                  <DialogTitle>{t("verifyYourEmail")}</DialogTitle>
-               </VisuallyHidden>
-               <div className="relative py-4 sm:py-0">
-                  <div className="p-6 sm:p-8">
-                     <button
-                        type="button"
-                        onClick={backToSignUp}
-                        className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
-                     >
-                        <ArrowLeft className="h-4 w-4" />
-                        <span className="text-sm">{t("back")}</span>
-                     </button>
-
-                     <h2 className="text-2xl font-bold text-gray-900 mb-2">{t("verifyYourEmail")}</h2>
-                     <p className="text-gray-600 text-sm mb-6">
-                        {t("enterCodeSentTo")}{" "}
-                        <span className="text-orange-500 font-medium">{forgotPasswordEmail}</span>
-                     </p>
-
-                     <form onSubmit={handleSignupVerificationSubmit} className="space-y-5">
-                        <div className="flex justify-center gap-2">
-                           {otpDigits.map((digit, index) => (
-                              <input
-                                 key={index}
-                                 ref={(el) => { otpInputRefs.current[index] = el }}
-                                 type="text"
-                                 inputMode="numeric"
-                                 maxLength={1}
-                                 value={digit}
-                                 onChange={(e) => handleOtpChange(index, e.target.value)}
-                                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                                 className="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                              />
-                           ))}
-                        </div>
-
-                        <div className="text-center">
-                           <button
-                              type="button"
-                              onClick={handleResendCode}
-                              disabled={!canResend || resendLoading}
-                              className={cn(
-                                 "text-sm",
-                                 canResend && !resendLoading ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
-                              )}
-                           >
-                              {resendLoading ? t("sending") : canResend ? t("resendCode") : t("resendCodeWithTimer", { seconds: resendCountdown })}
-                           </button>
-                        </div>
-
-                        <Button
-                           type="submit"
-                           disabled={otpDigits.some((d) => !d) || verifyLoading}
-                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                           {verifyLoading ? (
-                              <>
-                                 <Loader className="h-5 w-5 animate-spin " />
-                                 {t("verifying")}
-                              </>
-                           ) : (
-                              t("verifyAndContinue")
-                           )}
-                        </Button>
-                     </form>
                   </div>
                </div>
             </DialogContent>

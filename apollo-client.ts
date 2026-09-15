@@ -26,14 +26,13 @@ const getAuthToken = (): string => {
 const createApolloClient = () => {
   // HTTP link for queries and mutations
   const httpLink = new HttpLink({
-    uri:
-      process.env.NEXT_PUBLIC_API_URL || "https://api.temustores.shop/graphql",
+    uri: process.env.NEXT_PUBLIC_API_URL || "http://localhost:9091/graphql",
   });
 
   // WebSocket link for subscriptions
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "wss://api.temustores.shop/graphql",
+      url: "wss://localhost:9091/graphql",
       connectionParams: () => ({
         Authorization: getAuthToken(),
       }),

@@ -5,8 +5,11 @@ export const MUTATION_SHOP_REGISTER = gql`
     shopRegister(data: $data) {
       success
       data {
+        token
         data {
           id
+          email
+          status
         }
       }
       error {

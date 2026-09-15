@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { useMutation } from "@apollo/client/react"
 import { useTranslation } from "react-i18next"
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 import { Eye, EyeOff, ChevronUp, ChevronDown, ArrowLeft, Loader, CircleCheck } from "lucide-react"
 
 // Components
@@ -17,11 +16,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { AuthModals, AuthModalType } from "@/components/auth-modals"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 
 // constants:
 import { features, whySellFeatures } from "./constants"
-import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_RESEND_VERIFY_SHOP_EMAIL } from "@/app/api/shop/auth"
+import { MUTATION_SHOP_REGISTER } from "@/app/api/shop/auth"
 
 export default function ShopLandingPage() {
    const router = useRouter()
@@ -33,10 +31,6 @@ export default function ShopLandingPage() {
    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
    // Hero sign up verification state
-   const [heroCanResend, setHeroCanResend] = useState(false)
-   const [heroResendCountdown, setHeroResendCountdown] = useState(60)
-   const [isHeroVerificationOpen, setIsHeroVerificationOpen] = useState(false)
-   const [heroOtpDigits, setHeroOtpDigits] = useState(["", "", "", "", "", ""])
 
    // Form state
    const [email, setEmail] = useState("")
@@ -52,8 +46,6 @@ export default function ShopLandingPage() {
 
    // Mutations
    const [shopRegister, { loading: registerLoading }] = useMutation(MUTATION_SHOP_REGISTER)
-   const [verifyShopEmail, { loading: verifyLoading }] = useMutation(MUTATION_VERIFY_SHOP_EMAIL)
-   const [resendShopOTP, { loading: resendLoading }] = useMutation(MUTATION_RESEND_VERIFY_SHOP_EMAIL)
 
    // Password validation effect
    useEffect(() => {
@@ -169,11 +161,14 @@ export default function ShopLandingPage() {
 
          const result = response.data as any
          if (result?.shopRegister?.success) {
+            const registerData = result?.shopRegister?.data
             successMessage({ message: t('registrationSuccess') })
-            setHeroResendCountdown(60)
-            setHeroCanResend(false)
-            setHeroOtpDigits(["", "", "", "", "", ""])
-            setIsHeroVerificationOpen(true)
+            // Registration issues an application-scoped token: it only allows
+            // submitting the application, not signing in to the dashboard.
+            if (registerData?.token) {
+               Cookies.set("shop_auth_token", registerData.token)
+            }
+            router.push("/shop-landing/application")
          } else {
             const error = result?.shopRegister?.error
             errorMessage({ message: error?.message || t('registrationFailed') })
@@ -183,105 +178,6 @@ export default function ShopLandingPage() {
          errorMessage({ message: t('registrationError') })
       }
    }
-
-   const handleHeroOtpChange = (index: number, value: string) => {
-      if (value.length > 1) {
-         value = value.slice(-1)
-      }
-      if (!/^\d*$/.test(value)) return
-
-      const newOtpDigits = [...heroOtpDigits]
-      newOtpDigits[index] = value
-      setHeroOtpDigits(newOtpDigits)
-
-      // Auto-focus next input
-      if (value && index < 5) {
-         const nextInput = document.getElementById(`hero-otp-${index + 1}`)
-         nextInput?.focus()
-      }
-   }
-
-   const handleHeroOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Backspace" && !heroOtpDigits[index] && index > 0) {
-         const prevInput = document.getElementById(`hero-otp-${index - 1}`)
-         prevInput?.focus()
-      }
-   }
-
-   const handleHeroResendCode = async () => {
-      if (!heroCanResend || resendLoading) return
-      try {
-         const response = await resendShopOTP({
-            variables: {
-               data: {
-                  email: email,
-               },
-            },
-         })
-
-         const result = response.data as any
-         if (result?.shopResendOTP?.success) {
-            successMessage({ message: t('codeResent') })
-            setHeroResendCountdown(60)
-            setHeroCanResend(false)
-         } else {
-            const error = result?.shopResendOTP?.error
-            errorMessage({ message: error?.message || t('resendFailed') })
-         }
-      } catch (error) {
-         console.error("Resend code error:", error)
-         errorMessage({ message: t('applicationError') })
-      }
-   }
-
-   const handleHeroVerificationSubmit = async (e: React.FormEvent) => {
-      e.preventDefault()
-      const otp = heroOtpDigits.join("")
-
-      try {
-         const response = await verifyShopEmail({
-            variables: {
-               data: {
-                  email: email,
-                  otp: otp,
-               },
-            },
-         })
-
-         const result = response.data as any
-         if (result?.shopVerifyOTP?.success) {
-            const token = result?.shopVerifyOTP?.data?.token
-            if (token) {
-               Cookies.set("shop_auth_token", token)
-            }
-            successMessage({ message: t('emailVerified') })
-            setIsHeroVerificationOpen(false)
-            router.push("/shop-landing/application")
-         } else {
-            const error = result?.shopVerifyOTP?.error
-            errorMessage({ message: error?.message || t('verificationFailed') })
-         }
-      } catch (error) {
-         console.error("Verification error:", error)
-         errorMessage({ message: t('verificationError') })
-      }
-   }
-
-   useEffect(() => {
-      let timer: NodeJS.Timeout
-      if (isHeroVerificationOpen && heroResendCountdown > 0) {
-         timer = setInterval(() => {
-            setHeroResendCountdown((prev) => {
-               if (prev <= 1) {
-                  setHeroCanResend(true)
-                  return 0
-               }
-               return prev - 1
-            })
-         }, 1000)
-      }
-      return () => clearInterval(timer)
-   }, [isHeroVerificationOpen, heroResendCountdown])
 
    return (
       <div className="min-h-screen">
@@ -584,79 +480,6 @@ export default function ShopLandingPage() {
                </div>
             </div>
          </section>
-
-         <Dialog open={isHeroVerificationOpen} onOpenChange={setIsHeroVerificationOpen}>
-            <DialogContent className="w-full h-[90vh] sm:h-auto sm:max-h-[90vh] max-w-full sm:max-w-md rounded-t-xl sm:rounded-lg p-0 gap-0 overflow-hidden overflow-y-auto fixed bottom-0 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2">
-               <VisuallyHidden>
-                  <DialogTitle>{t('verifyYourEmail')}</DialogTitle>
-               </VisuallyHidden>
-               <div className="relative py-4 sm:py-0">
-                  <div className="p-6 sm:p-8">
-                     <button
-                        type="button"
-                        onClick={() => setIsHeroVerificationOpen(false)}
-                        className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
-                     >
-                        <ArrowLeft className="h-4 w-4" />
-                        <span className="text-sm">{t('back')}</span>
-                     </button>
-
-                     <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('verifyYourEmail')}</h2>
-                     <p className="text-gray-600 text-sm mb-6">
-                        {t('enterVerificationCode')}{" "}
-                        <span className="text-orange-500 font-medium">{email}</span>
-                     </p>
-
-                     <form onSubmit={handleHeroVerificationSubmit} className="space-y-5">
-                        <div className="flex justify-center gap-2">
-                           {heroOtpDigits.map((digit, index) => (
-                              <input
-                                 key={index}
-                                 id={`hero-otp-${index}`}
-                                 type="text"
-                                 inputMode="numeric"
-                                 maxLength={1}
-                                 value={digit}
-                                 onChange={(e) => handleHeroOtpChange(index, e.target.value)}
-                                 onKeyDown={(e) => handleHeroOtpKeyDown(index, e)}
-                                 className="w-12 h-14 text-center text-xl font-semibold border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                              />
-                           ))}
-                        </div>
-
-                        <div className="text-center">
-                           <button
-                              type="button"
-                              onClick={handleHeroResendCode}
-                              disabled={!heroCanResend || resendLoading}
-                              className={cn(
-                                 "text-sm",
-                                 heroCanResend && !resendLoading ? "text-orange-500 hover:underline cursor-pointer" : "text-gray-400"
-                              )}
-                           >
-                              {resendLoading ? t('sending') : heroCanResend ? t('resendCode') : `${heroResendCountdown}s ${t('resendCode')}`}
-                           </button>
-                        </div>
-
-                        <Button
-                           type="submit"
-                           disabled={heroOtpDigits.some((d) => !d) || verifyLoading}
-                           className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-6 rounded-lg text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                           {verifyLoading ? (
-                              <>
-                                 <Loader className="h-5 w-5 animate-spin " />
-                                 {t('verifying')}
-                              </>
-                           ) : (
-                              t('verifyAndContinue')
-                           )}
-                        </Button>
-                     </form>
-                  </div>
-               </div>
-            </DialogContent>
-         </Dialog>
 
          <AuthModals activeModal={activeModal} onModalChange={setActiveModal} />
       </div>
