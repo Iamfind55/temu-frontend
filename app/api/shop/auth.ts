@@ -132,6 +132,19 @@ export const MUTATION_SHOP_FORGOT_PASSWORD = gql`
   }
 `;
 
+export const MUTATION_SHOP_VERIFY_RESET_EMAIL = gql`
+  mutation ShopVerifyResetEmail($data: ShopVerifyResetEmailInput!) {
+    shopVerifyResetEmail(data: $data) {
+      success
+      error {
+        message
+        code
+        details
+      }
+    }
+  }
+`;
+
 export const MUTATION_SHOP_RESET_PASSWORD = gql`
   mutation ShopResetPassword($data: ShopResetPasswordInput!) {
     shopResetPassword(data: $data) {

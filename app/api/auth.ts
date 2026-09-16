@@ -150,7 +150,7 @@ export const MUTATION_CUSTOMER_RESEND_OTP = gql`
 `;
 
 export const MUTATION_CUSTOMER_RESET_PASSWORD = gql`
-  mutation CustomerResetPassword($data: ShopResetPasswordInput!) {
+  mutation CustomerResetPassword($data: CustomerResetPasswordInput!) {
     customerResetPassword(data: $data) {
       success
       error {

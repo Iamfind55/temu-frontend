@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 import { useToast } from "@/lib/toast"
 import { ShopLoginResponse } from "@/types/shop"
 import { useShopStore } from "@/store/shop-store"
-import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_SHOP_LOGIN, MUTATION_SHOP_FORGOT_PASSWORD, MUTATION_RESEND_VERIFY_SHOP_EMAIL, MUTATION_SHOP_RESET_PASSWORD } from "@/app/api/shop/auth"
+import { MUTATION_SHOP_REGISTER, MUTATION_VERIFY_SHOP_EMAIL, MUTATION_SHOP_LOGIN, MUTATION_RESEND_VERIFY_SHOP_EMAIL, MUTATION_SHOP_RESET_PASSWORD, MUTATION_SHOP_VERIFY_RESET_EMAIL } from "@/app/api/shop/auth"
 
 // components:
 import { Button } from "@/components/ui/button"
@@ -43,9 +43,9 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
    const [shopRegister, { loading: registerLoading }] = useMutation(MUTATION_SHOP_REGISTER)
    const [verifyShopEmail, { loading: verifyLoading }] = useMutation(MUTATION_VERIFY_SHOP_EMAIL)
    const [shopLogin, { loading: loginLoading }] = useMutation<ShopLoginResponse>(MUTATION_SHOP_LOGIN)
-   const [shopForgotPassword, { loading: forgotPasswordLoading }] = useMutation(MUTATION_SHOP_FORGOT_PASSWORD)
    const [resendShopOTP, { loading: resendLoading }] = useMutation(MUTATION_RESEND_VERIFY_SHOP_EMAIL)
    const [shopResetPassword, { loading: resetPasswordLoading }] = useMutation(MUTATION_SHOP_RESET_PASSWORD)
+   const [shopVerifyResetEmail, { loading: verifyResetEmailLoading }] = useMutation(MUTATION_SHOP_VERIFY_RESET_EMAIL)
 
    // Sign In form state
    const [signInEmail, setSignInEmail] = useState("")
@@ -274,6 +274,9 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       onModalChange("forgot-password")
    }
 
+   // Confirms the address belongs to an account before asking the seller to
+   // pick a new password. The server looks it up again on the reset itself, so
+   // a pass here is convenience, not authorisation.
    const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
       e.preventDefault()
 
@@ -283,26 +286,24 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
       }
 
       try {
-         const response = await shopForgotPassword({
+         const response = await shopVerifyResetEmail({
             variables: {
-               email: forgotPasswordEmail,
+               data: {
+                  email: forgotPasswordEmail,
+               },
             },
          })
 
          // eslint-disable-next-line @typescript-eslint/no-explicit-any
          const result = response.data as any
-         if (result?.shopForgotPassword?.success) {
-            successMessage({ message: t("verificationCodeSent") })
-            setResendCountdown(60)
-            setCanResend(false)
-            setOtpDigits(["", "", "", "", "", ""])
-            onModalChange("verification")
+         if (result?.shopVerifyResetEmail?.success) {
+            onModalChange("reset-password")
          } else {
-            const error = result?.shopForgotPassword?.error
-            errorMessage({ message: error?.message || t("verificationCodeFailed") })
+            const error = result?.shopVerifyResetEmail?.error
+            errorMessage({ message: error?.message || t("passwordResetFailed") })
          }
       } catch (error) {
-         console.error("Forgot password error:", error)
+         console.error("Verify reset email error:", error)
          errorMessage({ message: t("genericError") })
       }
    }
@@ -409,7 +410,6 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
             variables: {
                data: {
                   email: forgotPasswordEmail,
-                  otp: verifiedOtp,
                   new_password: newPassword,
                },
             },
@@ -711,7 +711,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                      <h2 className="text-md sm:text-2xl font-bold text-gray-900 mb-2">{t("forgotPasswordTitle")}</h2>
                      <p className="text-gray-600 text-sm mb-6">
-                        {t("enterEmailForVerification")}
+                        {t("resetWithEmail")}
                      </p>
 
                      <form onSubmit={handleForgotPasswordSubmit} className="space-y-5">
@@ -730,17 +730,10 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
 
                         <Button
                            type="submit"
-                           disabled={forgotPasswordLoading}
+                           disabled={verifyResetEmailLoading}
                            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 sm:py-6 rounded-md sm:rounded-lg text-sm sm:text-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                           {forgotPasswordLoading ? (
-                              <>
-                                 <Loader className="h-5 w-5 animate-spin " />
-                                 {t("sending")}
-                              </>
-                           ) : (
-                              t("continue")
-                           )}
+                           {t("continue")}
                         </Button>
                      </form>
                   </div>
@@ -832,7 +825,7 @@ export function AuthModals({ activeModal, onModalChange }: AuthModalsProps) {
                   <div className="p-6 sm:p-8">
                      <button
                         type="button"
-                        onClick={backToVerification}
+                        onClick={backToForgotPassword}
                         className="flex items-center gap-1 text-gray-600 hover:text-gray-900 mb-4"
                      >
                         <ArrowLeft className="h-4 w-4" />
