@@ -26,6 +26,12 @@ interface CloudinaryResponse {
   secure_url?: string;
 }
 
+/**
+ * The uploadable images on this page. Each name is also the matching key in
+ * formData, so one handler can drive all four.
+ */
+type ImageField = "logo" | "cover" | "idCardFront" | "idCardBack";
+
 export default function ProfilePage() {
   const { t } = useTranslation('shop-dashboard');
   const { errorMessage, successMessage } = useToast();
@@ -46,8 +52,8 @@ export default function ProfilePage() {
     phoneNumber: "",
   });
   const [isLoading, setIsLoading] = React.useState(false);
-  const [selectedLogo, setSelectedLogo] = React.useState<File | null>(null);
-  const [selectedCover, setSelectedCover] = React.useState<File | null>(null);
+  // Files picked but not yet uploaded, keyed by field.
+  const [selectedFiles, setSelectedFiles] = React.useState<Partial<Record<ImageField, File>>>({});
 
   // Mutation
   const [updateShopInfo] = useMutation(MUTATION_SHOP_UPDATE_INFORMATION1);
@@ -74,33 +80,43 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleImageSelect = (type: "logo" | "cover") => (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
+  const handleImageSelect = (field: ImageField) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        if (type === "logo") {
-          setSelectedLogo(file);
-          setFormData((prev) => ({ ...prev, logo: result }));
-        } else {
-          setSelectedCover(file);
-          setFormData((prev) => ({ ...prev, cover: result }));
-        }
-      };
-      reader.readAsDataURL(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      // Show the local preview immediately; the Cloudinary upload happens on save.
+      setFormData((prev) => ({ ...prev, [field]: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
+    setSelectedFiles((prev) => ({ ...prev, [field]: file }));
+
+    // Clear the input so picking the same file again still fires onChange.
+    e.target.value = "";
+  };
+
+  /** The value currently saved on the shop, used when discarding a pick. */
+  const savedImage = (field: ImageField): string => {
+    switch (field) {
+      case "logo":
+        return shop?.image?.logo || "";
+      case "cover":
+        return shop?.image?.cover || "";
+      case "idCardFront":
+        return shop?.id_card_info?.id_card_image_front || "";
+      case "idCardBack":
+        return shop?.id_card_info?.id_card_image_back || "";
     }
   };
 
-  const handleRemoveImage = (type: "logo" | "cover") => {
-    if (type === "logo") {
-      setSelectedLogo(null);
-      setFormData((prev) => ({ ...prev, logo: shop?.image?.logo || "" }));
-    } else {
-      setSelectedCover(null);
-      setFormData((prev) => ({ ...prev, cover: shop?.image?.cover || "" }));
-    }
+  const handleRemoveImage = (field: ImageField) => {
+    setSelectedFiles((prev) => {
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+    setFormData((prev) => ({ ...prev, [field]: savedImage(field) }));
   };
 
   const uploadToCloudinary = async (file: File): Promise<string> => {
@@ -120,7 +136,12 @@ export default function ProfilePage() {
     );
 
     const data = (await response.json()) as CloudinaryResponse;
-    return data.secure_url || "";
+    // Throw rather than return "": a silent empty string would overwrite the
+    // existing image with nothing when the save goes through.
+    if (!data.secure_url) {
+      throw new Error("Cloudinary upload returned no URL");
+    }
+    return data.secure_url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,17 +149,27 @@ export default function ProfilePage() {
     setIsLoading(true);
 
     try {
-      let logoUrl = formData.logo;
-      let coverUrl = formData.cover;
+      // Start from what is already saved, so an untouched field keeps its URL
+      // rather than being overwritten with the data: preview string.
+      const urls: Record<ImageField, string> = {
+        logo: savedImage("logo"),
+        cover: savedImage("cover"),
+        idCardFront: savedImage("idCardFront"),
+        idCardBack: savedImage("idCardBack"),
+      };
 
-      // Upload images if new ones are selected
-      if (selectedLogo) {
-        logoUrl = await uploadToCloudinary(selectedLogo);
-        setSelectedLogo(null);
-      }
-      if (selectedCover) {
-        coverUrl = await uploadToCloudinary(selectedCover);
-        setSelectedCover(null);
+      const pending = Object.entries(selectedFiles) as [ImageField, File][];
+      try {
+        const uploaded = await Promise.all(
+          pending.map(async ([field, file]) => [field, await uploadToCloudinary(file)] as const)
+        );
+        uploaded.forEach(([field, url]) => {
+          urls[field] = url;
+        });
+      } catch {
+        errorMessage({ message: t('uploadFailed'), duration: 3000 });
+        setIsLoading(false);
+        return;
       }
 
       const res: any = await updateShopInfo({
@@ -152,8 +183,12 @@ export default function ProfilePage() {
             store_name: formData.storeName,
             remark: formData.remark,
             image: {
-              logo: logoUrl,
-              cover: coverUrl,
+              logo: urls.logo,
+              cover: urls.cover,
+            },
+            id_card_info: {
+              id_card_image_front: urls.idCardFront,
+              id_card_image_back: urls.idCardBack,
             },
           },
         },
@@ -163,6 +198,7 @@ export default function ProfilePage() {
         // Update Zustand store with the latest shop data
         const updatedShopData = res.data.updateShopInformation.data as ShopData;
         setShop(updatedShopData);
+        setSelectedFiles({});
 
         successMessage({
           message: t('profileUpdatedSuccess'),
@@ -223,39 +259,55 @@ export default function ProfilePage() {
                         {t('change')}
                       </Button>
                       <p className="hidden sm:block mt-2 text-xs text-gray-500">
-                        {selectedLogo ? t('selectedFile', { filename: selectedLogo.name }) : t('imageFormatInfo')}
+                        {selectedFiles.logo ? t('selectedFile', { filename: selectedFiles.logo.name }) : t('imageFormatInfo')}
                       </p>
                     </div>
                   </div>
 
                   <div className="w-1/2">
                     <p className="text-sm font-medium text-gray-700 mb-2">{t('shopCoverImage')}</p>
-                    {formData.cover ? (
-                      <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden">
-                        <img
-                          src={formData.cover}
-                          alt="Shop Cover"
-                          className="w-full h-30 object-cover"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveImage("cover")}
-                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <label className="flex flex-col items-center justify-center w-full h-30 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-500 hover:bg-orange-50 transition-colors">
-                        <Upload className="w-4 h-4 text-gray-400 mb-2" />
-                        <span className="text-sm text-gray-500">{t('clickToUpload')}</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageSelect("cover")}
-                        />
-                      </label>
+                    {/* The picker stays reachable once a cover exists - clicking
+                        the image itself opens it, so the cover can be replaced. */}
+                    <label className="block cursor-pointer">
+                      {formData.cover ? (
+                        <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden group">
+                          <img
+                            src={formData.cover}
+                            alt="Shop Cover"
+                            className="w-full h-30 object-cover"
+                          />
+                          {/* Touch devices never hover, so on mobile the icon sits
+                              in the centre permanently; from sm up it becomes a
+                              hover overlay with a label. */}
+                          <div className="absolute inset-0 flex items-center justify-center transition-opacity sm:bg-black/40 sm:opacity-0 sm:group-hover:opacity-100">
+                            <span className="flex items-center gap-1 rounded-full bg-black/55 p-2 text-white text-sm font-medium sm:rounded-none sm:bg-transparent sm:p-0">
+                              <Upload className="w-5 h-5 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">{t('change')}</span>
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center w-full h-30 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors">
+                          <Upload className="w-4 h-4 text-gray-400 mb-2" />
+                          <span className="text-sm text-gray-500">{t('clickToUpload')}</span>
+                        </div>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageSelect("cover")}
+                        disabled={isLoading}
+                      />
+                    </label>
+                    {selectedFiles.cover && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage("cover")}
+                        className="mt-2 text-xs text-gray-500 hover:text-red-600 flex items-center gap-1"
+                      >
+                        <X className="w-3 h-3" /> {selectedFiles.cover.name}
+                      </button>
                     )}
                   </div>
                 </div>
@@ -374,41 +426,52 @@ export default function ProfilePage() {
                   </p>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">{t('frontSide')}</p>
-                      {formData.idCardFront ? (
-                        <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
-                          <img
-                            src={formData.idCardFront}
-                            alt="ID Front"
-                            className="w-full h-40 object-cover"
+                    {([
+                      { field: "idCardFront" as ImageField, label: t('frontSide'), alt: "ID Front" },
+                      { field: "idCardBack" as ImageField, label: t('backSide'), alt: "ID Back" },
+                    ]).map(({ field, label, alt }) => (
+                      <div key={field}>
+                        <p className="text-sm font-medium text-gray-700 mb-2">{label}</p>
+                        <label className="block cursor-pointer">
+                          {formData[field] ? (
+                            <div className="relative border-2 border-gray-200 rounded-lg overflow-hidden group">
+                              <img
+                                src={formData[field]}
+                                alt={alt}
+                                className="w-full h-40 object-cover"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center transition-opacity sm:bg-black/40 sm:opacity-0 sm:group-hover:opacity-100">
+                                <span className="flex items-center gap-1 rounded-full bg-black/55 p-2 text-white text-sm font-medium sm:rounded-none sm:bg-transparent sm:p-0">
+                                  <Upload className="w-5 h-5 sm:w-4 sm:h-4" />
+                                  <span className="hidden sm:inline">{t('change')}</span>
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 hover:border-orange-500 hover:bg-orange-50 transition-colors">
+                              <Upload className="w-8 h-8 text-gray-300 mb-2" />
+                              <span className="text-sm text-gray-500">{t('clickToUpload')}</span>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleImageSelect(field)}
+                            disabled={isLoading}
                           />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 rounded-lg bg-gray-50">
-                          <User className="w-8 h-8 text-gray-300 mb-2" />
-                          <span className="text-sm text-gray-400">{t('noImage')}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">{t('backSide')}</p>
-                      {formData.idCardBack ? (
-                        <div className="border-2 border-gray-200 rounded-lg overflow-hidden">
-                          <img
-                            src={formData.idCardBack}
-                            alt="ID Back"
-                            className="w-full h-40 object-cover"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-200 rounded-lg bg-gray-50">
-                          <User className="w-8 h-8 text-gray-300 mb-2" />
-                          <span className="text-sm text-gray-400">{t('noImage')}</span>
-                        </div>
-                      )}
-                    </div>
+                        </label>
+                        {selectedFiles[field] && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(field)}
+                            className="mt-2 text-xs text-gray-500 hover:text-red-600 flex items-center gap-1"
+                          >
+                            <X className="w-3 h-3" /> {selectedFiles[field]?.name}
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
