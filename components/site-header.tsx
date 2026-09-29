@@ -55,7 +55,7 @@ export function SiteHeader({ className }: { className?: string }) {
     setMounted(true)
   }, [])
 
-  // Hide "Sell on Tamu" section on mobile when scrolling down
+  // Hide "Sell on Temu" section on mobile when scrolling down
   React.useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
@@ -156,11 +156,19 @@ export function SiteHeader({ className }: { className?: string }) {
       <div className={cn("bg-red-950 text-white", className)}>
         <div className="container mx-auto flex items-center gap-4 px-4 py-3">
           <Link href="/" className="hidden sm:flex items-center gap-2">
-            <span className="bg-orange-500 text-white font-semibold text-xl px-2 py-3 rounded-xl tracking-wider">
-              TAMU
-            </span>
+            <img
+              src="/logo/icon.png"
+              alt="Temu"
+              className="h-10 w-auto"
+            />
           </Link>
-          <h1 className="block sm:hidden text-orange-500 font-bold text-xl" onClick={() => router.push("/")}>TAMU</h1>
+          <h1 className="block sm:hidden" onClick={() => router.push("/")}>
+            <img
+              src="/logo/icon.png"
+              alt="Temu"
+              className="h-8 w-auto cursor-pointer"
+            />
+          </h1>
 
           <Link href="/best-selling" className="hidden sm:block">
             <Button variant="ghost" className="hover:bg-red-800 cursor-pointer rounded-full font-semibold hover:text-white">

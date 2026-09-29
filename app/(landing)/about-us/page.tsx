@@ -9,7 +9,7 @@ export default function AboutUsPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-12 max-w-5xl">
-        {/* What is Tamu? */}
+        {/* What is Temu? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
             {t('whatIsTamu')}
@@ -19,7 +19,7 @@ export default function AboutUsPage() {
               <div className="w-32 h-32 rounded-2xl flex items-center justify-center">
                 <Image
                   src="/images/about-01.webp"
-                  alt="Tamu Logo"
+                  alt="Temu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -32,7 +32,7 @@ export default function AboutUsPage() {
           </div>
         </section>
 
-        {/* What does Tamu mean? */}
+        {/* What does Temu mean? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
             {t('whatDoesTamuMean')}
@@ -47,7 +47,7 @@ export default function AboutUsPage() {
           </div>
         </section>
 
-        {/* Where are the products sold on Tamu shipped from? */}
+        {/* Where are the products sold on Temu shipped from? */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
             {t('whereShippedFrom')}
@@ -57,7 +57,7 @@ export default function AboutUsPage() {
           </p>
         </section>
 
-        {/* Tamu's strengths */}
+        {/* Temu's strengths */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-orange-500 text-center mb-8">
             {t('tamuStrengths')}
@@ -89,7 +89,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-02.webp"
-                  alt="Tamu Logo"
+                  alt="Temu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -110,7 +110,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-03.webp"
-                  alt="Tamu Logo"
+                  alt="Temu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -131,7 +131,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-04.webp"
-                  alt="Tamu Logo"
+                  alt="Temu Logo"
                   width={120}
                   height={120}
                   className="object-contain"
@@ -152,7 +152,7 @@ export default function AboutUsPage() {
               <div className="w-30 h-30 flex-shrink-0">
                 <Image
                   src="/images/about-05.webp"
-                  alt="Tamu Logo"
+                  alt="Temu Logo"
                   width={120}
                   height={120}
                   className="object-contain"

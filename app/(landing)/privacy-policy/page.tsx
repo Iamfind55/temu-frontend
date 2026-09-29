@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
           <main className="flex-1 min-w-0">
             <div className="mb-8 text-sm text-gray-700 leading-relaxed space-y-4">
               <p>
-                This Privacy Policy describes how Tamu Stores (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and shares
+                This Privacy Policy describes how Temu Stores (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) collects, uses, and shares
                 information about you when you use our website at temustores.shop and related services (the &quot;Service&quot;).
               </p>
               <p>

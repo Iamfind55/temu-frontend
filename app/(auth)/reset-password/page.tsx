@@ -140,9 +140,7 @@ export default function ResetPasswordPage() {
       <div className="sm:border-b bg-white">
         <div className="container mx-auto flex items-center gap-2 px-4 py-4">
           <Link href="/" className="hidden sm:flex items-center gap-2">
-            <span className="bg-orange-500 text-white font-extrabold text-2xl px-3 py-1 rounded-lg tracking-wider">
-              TAMU
-            </span>
+            <img src="/logo/icon.png" alt="Temu" className="h-10 w-auto" />
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-sm text-green-600">
             <Lock className="h-4 w-4" />

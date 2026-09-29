@@ -25,7 +25,7 @@ export default function TermsOfUsePage() {
           <div className="mb-8 text-sm text-gray-700 leading-relaxed space-y-4">
             <p>
               These Terms of Use (&quot;Terms&quot;) govern your access to and use of the website at temustores.shop,
-              our mobile applications, and related services (collectively, the &quot;Service&quot;) operated by Tamu Stores
+              our mobile applications, and related services (collectively, the &quot;Service&quot;) operated by Temu Stores
               (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;).
             </p>
             <p>

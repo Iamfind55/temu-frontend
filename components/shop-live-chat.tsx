@@ -599,7 +599,7 @@ export function ShopLiveChat() {
                         <div className="text-center mt-2">
                            <span className="text-xs text-gray-400">
                               {t("poweredBy")}{" "}
-                              <span className="font-semibold text-orange-500">Tamu</span>
+                              <span className="font-semibold text-orange-500">Temu</span>
                            </span>
                         </div>
                      </div>

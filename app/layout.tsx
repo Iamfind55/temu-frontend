@@ -22,22 +22,22 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Tamu Stores - Online Shopping",
+  title: "Temu Stores - Online Shopping",
   description: "Online marketplace for everyday products at affordable prices.",
   manifest: '/manifest.json',
   themeColor: '#f97316',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Tamu Stores',
+    title: 'Temu Stores',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: 'website',
-    siteName: 'Tamu Stores',
-    title: 'Tamu Stores - Online Shopping',
+    siteName: 'Temu Stores',
+    title: 'Temu Stores - Online Shopping',
     description: 'Online marketplace for everyday products at affordable prices.',
   },
   icons: {
