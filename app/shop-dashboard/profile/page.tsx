@@ -179,7 +179,10 @@ export default function ProfilePage() {
             username: formData.username,
             email: formData.email,
             phone_number: formData.phoneNumber,
-            dob: formData.dob,
+            // dob is a timestamp column: sending "" (what the input holds when
+            // the shop has no birthday on file) makes Postgres reject the whole
+            // update, so leave it out entirely rather than send an empty string.
+            ...(formData.dob ? { dob: formData.dob } : {}),
             store_name: formData.storeName,
             remark: formData.remark,
             image: {
@@ -206,7 +209,9 @@ export default function ProfilePage() {
         });
       } else {
         errorMessage({
-          message: t('profileUpdateFailed'),
+          // Show what the server actually said; the generic string hid the real
+          // cause (e.g. a rejected column value) behind "try again later".
+          message: res?.data?.updateShopInformation?.error?.message || t('profileUpdateFailed'),
           duration: 3000,
         });
       }
